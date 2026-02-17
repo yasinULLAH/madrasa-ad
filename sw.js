@@ -122,23 +122,23 @@ if (workbox) {
     },
     {
         "url": "copilot.html",
-        "revision": "f925dff68e9513f3c924dc2538b635f2"
+        "revision": "ccc8f9ec1c269ee4952cae8b10df026e"
     },
     {
         "url": "google.html",
-        "revision": "e6b07b918c6b3a053f8a01230dd4b4b0"
+        "revision": "fc7f4296c9815b87538f30052981b219"
     },
     {
         "url": "grok.html",
-        "revision": "b20b392e6477b5879db5d00d878f2a25"
+        "revision": "e2ac58d5bb61355409f6cc093cf7322e"
     },
     {
         "url": "index.html",
-        "revision": "aa9fe335be61db2bda0a4a4b4399a881"
+        "revision": "254683433b9ffb18e72584823ef9b7ea"
     },
     {
         "url": "indexw.html",
-        "revision": "2d9b3c96a7e3562d7498abae1d588ddb"
+        "revision": "1aa0f645e639454ddf356b789badbe51"
     },
     {
         "url": "islamic-poster-1771325096068.png",
@@ -149,20 +149,24 @@ if (workbox) {
         "revision": "2cf65b3042a0c850a3452ca5cdda516b"
     },
     {
+        "url": "islamic-poster-1771325596596.png",
+        "revision": "eaaebe33d7d86ca65e9853aff9b86ebd"
+    },
+    {
         "url": "islamic_poster_creator (1).html",
-        "revision": "94ad945bcfbc76d37274d384a8df993b"
+        "revision": "ed2261a05fd9d35ec2d61b2405718425"
     },
     {
         "url": "islamic_poster_creator.html",
-        "revision": "1fe84b143e8a00d4517928413568056c"
+        "revision": "a4c263b54f0e9cbd616ed4144dda3024"
     },
     {
         "url": "islamic_poster_premium.html",
-        "revision": "a6e28f82e2fbfab66c527e4657577eb5"
+        "revision": "0369a1d88539521587fde7339033a8ad"
     },
     {
         "url": "jamia-admission-editor.html",
-        "revision": "2ef20912890f9fd9f22be4f56e418c2b"
+        "revision": "bc3622a5db2d534193882c7634b52631"
     },
     {
         "url": "madrasa-flyer-1771324637171.png",
@@ -170,15 +174,23 @@ if (workbox) {
     },
     {
         "url": "madrasa-flyer-editor.html",
-        "revision": "f8b644dec494616a7bf614be5310907d"
+        "revision": "a1c39e36d4ae6fc08ccaa456a046f4cd"
+    },
+    {
+        "url": "manifest.json",
+        "revision": "358b1fba18149fce96b66c26eb70ad26"
     },
     {
         "url": "new.html",
-        "revision": "4a56e6780e09380d30e9a37a4a461403"
+        "revision": "1b3f9bdb8944ccb344c1c4ae27729908"
     },
     {
         "url": "offline.html",
-        "revision": "7656c61e25225c4fcc77cb000be6d527"
+        "revision": "93dd8135f88165fc1bbc0acf525cd1d3"
+    },
+    {
+        "url": "sw.js",
+        "revision": "c3f0b0ecedb1b8f4a63cf0bf7cac1591"
     }
 ]);
 

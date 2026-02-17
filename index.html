@@ -1190,8 +1190,18 @@
                     useCORS: true,
                     allowTaint: true,
                     backgroundColor: '#ffffff',
-                    width: canvas.offsetWidth,
-                    height: canvas.offsetHeight
+                    windowWidth: 1400, // Force desktop media queries
+                    onclone: (clonedDoc) => {
+                        const clonedCanvas = clonedDoc.getElementById('posterCanvas');
+                        // Force desktop width on the cloned element
+                        clonedCanvas.style.width = '900px';
+                        clonedCanvas.style.maxWidth = 'none';
+                        clonedCanvas.style.height = 'auto';
+
+                        // Ensure hidden items remain hidden in clone
+                        const hidden = clonedCanvas.querySelectorAll('.add-section-btn, .action-menu, .delete-btn');
+                        hidden.forEach(el => el.style.display = 'none');
+                    }
                 });
 
                 const link = document.createElement('a');
@@ -1276,6 +1286,7 @@
             initDB();
         };
     </script>
+
     <script type="module">
         import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
 
