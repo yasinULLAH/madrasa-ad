@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
 
+<html dir="rtl" lang="ur">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ma'had Rasheed Poster Creator</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
-        rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.1/qrcode.min.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ma'had Rasheed Poster Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&amp;family=Roboto:wght@300;400;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.1/qrcode.min.js"></script>
+<style>
         * {
             box-sizing: border-box;
             margin: 0;
@@ -504,126 +502,108 @@
             height: auto;
         }
     </style>
-</head>
-
+<link href="manifest.json" rel="manifest"/><link href="favicon.ico" rel="icon" type="image/x-icon"/></head>
 <body>
-
-    <div class="container">
-        <div class="header">
-            <h1>معہد الرشید - پوسٹر تخلیق کار</h1>
-            <p>Ma'had Rasheed Poster Creator & Manager</p>
-        </div>
-
-        <div class="controls">
-            <button class="btn btn-primary" onclick="openCreateModal()">➕ نیا پوسٹر بنائیں</button>
-            <button class="btn btn-success" onclick="exportAllData()">💾 ڈیٹا محفوظ کریں</button>
-            <button class="btn btn-warning" onclick="document.getElementById('importFile').click()">📂 ڈیٹا درآمد
+<div class="container">
+<div class="header">
+<h1>معہد الرشید - پوسٹر تخلیق کار</h1>
+<p>Ma'had Rasheed Poster Creator &amp; Manager</p>
+</div>
+<div class="controls">
+<button class="btn btn-primary" onclick="openCreateModal()">➕ نیا پوسٹر بنائیں</button>
+<button class="btn btn-success" onclick="exportAllData()">💾 ڈیٹا محفوظ کریں</button>
+<button class="btn btn-warning" onclick="document.getElementById('importFile').click()">📂 ڈیٹا درآمد
                 کریں</button>
-            <button class="btn btn-danger" onclick="deleteAllPosters()">🗑️ تمام حذف کریں</button>
-        </div>
-
-        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-
-        <div class="poster-grid" id="posterGrid"></div>
-    </div>
-
-    <div class="modal" id="editorModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()">×</button>
-            <h2 style="margin-bottom: 25px; color: #2d5f3f; text-align: center;">پوسٹر ایڈیٹر</h2>
-            <form id="posterForm" onsubmit="savePoster(event)">
-                <input type="hidden" id="posterId">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>ادارے کا نام (Urdu)</label>
-                        <input type="text" id="institutionNameUrdu" required>
-                    </div>
-                    <div class="form-group">
-                        <label>ادارے کا نام (English)</label>
-                        <input type="text" id="institutionNameEng" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>اعلان (Announcement)</label>
-                    <input type="text" id="announcement" required>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>تاریخ شروع (Start Date)</label>
-                        <input type="text" id="startDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label>تاریخ ختم (End Date)</label>
-                        <input type="text" id="endDate" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>خصوصیات (Features - علامت سے الگ کریں)</label>
-                    <textarea id="features" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>شرائط (Conditions - علامت سے الگ کریں)</label>
-                    <textarea id="conditions" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>رابطہ نمبرز (Contact Numbers - کوما سے الگ کریں)</label>
-                    <input type="text" id="contactNumbers" required>
-                </div>
-
-                <div class="form-group">
-                    <label>ویب سائٹ/QR لنک</label>
-                    <input type="url" id="qrLink" required>
-                </div>
-
-                <div class="form-group">
-                    <label>پتہ (Address)</label>
-                    <textarea id="address" rows="3" required></textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>پرائمری رنگ</label>
-                        <input type="color" id="primaryColor" value="#2d5f3f">
-                    </div>
-                    <div class="form-group">
-                        <label>سیکنڈری رنگ</label>
-                        <input type="color" id="secondaryColor" value="#f97316">
-                    </div>
-                </div>
-
-                <div style="display: flex; gap: 15px; margin-top: 25px;">
-                    <button type="submit" class="btn btn-success" style="flex: 1;">💾 محفوظ کریں</button>
-                    <button type="button" class="btn btn-danger" onclick="closeModal()" style="flex: 1;">❌ منسوخ
+<button class="btn btn-danger" onclick="deleteAllPosters()">🗑️ تمام حذف کریں</button>
+</div>
+<input accept=".json" id="importFile" onchange="importData(event)" style="display:none" type="file"/>
+<div class="poster-grid" id="posterGrid"></div>
+</div>
+<div class="modal" id="editorModal">
+<div class="modal-content">
+<button class="modal-close" onclick="closeModal()">×</button>
+<h2 style="margin-bottom: 25px; color: #2d5f3f; text-align: center;">پوسٹر ایڈیٹر</h2>
+<form id="posterForm" onsubmit="savePoster(event)">
+<input id="posterId" type="hidden"/>
+<div class="form-row">
+<div class="form-group">
+<label>ادارے کا نام (Urdu)</label>
+<input id="institutionNameUrdu" required="" type="text"/>
+</div>
+<div class="form-group">
+<label>ادارے کا نام (English)</label>
+<input id="institutionNameEng" required="" type="text"/>
+</div>
+</div>
+<div class="form-group">
+<label>اعلان (Announcement)</label>
+<input id="announcement" required="" type="text"/>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>تاریخ شروع (Start Date)</label>
+<input id="startDate" required="" type="text"/>
+</div>
+<div class="form-group">
+<label>تاریخ ختم (End Date)</label>
+<input id="endDate" required="" type="text"/>
+</div>
+</div>
+<div class="form-group">
+<label>خصوصیات (Features - علامت سے الگ کریں)</label>
+<textarea id="features" required=""></textarea>
+</div>
+<div class="form-group">
+<label>شرائط (Conditions - علامت سے الگ کریں)</label>
+<textarea id="conditions" required=""></textarea>
+</div>
+<div class="form-group">
+<label>رابطہ نمبرز (Contact Numbers - کوما سے الگ کریں)</label>
+<input id="contactNumbers" required="" type="text"/>
+</div>
+<div class="form-group">
+<label>ویب سائٹ/QR لنک</label>
+<input id="qrLink" required="" type="url"/>
+</div>
+<div class="form-group">
+<label>پتہ (Address)</label>
+<textarea id="address" required="" rows="3"></textarea>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>پرائمری رنگ</label>
+<input id="primaryColor" type="color" value="#2d5f3f"/>
+</div>
+<div class="form-group">
+<label>سیکنڈری رنگ</label>
+<input id="secondaryColor" type="color" value="#f97316"/>
+</div>
+</div>
+<div style="display: flex; gap: 15px; margin-top: 25px;">
+<button class="btn btn-success" style="flex: 1;" type="submit">💾 محفوظ کریں</button>
+<button class="btn btn-danger" onclick="closeModal()" style="flex: 1;" type="button">❌ منسوخ
                         کریں</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal" id="previewModal">
-        <div class="modal-content" style="max-width: 650px;">
-            <button class="modal-close" onclick="closePreviewModal()">×</button>
-            <h2 style="margin-bottom: 20px; text-align: center; color: #2d5f3f;">پوسٹر پیش نظارہ</h2>
-            <div class="preview-container" id="previewContainer"></div>
-            <div style="display: flex; gap: 15px; margin-top: 20px;">
-                <button class="btn btn-primary" onclick="exportToPNG()" style="flex: 1;">🖼️ PNG ڈاؤن لوڈ</button>
-                <button class="btn btn-info" onclick="exportToPDF()" style="flex: 1;">📄 PDF ڈاؤن لوڈ</button>
-                <button class="btn btn-danger" onclick="closePreviewModal()" style="flex: 1;">بند کریں</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="loading" id="loadingOverlay">
-        <div class="spinner"></div>
-        <p style="text-align: center; font-weight: 600; color: #2d5f3f;">براہ کرم انتظار کریں...</p>
-    </div>
-
-    <script>
+</div>
+</form>
+</div>
+</div>
+<div class="modal" id="previewModal">
+<div class="modal-content" style="max-width: 650px;">
+<button class="modal-close" onclick="closePreviewModal()">×</button>
+<h2 style="margin-bottom: 20px; text-align: center; color: #2d5f3f;">پوسٹر پیش نظارہ</h2>
+<div class="preview-container" id="previewContainer"></div>
+<div style="display: flex; gap: 15px; margin-top: 20px;">
+<button class="btn btn-primary" onclick="exportToPNG()" style="flex: 1;">🖼️ PNG ڈاؤن لوڈ</button>
+<button class="btn btn-info" onclick="exportToPDF()" style="flex: 1;">📄 PDF ڈاؤن لوڈ</button>
+<button class="btn btn-danger" onclick="closePreviewModal()" style="flex: 1;">بند کریں</button>
+</div>
+</div>
+</div>
+<div class="loading" id="loadingOverlay">
+<div class="spinner"></div>
+<p style="text-align: center; font-weight: 600; color: #2d5f3f;">براہ کرم انتظار کریں...</p>
+</div>
+<script>
         let db;
         let currentPosterId = null;
         let currentPosterData = null;
@@ -1076,7 +1056,22 @@ ${posterHTML}
             await loadPosters();
         });
     </script>
+<script type="module">
+  import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
 
-</body>
+  const swUrl = './sw.js';
+  const wb = new Workbox(swUrl);
 
+  wb.addEventListener('waiting', () => {
+    console.log('A new service worker is waiting to activate.');
+    wb.messageSW({ type: 'SKIP_WAITING' });
+  });
+
+  wb.addEventListener('controlling', () => {
+    console.log('The new service worker is now in control. Reloading page for updates...');
+    window.location.reload();
+  });
+
+  wb.register();
+</script></body>
 </html>

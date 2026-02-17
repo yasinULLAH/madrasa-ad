@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+
+<html dir="rtl" lang="ur">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Islamic Poster Creator - اسلامی پوسٹر بنائیں</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Islamic Poster Creator - اسلامی پوسٹر بنائیں</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
         @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
 
         * {
@@ -377,234 +378,196 @@
             }
         }
     </style>
-</head>
+<link href="manifest.json" rel="manifest"/><link href="favicon.ico" rel="icon" type="image/x-icon"/></head>
 <body>
-    <div class="container">
-        <div class="control-panel">
-            <h2>🕌 اسلامی پوسٹر بنائیں</h2>
-
-            <div class="form-group">
-                <label>پوسٹر کا نام (Poster Name)</label>
-                <input type="text" id="posterName" placeholder="مثال: رمضان پروگرام 2024">
-            </div>
-
-            <div class="form-group">
-                <label>مرکزی عنوان (Main Title)</label>
-                <input type="text" id="mainTitle" placeholder="اعلان داخلہ">
-            </div>
-
-            <div class="form-group">
-                <label>اسلامی سال (Islamic Year)</label>
-                <input type="text" id="islamicYear" placeholder="1445">
-            </div>
-
-            <div class="form-group">
-                <label>عیسوی سال (Gregorian Year)</label>
-                <input type="text" id="gregorianYear" placeholder="2024">
-            </div>
-
-            <div class="form-group">
-                <label>اسلامی تاریخ (Islamic Date)</label>
-                <input type="text" id="islamicDate" placeholder="10 شوال 1445">
-            </div>
-
-            <div class="form-group">
-                <label>عیسوی تاریخ (Gregorian Date)</label>
-                <input type="text" id="gregorianDate" placeholder="20 اپریل 2024">
-            </div>
-
-            <h3 style="margin-top: 20px; margin-bottom: 10px;">تین بڑے سیکشن (Three Main Sections)</h3>
-
-            <div class="form-group">
-                <label>پہلا سیکشن عنوان (Section 1 Title)</label>
-                <input type="text" id="section1Title" placeholder="تصوری علمیم">
-            </div>
-
-            <div class="form-group">
-                <label>پہلا سیکشن مواد (Section 1 Content)</label>
-                <textarea id="section1Content" placeholder="اندرونی تفصیل..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>دوسرا سیکشن عنوان (Section 2 Title)</label>
-                <input type="text" id="section2Title" placeholder="تجویدالقرآن">
-            </div>
-
-            <div class="form-group">
-                <label>دوسرا سیکشن مواد (Section 2 Content)</label>
-                <textarea id="section2Content" placeholder="تفصیل..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>تیسرا سیکشن عنوان (Section 3 Title)</label>
-                <input type="text" id="section3Title" placeholder="دروس نظامی">
-            </div>
-
-            <div class="form-group">
-                <label>تیسرا سیکشن مواد (Section 3 Content)</label>
-                <textarea id="section3Content" placeholder="تفصیل..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>اوقات (Timing)</label>
-                <input type="text" id="timing" placeholder="صبح 8:00 تا 12:30">
-            </div>
-
-            <div class="form-group">
-                <label>مرکزی معلومات (Central Information)</label>
-                <textarea id="centralInfo" placeholder="شعبہ حفظ کی تفصیلات..."></textarea>
-            </div>
-
-            <h3 style="margin-top: 20px; margin-bottom: 10px;">نچلے تین سیکشن (Bottom Three Sections)</h3>
-
-            <div class="form-group">
-                <label>بائیں سیکشن عنوان (Left Section Title)</label>
-                <input type="text" id="leftTitle" placeholder="ضروری نوٹ">
-            </div>
-
-            <div class="form-group">
-                <label>بائیں سیکشن مواد (Left Section Content)</label>
-                <textarea id="leftContent"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>درمیانی سیکشن عنوان (Middle Section Title)</label>
-                <input type="text" id="middleTitle" placeholder="دینی اور عصری علوم کا حسین امتزاج">
-            </div>
-
-            <div class="form-group">
-                <label>درمیانی سیکشن مواد (Middle Section Content)</label>
-                <textarea id="middleContent"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>دائیں سیکشن عنوان (Right Section Title)</label>
-                <input type="text" id="rightTitle" placeholder="خاص نوٹ">
-            </div>
-
-            <div class="form-group">
-                <label>دائیں سیکشن مواد (Right Section Content)</label>
-                <textarea id="rightContent"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>فون نمبرات (Phone Numbers)</label>
-                <input type="text" id="phoneNumbers" placeholder="0336-9586656 | 0311-5342747 | 0312-3550107">
-            </div>
-
-            <div class="form-group">
-                <label>پتہ (Address)</label>
-                <input type="text" id="address" placeholder="مدرسہ عربیہ اسلامیہ میمل">
-            </div>
-
-            <div class="form-group">
-                <label>مکمل پتہ (Full Address)</label>
-                <input type="text" id="fullAddress" placeholder="شاہراہ حصہ پل ہرن مسجد شریف کراچی">
-            </div>
-
-            <button class="btn btn-primary" onclick="updatePreview()">👁️ پیش منظر دیکھیں</button>
-            <button class="btn btn-success" onclick="savePoster()">💾 محفوظ کریں</button>
-            <button class="btn btn-info" onclick="exportToImage()">📷 تصویر کے طور پر ایکسپورٹ (High Res)</button>
-            <button class="btn btn-warning" onclick="exportToPDF()">📄 PDF کے طور پر ایکسپورٹ</button>
-            <button class="btn btn-danger" onclick="clearForm()">🗑️ صاف کریں</button>
-
-            <div class="saved-posters">
-                <h3>محفوظ شدہ پوسٹرز (Saved Posters)</h3>
-                <div class="poster-list" id="posterList"></div>
-            </div>
-        </div>
-
-        <div class="poster-preview">
-            <div id="posterCanvas">
-                <div class="poster-header">
-                    <div class="decorative-elements deco-left"></div>
-                    <div class="decorative-elements deco-right"></div>
-                    <div class="poster-title" id="previewMainTitle">اعلان داخلہ</div>
-                    <div class="poster-dates">
-                        <span id="previewIslamicYear">1445</span>
-                        <span>/</span>
-                        <span id="previewGregorianYear">2024</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-around; margin-top: 10px; font-size: 18px;">
-                        <span><span class="date-badge">10</span> <span id="previewIslamicDate">شوال 1445</span></span>
-                        <span><span class="date-badge">20</span> <span id="previewGregorianDate">اپریل 2024</span></span>
-                    </div>
-                </div>
-
-                <div class="sections-container">
-                    <div class="section-card">
-                        <div class="section-title" id="previewSection1Title">تصوری علمیم</div>
-                        <div class="section-content" id="previewSection1Content">
+<div class="container">
+<div class="control-panel">
+<h2>🕌 اسلامی پوسٹر بنائیں</h2>
+<div class="form-group">
+<label>پوسٹر کا نام (Poster Name)</label>
+<input id="posterName" placeholder="مثال: رمضان پروگرام 2024" type="text"/>
+</div>
+<div class="form-group">
+<label>مرکزی عنوان (Main Title)</label>
+<input id="mainTitle" placeholder="اعلان داخلہ" type="text"/>
+</div>
+<div class="form-group">
+<label>اسلامی سال (Islamic Year)</label>
+<input id="islamicYear" placeholder="1445" type="text"/>
+</div>
+<div class="form-group">
+<label>عیسوی سال (Gregorian Year)</label>
+<input id="gregorianYear" placeholder="2024" type="text"/>
+</div>
+<div class="form-group">
+<label>اسلامی تاریخ (Islamic Date)</label>
+<input id="islamicDate" placeholder="10 شوال 1445" type="text"/>
+</div>
+<div class="form-group">
+<label>عیسوی تاریخ (Gregorian Date)</label>
+<input id="gregorianDate" placeholder="20 اپریل 2024" type="text"/>
+</div>
+<h3 style="margin-top: 20px; margin-bottom: 10px;">تین بڑے سیکشن (Three Main Sections)</h3>
+<div class="form-group">
+<label>پہلا سیکشن عنوان (Section 1 Title)</label>
+<input id="section1Title" placeholder="تصوری علمیم" type="text"/>
+</div>
+<div class="form-group">
+<label>پہلا سیکشن مواد (Section 1 Content)</label>
+<textarea id="section1Content" placeholder="اندرونی تفصیل..."></textarea>
+</div>
+<div class="form-group">
+<label>دوسرا سیکشن عنوان (Section 2 Title)</label>
+<input id="section2Title" placeholder="تجویدالقرآن" type="text"/>
+</div>
+<div class="form-group">
+<label>دوسرا سیکشن مواد (Section 2 Content)</label>
+<textarea id="section2Content" placeholder="تفصیل..."></textarea>
+</div>
+<div class="form-group">
+<label>تیسرا سیکشن عنوان (Section 3 Title)</label>
+<input id="section3Title" placeholder="دروس نظامی" type="text"/>
+</div>
+<div class="form-group">
+<label>تیسرا سیکشن مواد (Section 3 Content)</label>
+<textarea id="section3Content" placeholder="تفصیل..."></textarea>
+</div>
+<div class="form-group">
+<label>اوقات (Timing)</label>
+<input id="timing" placeholder="صبح 8:00 تا 12:30" type="text"/>
+</div>
+<div class="form-group">
+<label>مرکزی معلومات (Central Information)</label>
+<textarea id="centralInfo" placeholder="شعبہ حفظ کی تفصیلات..."></textarea>
+</div>
+<h3 style="margin-top: 20px; margin-bottom: 10px;">نچلے تین سیکشن (Bottom Three Sections)</h3>
+<div class="form-group">
+<label>بائیں سیکشن عنوان (Left Section Title)</label>
+<input id="leftTitle" placeholder="ضروری نوٹ" type="text"/>
+</div>
+<div class="form-group">
+<label>بائیں سیکشن مواد (Left Section Content)</label>
+<textarea id="leftContent"></textarea>
+</div>
+<div class="form-group">
+<label>درمیانی سیکشن عنوان (Middle Section Title)</label>
+<input id="middleTitle" placeholder="دینی اور عصری علوم کا حسین امتزاج" type="text"/>
+</div>
+<div class="form-group">
+<label>درمیانی سیکشن مواد (Middle Section Content)</label>
+<textarea id="middleContent"></textarea>
+</div>
+<div class="form-group">
+<label>دائیں سیکشن عنوان (Right Section Title)</label>
+<input id="rightTitle" placeholder="خاص نوٹ" type="text"/>
+</div>
+<div class="form-group">
+<label>دائیں سیکشن مواد (Right Section Content)</label>
+<textarea id="rightContent"></textarea>
+</div>
+<div class="form-group">
+<label>فون نمبرات (Phone Numbers)</label>
+<input id="phoneNumbers" placeholder="0336-9586656 | 0311-5342747 | 0312-3550107" type="text"/>
+</div>
+<div class="form-group">
+<label>پتہ (Address)</label>
+<input id="address" placeholder="مدرسہ عربیہ اسلامیہ میمل" type="text"/>
+</div>
+<div class="form-group">
+<label>مکمل پتہ (Full Address)</label>
+<input id="fullAddress" placeholder="شاہراہ حصہ پل ہرن مسجد شریف کراچی" type="text"/>
+</div>
+<button class="btn btn-primary" onclick="updatePreview()">👁️ پیش منظر دیکھیں</button>
+<button class="btn btn-success" onclick="savePoster()">💾 محفوظ کریں</button>
+<button class="btn btn-info" onclick="exportToImage()">📷 تصویر کے طور پر ایکسپورٹ (High Res)</button>
+<button class="btn btn-warning" onclick="exportToPDF()">📄 PDF کے طور پر ایکسپورٹ</button>
+<button class="btn btn-danger" onclick="clearForm()">🗑️ صاف کریں</button>
+<div class="saved-posters">
+<h3>محفوظ شدہ پوسٹرز (Saved Posters)</h3>
+<div class="poster-list" id="posterList"></div>
+</div>
+</div>
+<div class="poster-preview">
+<div id="posterCanvas">
+<div class="poster-header">
+<div class="decorative-elements deco-left"></div>
+<div class="decorative-elements deco-right"></div>
+<div class="poster-title" id="previewMainTitle">اعلان داخلہ</div>
+<div class="poster-dates">
+<span id="previewIslamicYear">1445</span>
+<span>/</span>
+<span id="previewGregorianYear">2024</span>
+</div>
+<div style="display: flex; justify-content: space-around; margin-top: 10px; font-size: 18px;">
+<span><span class="date-badge">10</span> <span id="previewIslamicDate">شوال 1445</span></span>
+<span><span class="date-badge">20</span> <span id="previewGregorianDate">اپریل 2024</span></span>
+</div>
+</div>
+<div class="sections-container">
+<div class="section-card">
+<div class="section-title" id="previewSection1Title">تصوری علمیم</div>
+<div class="section-content" id="previewSection1Content">
                             اندرونی مذہبی تعلیم کی فراہمی کے ساتھ معاشرے کے لیے مفید انسان تیار کریں
                         </div>
-                    </div>
-
-                    <div class="section-card" style="background: #2C5F4F;">
-                        <div class="section-title" style="background: rgba(255,255,255,0.2);" id="previewSection2Title">تجویدالقرآن</div>
-                        <div class="section-content" style="background: #E6B0AA; color: #000; border-color: #8B4513;" id="previewSection2Content">
+</div>
+<div class="section-card" style="background: #2C5F4F;">
+<div class="section-title" id="previewSection2Title" style="background: rgba(255,255,255,0.2);">تجویدالقرآن</div>
+<div class="section-content" id="previewSection2Content" style="background: #E6B0AA; color: #000; border-color: #8B4513;">
                             حافظہ قرآن کریم اور تجوید کی تعلیم
                         </div>
-                    </div>
-
-                    <div class="section-card">
-                        <div class="section-title" id="previewSection3Title">دروس نظامی</div>
-                        <div class="section-content" id="previewSection3Content">
+</div>
+<div class="section-card">
+<div class="section-title" id="previewSection3Title">دروس نظامی</div>
+<div class="section-content" id="previewSection3Content">
                             اولاد کی تعلیم و تربیت کی فکر ہے تو ابھی داخلہ لیں
                         </div>
-                    </div>
-                </div>
-
-                <div class="timing-section" id="previewTiming">
+</div>
+</div>
+<div class="timing-section" id="previewTiming">
                     اوقات داخلہ: صبح 8:00 تا 12:30
                 </div>
-
-                <div style="background: #2C5F4F; padding: 15px; border-radius: 10px; margin-bottom: 15px; color: white; text-align: center;">
-                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
+<div style="background: #2C5F4F; padding: 15px; border-radius: 10px; margin-bottom: 15px; color: white; text-align: center;">
+<div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
                         شعبہ حفظ کی تفصیلات
                     </div>
-                    <div id="previewCentralInfo" style="font-size: 14px; line-height: 1.6;">
+<div id="previewCentralInfo" style="font-size: 14px; line-height: 1.6;">
                         10 شوال سے مسلسل 20 اپریل تک اور روس اتفاقی کے طلباء کے لیے 13 شوال 23 اپریل سے مسلسل شروع
                     </div>
-                </div>
-
-                <div class="bottom-sections">
-                    <div class="bottom-card">
-                        <div class="bottom-card-title" id="previewLeftTitle">ضروری نوٹ</div>
-                        <div class="bottom-card-content" id="previewLeftContent">
+</div>
+<div class="bottom-sections">
+<div class="bottom-card">
+<div class="bottom-card-title" id="previewLeftTitle">ضروری نوٹ</div>
+<div class="bottom-card-content" id="previewLeftContent">
                             حافظہ ہو جانے والا طالب علم، ارادے کے ساتھ دارالعلوم میں داخلہ لے اور کی فضیلت
                         </div>
-                    </div>
-
-                    <div class="middle-section">
-                        <div class="middle-title" id="previewMiddleTitle">دینی اور عصری علوم کا حسین امتزاج</div>
-                        <div class="middle-content" id="previewMiddleContent">
+</div>
+<div class="middle-section">
+<div class="middle-title" id="previewMiddleTitle">دینی اور عصری علوم کا حسین امتزاج</div>
+<div class="middle-content" id="previewMiddleContent">
                             دینی تعلیمات کے ساتھ عصری علوم کی تعلیم۔ قرآن، حدیث، فقہ اور عربی زبان کے ساتھ انگلش، اردو، ریاضی اور سائنس
                         </div>
-                    </div>
-
-                    <div class="bottom-card">
-                        <div class="bottom-card-title" id="previewRightTitle">خاص نوٹ</div>
-                        <div class="bottom-card-content" id="previewRightContent">
+</div>
+<div class="bottom-card">
+<div class="bottom-card-title" id="previewRightTitle">خاص نوٹ</div>
+<div class="bottom-card-content" id="previewRightContent">
                             اولاد کی تعلیم و تربیت کی فکر ہے تو ہمارے ساتھ رابطہ کریں اور اپنے بچوں کو دینی اور عصری تعلیم سے آراستہ کریں
                         </div>
-                    </div>
-                </div>
-
-                <div class="footer-section">
-                    <div class="footer-phone" id="previewPhoneNumbers">
+</div>
+</div>
+<div class="footer-section">
+<div class="footer-phone" id="previewPhoneNumbers">
                         📞 0336-9586656 | 0311-5342747 | 0312-3550107
                     </div>
-                    <div class="footer-address">
-                        <div id="previewAddress">مدرسہ عربیہ اسلامیہ میمل</div>
-                        <div id="previewFullAddress" style="font-size: 14px; margin-top: 5px;">شاہراہ حصہ پل ہرن مسجد شریف کراچی</div>
-                    </div>
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #FFA500, #FFD700); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+<div class="footer-address">
+<div id="previewAddress">مدرسہ عربیہ اسلامیہ میمل</div>
+<div id="previewFullAddress" style="font-size: 14px; margin-top: 5px;">شاہراہ حصہ پل ہرن مسجد شریف کراچی</div>
+</div>
+<div style="width: 60px; height: 60px; background: linear-gradient(135deg, #FFA500, #FFD700); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);"></div>
+</div>
+</div>
+</div>
+</div>
+<script>
         // IndexedDB Setup
         let db;
         const DB_NAME = 'IslamicPosterDB';
@@ -863,5 +826,22 @@
             updatePreview();
         };
     </script>
-</body>
+<script type="module">
+  import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
+
+  const swUrl = './sw.js';
+  const wb = new Workbox(swUrl);
+
+  wb.addEventListener('waiting', () => {
+    console.log('A new service worker is waiting to activate.');
+    wb.messageSW({ type: 'SKIP_WAITING' });
+  });
+
+  wb.addEventListener('controlling', () => {
+    console.log('The new service worker is now in control. Reloading page for updates...');
+    window.location.reload();
+  });
+
+  wb.register();
+</script></body>
 </html>

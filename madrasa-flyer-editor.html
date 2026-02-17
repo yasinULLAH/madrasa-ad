@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+
+<html dir="rtl" lang="ur">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Madrasa Admission Flyer Editor</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&amp;family=Amiri:wght@400;700&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -790,289 +791,256 @@
   .editable-hint:hover::after { display: flex; }
   .editable-hint:hover { outline: 2px dashed rgba(200,153,58,0.6); outline-offset: 2px; }
 </style>
-</head>
+<link href="manifest.json" rel="manifest"/><link href="favicon.ico" rel="icon" type="image/x-icon"/></head>
 <body>
-
 <!-- Loading overlay -->
 <div id="loadingOverlay">
-  <div class="spinner"></div>
-  <p id="loadingMsg">Processing...</p>
+<div class="spinner"></div>
+<p id="loadingMsg">Processing...</p>
 </div>
-
 <!-- ============ TOOLBAR ============ -->
 <div id="toolbar">
-  <h1>🕌 Madrasa Flyer CRUD Editor</h1>
-  <button class="btn btn-green" onclick="openEditor(null)">➕ New Flyer</button>
-  <button class="btn btn-gold" onclick="saveFlyer()">💾 Save</button>
-  <button class="btn btn-gold" onclick="exportImage()">🖼️ Export Image (HD)</button>
-  <button class="btn btn-blue" onclick="exportPDF()">📄 Export PDF</button>
-  <button class="btn btn-red" onclick="deleteCurrentFlyer()">🗑️ Delete</button>
-  <div id="recordsList"></div>
+<h1>🕌 Madrasa Flyer CRUD Editor</h1>
+<button class="btn btn-green" onclick="openEditor(null)">➕ New Flyer</button>
+<button class="btn btn-gold" onclick="saveFlyer()">💾 Save</button>
+<button class="btn btn-gold" onclick="exportImage()">🖼️ Export Image (HD)</button>
+<button class="btn btn-blue" onclick="exportPDF()">📄 Export PDF</button>
+<button class="btn btn-red" onclick="deleteCurrentFlyer()">🗑️ Delete</button>
+<div id="recordsList"></div>
 </div>
-
 <!-- ============ EDITOR MODAL ============ -->
 <div id="editorOverlay">
-  <div id="editorModal">
-    <h2>📝 Edit Flyer Content</h2>
-
-    <!-- Institution -->
-    <div class="form-section">
-      <h3>🏛️ Institution Info</h3>
-      <div class="form-group"><label>Institution Name (اردو)</label><input type="text" id="f_institutionName" value="جامعۃ الشہید"></div>
-      <div class="form-group"><label>Campus / Branch</label><input type="text" id="f_campus" value="گوجرانوالہ کیمپس"></div>
-      <div class="form-group"><label>Logo Text / Symbol</label><input type="text" id="f_logoText" value="J.S"></div>
-      <div class="form-group"><label>Footer Address</label><input type="text" id="f_footerAddress" value="ادارہ شاہ مین ٹاؤن روڈ گوجرانوالہ"></div>
-    </div>
-
-    <!-- Announcement -->
-    <div class="form-section">
-      <h3>📢 Announcement Header</h3>
-      <div class="form-group"><label>Big Title (اعلان)</label><input type="text" id="f_announceTitle" value="اعلان"></div>
-      <div class="form-group"><label>Sub Title (داخلہ)</label><input type="text" id="f_announceSubtitle" value="داخلہ"></div>
-      <div class="form-group"><label>Year (Hijri / Gregorian)</label><input type="text" id="f_year" value="1446/2025"></div>
-    </div>
-
-    <!-- Department -->
-    <div class="form-section">
-      <h3>📖 Department / Shoba</h3>
-      <div class="form-group"><label>Main Big Word (شعبہ)</label><input type="text" id="f_shoba" value="شعبہ"></div>
-      <div class="form-group"><label>Department Name (تحفیظ القران)</label><input type="text" id="f_departmentName" value="تحفیظ القران"></div>
-      <div class="form-group"><label>Entry For (داخلہ برائے)</label><input type="text" id="f_entryFor" value="داخلہ برائے"></div>
-      <div class="form-group"><label>Sub description</label><input type="text" id="f_noorani" value="نورانی قاعدہ ناظرہ حفظ وگردان"></div>
-      <div class="form-group"><label>Class Badge (ماڈل کلاس/غیر رہائشی)</label><input type="text" id="f_classBadge" value="ماڈل کلاس/غیر رہائشی"></div>
-    </div>
-
-    <!-- Conditions -->
-    <div class="form-section">
-      <h3>📋 Admission Conditions (شرائط داخلہ)</h3>
-      <div class="form-group"><label>Section Title</label><input type="text" id="f_conditionsTitle" value="شرائط داخلہ"></div>
-      <div id="conditionsList" class="conditions-list"></div>
-      <button class="btn btn-green btn-icon" style="margin-top:8px;direction:ltr" onclick="addCondition()">+ Add Condition</button>
-    </div>
-
-    <!-- Dates -->
-    <div class="form-section">
-      <h3>📅 Important Dates</h3>
-      <div class="form-group"><label>Registration Last Date (Label)</label><input type="text" id="f_regLabel" value="رجسٹریشن کی آخری تاریخ"></div>
-      <div class="form-group"><label>Registration Date (Value)</label><input type="text" id="f_regDate" value="30 مضان المبارک 1446ھ"></div>
-      <div class="form-group"><label>Admission Last Date (Label)</label><input type="text" id="f_admLabel" value="داخلہ کی آخری تاریخ"></div>
-      <div class="form-group"><label>Admission Date (Value)</label><input type="text" id="f_admDate" value="13 اپریل 2025ء"></div>
-    </div>
-
-    <!-- Central Circle -->
-    <div class="form-section">
-      <h3>⭕ Center Circle Text</h3>
-      <div class="form-group"><label>Line 1</label><input type="text" id="f_circleLine1" value="ماڈل کلاس"></div>
-      <div class="form-group"><label>Line 2</label><input type="text" id="f_circleLine2" value="سہولیات"></div>
-    </div>
-
-    <!-- Feature Circles -->
-    <div class="form-section">
-      <h3>🔵 Feature Circles (4 image captions)</h3>
-      <div class="circles-grid">
-        <div class="circle-editor">
-          <label>Circle 1 Caption</label>
-          <input type="text" id="f_cap1" value="ایک نظم ودرس بچیں">
-          <label style="margin-top:6px">Circle 1 Image URL (optional)</label>
-          <input type="text" id="f_img1" placeholder="https://...">
-        </div>
-        <div class="circle-editor">
-          <label>Circle 2 Caption</label>
-          <input type="text" id="f_cap2" value="منفی و ہاس استاد تام">
-          <label style="margin-top:6px">Circle 2 Image URL (optional)</label>
-          <input type="text" id="f_img2" placeholder="https://...">
-        </div>
-        <div class="circle-editor">
-          <label>Circle 3 Caption</label>
-          <input type="text" id="f_cap3" value="بچوں کو رہائے کا اہتمام">
-          <label style="margin-top:6px">Circle 3 Image URL (optional)</label>
-          <input type="text" id="f_img3" placeholder="https://...">
-        </div>
-        <div class="circle-editor">
-          <label>Circle 4 Caption</label>
-          <input type="text" id="f_cap4" value="بچوں کو کھیل کا میدان">
-          <label style="margin-top:6px">Circle 4 Image URL (optional)</label>
-          <input type="text" id="f_img4" placeholder="https://...">
-        </div>
-      </div>
-    </div>
-
-    <!-- Contact -->
-    <div class="form-section">
-      <h3>📞 Contact Info</h3>
-      <div class="form-group"><label>Phone 1</label><input type="tel" id="f_phone1" value="03167677646" dir="ltr"></div>
-      <div class="form-group"><label>Phone 2</label><input type="tel" id="f_phone2" value="03167677643" dir="ltr"></div>
-      <div class="form-group"><label>Contact Note</label><input type="text" id="f_contactNote" value="تفصیل کیلیے رابطہ کر سکتے ہیں"></div>
-    </div>
-
-    <!-- Hero Photo -->
-    <div class="form-section">
-      <h3>🖼️ Hero Banner Image</h3>
-      <div class="form-group"><label>Image URL</label><input type="text" id="f_heroImg" placeholder="https://... or leave blank"></div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn btn-gold" onclick="applyEdits()">✅ Apply Changes</button>
-      <button class="btn btn-red" onclick="closeEditor()">✖ Cancel</button>
-    </div>
-  </div>
+<div id="editorModal">
+<h2>📝 Edit Flyer Content</h2>
+<!-- Institution -->
+<div class="form-section">
+<h3>🏛️ Institution Info</h3>
+<div class="form-group"><label>Institution Name (اردو)</label><input id="f_institutionName" type="text" value="جامعۃ الشہید"/></div>
+<div class="form-group"><label>Campus / Branch</label><input id="f_campus" type="text" value="گوجرانوالہ کیمپس"/></div>
+<div class="form-group"><label>Logo Text / Symbol</label><input id="f_logoText" type="text" value="J.S"/></div>
+<div class="form-group"><label>Footer Address</label><input id="f_footerAddress" type="text" value="ادارہ شاہ مین ٹاؤن روڈ گوجرانوالہ"/></div>
 </div>
-
+<!-- Announcement -->
+<div class="form-section">
+<h3>📢 Announcement Header</h3>
+<div class="form-group"><label>Big Title (اعلان)</label><input id="f_announceTitle" type="text" value="اعلان"/></div>
+<div class="form-group"><label>Sub Title (داخلہ)</label><input id="f_announceSubtitle" type="text" value="داخلہ"/></div>
+<div class="form-group"><label>Year (Hijri / Gregorian)</label><input id="f_year" type="text" value="1446/2025"/></div>
+</div>
+<!-- Department -->
+<div class="form-section">
+<h3>📖 Department / Shoba</h3>
+<div class="form-group"><label>Main Big Word (شعبہ)</label><input id="f_shoba" type="text" value="شعبہ"/></div>
+<div class="form-group"><label>Department Name (تحفیظ القران)</label><input id="f_departmentName" type="text" value="تحفیظ القران"/></div>
+<div class="form-group"><label>Entry For (داخلہ برائے)</label><input id="f_entryFor" type="text" value="داخلہ برائے"/></div>
+<div class="form-group"><label>Sub description</label><input id="f_noorani" type="text" value="نورانی قاعدہ ناظرہ حفظ وگردان"/></div>
+<div class="form-group"><label>Class Badge (ماڈل کلاس/غیر رہائشی)</label><input id="f_classBadge" type="text" value="ماڈل کلاس/غیر رہائشی"/></div>
+</div>
+<!-- Conditions -->
+<div class="form-section">
+<h3>📋 Admission Conditions (شرائط داخلہ)</h3>
+<div class="form-group"><label>Section Title</label><input id="f_conditionsTitle" type="text" value="شرائط داخلہ"/></div>
+<div class="conditions-list" id="conditionsList"></div>
+<button class="btn btn-green btn-icon" onclick="addCondition()" style="margin-top:8px;direction:ltr">+ Add Condition</button>
+</div>
+<!-- Dates -->
+<div class="form-section">
+<h3>📅 Important Dates</h3>
+<div class="form-group"><label>Registration Last Date (Label)</label><input id="f_regLabel" type="text" value="رجسٹریشن کی آخری تاریخ"/></div>
+<div class="form-group"><label>Registration Date (Value)</label><input id="f_regDate" type="text" value="30 مضان المبارک 1446ھ"/></div>
+<div class="form-group"><label>Admission Last Date (Label)</label><input id="f_admLabel" type="text" value="داخلہ کی آخری تاریخ"/></div>
+<div class="form-group"><label>Admission Date (Value)</label><input id="f_admDate" type="text" value="13 اپریل 2025ء"/></div>
+</div>
+<!-- Central Circle -->
+<div class="form-section">
+<h3>⭕ Center Circle Text</h3>
+<div class="form-group"><label>Line 1</label><input id="f_circleLine1" type="text" value="ماڈل کلاس"/></div>
+<div class="form-group"><label>Line 2</label><input id="f_circleLine2" type="text" value="سہولیات"/></div>
+</div>
+<!-- Feature Circles -->
+<div class="form-section">
+<h3>🔵 Feature Circles (4 image captions)</h3>
+<div class="circles-grid">
+<div class="circle-editor">
+<label>Circle 1 Caption</label>
+<input id="f_cap1" type="text" value="ایک نظم ودرس بچیں"/>
+<label style="margin-top:6px">Circle 1 Image URL (optional)</label>
+<input id="f_img1" placeholder="https://..." type="text"/>
+</div>
+<div class="circle-editor">
+<label>Circle 2 Caption</label>
+<input id="f_cap2" type="text" value="منفی و ہاس استاد تام"/>
+<label style="margin-top:6px">Circle 2 Image URL (optional)</label>
+<input id="f_img2" placeholder="https://..." type="text"/>
+</div>
+<div class="circle-editor">
+<label>Circle 3 Caption</label>
+<input id="f_cap3" type="text" value="بچوں کو رہائے کا اہتمام"/>
+<label style="margin-top:6px">Circle 3 Image URL (optional)</label>
+<input id="f_img3" placeholder="https://..." type="text"/>
+</div>
+<div class="circle-editor">
+<label>Circle 4 Caption</label>
+<input id="f_cap4" type="text" value="بچوں کو کھیل کا میدان"/>
+<label style="margin-top:6px">Circle 4 Image URL (optional)</label>
+<input id="f_img4" placeholder="https://..." type="text"/>
+</div>
+</div>
+</div>
+<!-- Contact -->
+<div class="form-section">
+<h3>📞 Contact Info</h3>
+<div class="form-group"><label>Phone 1</label><input dir="ltr" id="f_phone1" type="tel" value="03167677646"/></div>
+<div class="form-group"><label>Phone 2</label><input dir="ltr" id="f_phone2" type="tel" value="03167677643"/></div>
+<div class="form-group"><label>Contact Note</label><input id="f_contactNote" type="text" value="تفصیل کیلیے رابطہ کر سکتے ہیں"/></div>
+</div>
+<!-- Hero Photo -->
+<div class="form-section">
+<h3>🖼️ Hero Banner Image</h3>
+<div class="form-group"><label>Image URL</label><input id="f_heroImg" placeholder="https://... or leave blank" type="text"/></div>
+</div>
+<div class="modal-actions">
+<button class="btn btn-gold" onclick="applyEdits()">✅ Apply Changes</button>
+<button class="btn btn-red" onclick="closeEditor()">✖ Cancel</button>
+</div>
+</div>
+</div>
 <!-- ============ FLYER ============ -->
 <div id="flyerWrapper">
-  <div id="flyer">
-    <div class="flyer-bg"></div>
-    <div class="flyer-pattern"></div>
-    <div class="arc-tl"></div>
-    <div class="arc-tr"></div>
-    <div class="arc-bl"></div>
-    <div class="arc-br"></div>
-
-    <div class="flyer-inner">
-
-      <!-- TOP ROW -->
-      <div class="top-row">
-        <!-- Announcement badge (left in RTL = right visually) -->
-        <div class="announcement-badge editable-hint" onclick="openEditor('announce')">
-          <div class="announce-title" id="d_announceTitle">اعلان</div>
-          <div class="announce-subtitle" id="d_announceSubtitle">داخلہ</div>
-          <div class="announce-year" id="d_year">1446/2025 ھ</div>
-        </div>
-
-        <!-- Logos right side -->
-        <div class="logos-area">
-          <div class="logo-badge" id="d_logoBadge">
-            <span id="d_logoText" style="font-size:1rem;font-weight:700;color:var(--gold-light)">J.S</span>
-          </div>
-          <div class="institute-name-badge editable-hint" onclick="openEditor('institution')">
-            <span id="d_institutionName">جامعۃ الشہید</span>
-            <span class="campus-tag" id="d_campus">گوجرانوالہ کیمپس</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- HERO PHOTO BAND -->
-      <div class="hero-photo-band editable-hint" onclick="openEditor('hero')">
-        <div class="hero-photo-placeholder" id="d_heroArea">
-          <div style="font-size:2rem;margin-bottom:4px">👨‍🎓👨‍🎓👨‍🎓</div>
-          <div>Hero banner image (click to set)</div>
-        </div>
-      </div>
-
-      <!-- MAIN CONTENT ROW -->
-      <div class="main-content-row">
-
-        <!-- LEFT: Conditions box -->
-        <div class="left-panel">
-          <div class="conditions-box editable-hint" onclick="openEditor('conditions')">
-            <div class="box-title" id="d_conditionsTitle">شرائط داخلہ</div>
-            <ul id="d_conditionsList">
-              <li>عمر 8 تا 11 سال</li>
-              <li>اسکول ازکم KG-II تک پڑھاہو</li>
-              <li>داخلہ اعلان میں شرط ہے۔ شرائط سے پاس</li>
-              <li>ماڈل کلاس ٹیسٹ کے بغیر داخلہ نہیں ہوگا</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- RIGHT: Shoba / title -->
-        <div class="right-panel editable-hint" onclick="openEditor('dept')">
-          <div class="shoba-word" id="d_shoba">شعبہ</div>
-          <div class="tahfiz-title" id="d_departmentName">تحفیظ القران</div>
-          <div class="entry-subtitle" id="d_entryFor">داخلہ برائے</div>
-          <div class="noorani-tag" id="d_noorani">نورانی قاعدہ ناظرہ حفظ وگردان</div>
-          <div class="model-class-badge" id="d_classBadge">ماڈل کلاس/غیر رہائشی</div>
-        </div>
-      </div>
-
-      <!-- DATES -->
-      <div class="dates-row editable-hint" onclick="openEditor('dates')">
-        <div class="clock-icon">🕐</div>
-        <div class="dates-info">
-          <div class="date-line">
-            <span class="date-label" id="d_regLabel">رجسٹریشن کی آخری تاریخ</span>:
-            <span id="d_regDate">30 مضان المبارک 1446ھ</span>
-          </div>
-          <div class="date-line">
-            <span class="date-label" id="d_admLabel">داخلہ کی آخری تاریخ</span>:
-            <span id="d_admDate">13 اپریل 2025ء</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- CIRCLES + CENTRAL -->
-      <div class="circles-section">
-
-        <!-- Top two circles -->
-        <div style="display:flex;justify-content:space-around;margin-bottom:10px">
-          <div class="feature-circle-wrap editable-hint" onclick="openEditor('circles')">
-            <div class="feature-circle" id="d_circle1">
-              <div class="feature-circle-placeholder">📚<br>Circle 1</div>
-            </div>
-            <div class="feature-caption" id="d_cap1">ایک نظم ودرس بچیں</div>
-          </div>
-
-          <div class="model-class-central">
-            <div class="model-class-circle editable-hint" onclick="openEditor('circle_center')">
-              <div class="mc-line1" id="d_circleLine1">ماڈل کلاس</div>
-              <div class="mc-line2" id="d_circleLine2">سہولیات</div>
-            </div>
-          </div>
-
-          <div class="feature-circle-wrap editable-hint" onclick="openEditor('circles')">
-            <div class="feature-circle" id="d_circle2">
-              <div class="feature-circle-placeholder">👨‍🏫<br>Circle 2</div>
-            </div>
-            <div class="feature-caption" id="d_cap2">منفی و ہاس استاد تام</div>
-          </div>
-        </div>
-
-        <!-- Bottom two circles -->
-        <div style="display:flex;justify-content:space-around;">
-          <div class="feature-circle-wrap editable-hint" onclick="openEditor('circles')">
-            <div class="feature-circle" id="d_circle3">
-              <div class="feature-circle-placeholder">🍽️<br>Circle 3</div>
-            </div>
-            <div class="feature-caption" id="d_cap3">بچوں کو رہائے کا اہتمام</div>
-          </div>
-
-          <div class="feature-circle-wrap editable-hint" onclick="openEditor('circles')">
-            <div class="feature-circle" id="d_circle4">
-              <div class="feature-circle-placeholder">⚽<br>Circle 4</div>
-            </div>
-            <div class="feature-caption" id="d_cap4">بچوں کو کھیل کا میدان</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CONTACT -->
-      <div class="contact-section editable-hint" onclick="openEditor('contact')">
-        <div class="contact-left">
-          <div class="phone-icon">📞</div>
-          <div>
-            <div class="phone-numbers">
-              <div id="d_phone1">03167677646</div>
-              <div id="d_phone2">03167677643</div>
-            </div>
-            <div class="phone-note" id="d_contactNote">تفصیل کیلیے رابطہ کر سکتے ہیں</div>
-          </div>
-        </div>
-        <div class="qr-box" id="d_qrBox">
-          <div style="text-align:center;font-size:0.55rem;color:#666">QR<br>Code</div>
-        </div>
-      </div>
-
-      <!-- FOOTER -->
-      <div class="flyer-footer editable-hint" onclick="openEditor('institution')">
-        📍 <span id="d_footerAddress">ادارہ شاہ مین ٹاؤن روڈ گوجرانوالہ</span>
-      </div>
-
-    </div><!-- /flyer-inner -->
-  </div><!-- /flyer -->
+<div id="flyer">
+<div class="flyer-bg"></div>
+<div class="flyer-pattern"></div>
+<div class="arc-tl"></div>
+<div class="arc-tr"></div>
+<div class="arc-bl"></div>
+<div class="arc-br"></div>
+<div class="flyer-inner">
+<!-- TOP ROW -->
+<div class="top-row">
+<!-- Announcement badge (left in RTL = right visually) -->
+<div class="announcement-badge editable-hint" onclick="openEditor('announce')">
+<div class="announce-title" id="d_announceTitle">اعلان</div>
+<div class="announce-subtitle" id="d_announceSubtitle">داخلہ</div>
+<div class="announce-year" id="d_year">1446/2025 ھ</div>
 </div>
-
+<!-- Logos right side -->
+<div class="logos-area">
+<div class="logo-badge" id="d_logoBadge">
+<span id="d_logoText" style="font-size:1rem;font-weight:700;color:var(--gold-light)">J.S</span>
+</div>
+<div class="institute-name-badge editable-hint" onclick="openEditor('institution')">
+<span id="d_institutionName">جامعۃ الشہید</span>
+<span class="campus-tag" id="d_campus">گوجرانوالہ کیمپس</span>
+</div>
+</div>
+</div>
+<!-- HERO PHOTO BAND -->
+<div class="hero-photo-band editable-hint" onclick="openEditor('hero')">
+<div class="hero-photo-placeholder" id="d_heroArea">
+<div style="font-size:2rem;margin-bottom:4px">👨‍🎓👨‍🎓👨‍🎓</div>
+<div>Hero banner image (click to set)</div>
+</div>
+</div>
+<!-- MAIN CONTENT ROW -->
+<div class="main-content-row">
+<!-- LEFT: Conditions box -->
+<div class="left-panel">
+<div class="conditions-box editable-hint" onclick="openEditor('conditions')">
+<div class="box-title" id="d_conditionsTitle">شرائط داخلہ</div>
+<ul id="d_conditionsList">
+<li>عمر 8 تا 11 سال</li>
+<li>اسکول ازکم KG-II تک پڑھاہو</li>
+<li>داخلہ اعلان میں شرط ہے۔ شرائط سے پاس</li>
+<li>ماڈل کلاس ٹیسٹ کے بغیر داخلہ نہیں ہوگا</li>
+</ul>
+</div>
+</div>
+<!-- RIGHT: Shoba / title -->
+<div class="right-panel editable-hint" onclick="openEditor('dept')">
+<div class="shoba-word" id="d_shoba">شعبہ</div>
+<div class="tahfiz-title" id="d_departmentName">تحفیظ القران</div>
+<div class="entry-subtitle" id="d_entryFor">داخلہ برائے</div>
+<div class="noorani-tag" id="d_noorani">نورانی قاعدہ ناظرہ حفظ وگردان</div>
+<div class="model-class-badge" id="d_classBadge">ماڈل کلاس/غیر رہائشی</div>
+</div>
+</div>
+<!-- DATES -->
+<div class="dates-row editable-hint" onclick="openEditor('dates')">
+<div class="clock-icon">🕐</div>
+<div class="dates-info">
+<div class="date-line">
+<span class="date-label" id="d_regLabel">رجسٹریشن کی آخری تاریخ</span>:
+            <span id="d_regDate">30 مضان المبارک 1446ھ</span>
+</div>
+<div class="date-line">
+<span class="date-label" id="d_admLabel">داخلہ کی آخری تاریخ</span>:
+            <span id="d_admDate">13 اپریل 2025ء</span>
+</div>
+</div>
+</div>
+<!-- CIRCLES + CENTRAL -->
+<div class="circles-section">
+<!-- Top two circles -->
+<div style="display:flex;justify-content:space-around;margin-bottom:10px">
+<div class="feature-circle-wrap editable-hint" onclick="openEditor('circles')">
+<div class="feature-circle" id="d_circle1">
+<div class="feature-circle-placeholder">📚<br/>Circle 1</div>
+</div>
+<div class="feature-caption" id="d_cap1">ایک نظم ودرس بچیں</div>
+</div>
+<div class="model-class-central">
+<div class="model-class-circle editable-hint" onclick="openEditor('circle_center')">
+<div class="mc-line1" id="d_circleLine1">ماڈل کلاس</div>
+<div class="mc-line2" id="d_circleLine2">سہولیات</div>
+</div>
+</div>
+<div class="feature-circle-wrap editable-hint" onclick="openEditor('circles')">
+<div class="feature-circle" id="d_circle2">
+<div class="feature-circle-placeholder">👨‍🏫<br/>Circle 2</div>
+</div>
+<div class="feature-caption" id="d_cap2">منفی و ہاس استاد تام</div>
+</div>
+</div>
+<!-- Bottom two circles -->
+<div style="display:flex;justify-content:space-around;">
+<div class="feature-circle-wrap editable-hint" onclick="openEditor('circles')">
+<div class="feature-circle" id="d_circle3">
+<div class="feature-circle-placeholder">🍽️<br/>Circle 3</div>
+</div>
+<div class="feature-caption" id="d_cap3">بچوں کو رہائے کا اہتمام</div>
+</div>
+<div class="feature-circle-wrap editable-hint" onclick="openEditor('circles')">
+<div class="feature-circle" id="d_circle4">
+<div class="feature-circle-placeholder">⚽<br/>Circle 4</div>
+</div>
+<div class="feature-caption" id="d_cap4">بچوں کو کھیل کا میدان</div>
+</div>
+</div>
+</div>
+<!-- CONTACT -->
+<div class="contact-section editable-hint" onclick="openEditor('contact')">
+<div class="contact-left">
+<div class="phone-icon">📞</div>
+<div>
+<div class="phone-numbers">
+<div id="d_phone1">03167677646</div>
+<div id="d_phone2">03167677643</div>
+</div>
+<div class="phone-note" id="d_contactNote">تفصیل کیلیے رابطہ کر سکتے ہیں</div>
+</div>
+</div>
+<div class="qr-box" id="d_qrBox">
+<div style="text-align:center;font-size:0.55rem;color:#666">QR<br/>Code</div>
+</div>
+</div>
+<!-- FOOTER -->
+<div class="flyer-footer editable-hint" onclick="openEditor('institution')">
+        📍 <span id="d_footerAddress">ادارہ شاہ مین ٹاؤن روڈ گوجرانوالہ</span>
+</div>
+</div><!-- /flyer-inner -->
+</div><!-- /flyer -->
+</div>
 <div id="statusBar">Ready — Click any flyer section to edit, or use the toolbar buttons.</div>
-
 <script>
 // =============================
 // IndexedDB Setup
@@ -1584,5 +1552,22 @@ document.getElementById('editorOverlay').addEventListener('click', function(e) {
 initDB();
 loadDefaultFlyer();
 </script>
-</body>
+<script type="module">
+  import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
+
+  const swUrl = './sw.js';
+  const wb = new Workbox(swUrl);
+
+  wb.addEventListener('waiting', () => {
+    console.log('A new service worker is waiting to activate.');
+    wb.messageSW({ type: 'SKIP_WAITING' });
+  });
+
+  wb.addEventListener('controlling', () => {
+    console.log('The new service worker is now in control. Reloading page for updates...');
+    window.location.reload();
+  });
+
+  wb.register();
+</script></body>
 </html>

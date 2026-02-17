@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Admission Poster App</title>
-  <style>
+<meta charset="utf-8"/>
+<title>Admission Poster App</title>
+<style>
     body { font-family: 'Noto Nastaliq Urdu', serif; }
     .poster {
       width: 800px; margin: auto; padding: 20px;
@@ -12,19 +13,18 @@
     h1 { text-align: center; }
     .section { margin: 15px 0; }
   </style>
-</head>
+<link href="manifest.json" rel="manifest"/><link href="favicon.ico" rel="icon" type="image/x-icon"/></head>
 <body>
-  <div class="poster" id="poster">
-    <h1>اعلان داخلہ 1445/2024</h1>
-    <div class="section" id="details"></div>
-    <button onclick="addEntry()">Add Entry</button>
-    <button onclick="exportImage()">Export Image</button>
-    <button onclick="exportPDF()">Export PDF</button>
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script>
+<div class="poster" id="poster">
+<h1>اعلان داخلہ 1445/2024</h1>
+<div class="section" id="details"></div>
+<button onclick="addEntry()">Add Entry</button>
+<button onclick="exportImage()">Export Image</button>
+<button onclick="exportPDF()">Export PDF</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
     // IndexedDB setup
     let db;
     const request = indexedDB.open("posterDB", 1);
@@ -68,5 +68,22 @@
       pdf.save("poster.pdf");
     }
   </script>
-</body>
+<script type="module">
+  import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
+
+  const swUrl = './sw.js';
+  const wb = new Workbox(swUrl);
+
+  wb.addEventListener('waiting', () => {
+    console.log('A new service worker is waiting to activate.');
+    wb.messageSW({ type: 'SKIP_WAITING' });
+  });
+
+  wb.addEventListener('controlling', () => {
+    console.log('The new service worker is now in control. Reloading page for updates...');
+    window.location.reload();
+  });
+
+  wb.register();
+</script></body>
 </html>

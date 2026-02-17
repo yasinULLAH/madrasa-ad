@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+
+<html dir="rtl" lang="ur">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poster Maker App</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Poster Maker App</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
         body {
             font-family: 'Noto Nastaliq Urdu', serif;
             direction: rtl;
@@ -126,69 +127,67 @@
             margin: 20px;
         }
     </style>
-</head>
+<link href="manifest.json" rel="manifest"/><link href="favicon.ico" rel="icon" type="image/x-icon"/></head>
 <body>
-    <h1>Poster Maker App</h1>
-    <div id="poster">
-        <img id="poster-logo" src="">
-        <img id="poster-top-photo" src="">
-        <img id="poster-small-photo" src="">
-        <div class="orange-bubble" id="orange-title"></div>
-        <div class="hexagon"><span id="big-title"></span></div>
-        <div id="sub-title"></div>
-        <div id="organization"></div>
-        <div id="date"></div>
-        <!-- Add more spans/divs for other texts -->
-        <div id="qr-code"></div>
-        <div id="conditions">
-            <h3 id="conditions-title"></h3>
-            <ul>
-                <li id="condition1"></li>
-                <li id="condition2"></li>
-                <li id="condition3"></li>
-            </ul>
-        </div>
-        <div id="calendar">
-            <span id="from-date"></span> سے <span id="to-date"></span> <span id="month"></span>
-        </div>
-        <div id="phone"></div>
-        <div id="bottom-text"></div>
-    </div>
-    <button onclick="exportToPNG()">Export to PNG</button>
-    <button onclick="exportToPDF()">Export to PDF</button>
-
-    <div id="editor">
-        <h2>Edit Poster</h2>
-        <input type="hidden" id="current-id">
-        <label>Orange Title: <input type="text" id="edit-orange-title" value="مجلس تکمیل قرآن حکیم"></label>
-        <label>Big Title: <input type="text" id="edit-big-title" value="مدرسه دار الشہید"></label>
-        <label>Sub Title: <input type="text" id="edit-sub-title" value="کا اجلاس فراغت"></label>
-        <label>Organization: <input type="text" id="edit-organization" value="انجمن دعوت و اصلاح"></label>
-        <label>Date: <input type="text" id="edit-date" value="14/4/2025"></label>
-        <label>Conditions Title: <input type="text" id="edit-conditions-title" value="شرائط"></label>
-        <label>Condition 1: <input type="text" id="edit-condition1" value="F.A , B.A کر لی ہو۔"></label>
-        <label>Condition 2: <input type="text" id="edit-condition2" value="عمر 20 سال سے زائد"></label>
-        <label>Condition 3: <input type="text" id="edit-condition3" value=""></label>
-        <label>From Date: <input type="text" id="edit-from-date" value="5"></label>
-        <label>To Date: <input type="text" id="edit-to-date" value="9"></label>
-        <label>Month: <input type="text" id="edit-month" value="رمضان المبارک"></label>
-        <label>Location: <input type="text" id="edit-location" value="بولند بالا ، کرم"></label>
-        <label>Phone: <input type="text" id="edit-phone" value="0370270214 / 0316776745"></label>
-        <label>Bottom Text: <input type="text" id="edit-bottom-text" value="ال فاروق اسلامک سینٹر بنو"></label>
-        <label>QR URL: <input type="text" id="edit-qr-url" value="https://example.com"></label>
-        <label>Logo Image: <input type="file" id="edit-logo"></label>
-        <label>Top Photo: <input type="file" id="edit-top-photo"></label>
-        <label>Small Photo: <input type="file" id="edit-small-photo"></label>
-        <!-- Add more fields as needed -->
-        <button onclick="addPoster()">Add New</button>
-        <button onclick="updatePoster()">Update</button>
-    </div>
-    <div id="poster-list">
-        <h2>Posters</h2>
-        <ul id="list"></ul>
-    </div>
-
-    <script>
+<h1>Poster Maker App</h1>
+<div id="poster">
+<img id="poster-logo" src=""/>
+<img id="poster-top-photo" src=""/>
+<img id="poster-small-photo" src=""/>
+<div class="orange-bubble" id="orange-title"></div>
+<div class="hexagon"><span id="big-title"></span></div>
+<div id="sub-title"></div>
+<div id="organization"></div>
+<div id="date"></div>
+<!-- Add more spans/divs for other texts -->
+<div id="qr-code"></div>
+<div id="conditions">
+<h3 id="conditions-title"></h3>
+<ul>
+<li id="condition1"></li>
+<li id="condition2"></li>
+<li id="condition3"></li>
+</ul>
+</div>
+<div id="calendar">
+<span id="from-date"></span> سے <span id="to-date"></span> <span id="month"></span>
+</div>
+<div id="phone"></div>
+<div id="bottom-text"></div>
+</div>
+<button onclick="exportToPNG()">Export to PNG</button>
+<button onclick="exportToPDF()">Export to PDF</button>
+<div id="editor">
+<h2>Edit Poster</h2>
+<input id="current-id" type="hidden"/>
+<label>Orange Title: <input id="edit-orange-title" type="text" value="مجلس تکمیل قرآن حکیم"/></label>
+<label>Big Title: <input id="edit-big-title" type="text" value="مدرسه دار الشہید"/></label>
+<label>Sub Title: <input id="edit-sub-title" type="text" value="کا اجلاس فراغت"/></label>
+<label>Organization: <input id="edit-organization" type="text" value="انجمن دعوت و اصلاح"/></label>
+<label>Date: <input id="edit-date" type="text" value="14/4/2025"/></label>
+<label>Conditions Title: <input id="edit-conditions-title" type="text" value="شرائط"/></label>
+<label>Condition 1: <input id="edit-condition1" type="text" value="F.A , B.A کر لی ہو۔"/></label>
+<label>Condition 2: <input id="edit-condition2" type="text" value="عمر 20 سال سے زائد"/></label>
+<label>Condition 3: <input id="edit-condition3" type="text" value=""/></label>
+<label>From Date: <input id="edit-from-date" type="text" value="5"/></label>
+<label>To Date: <input id="edit-to-date" type="text" value="9"/></label>
+<label>Month: <input id="edit-month" type="text" value="رمضان المبارک"/></label>
+<label>Location: <input id="edit-location" type="text" value="بولند بالا ، کرم"/></label>
+<label>Phone: <input id="edit-phone" type="text" value="0370270214 / 0316776745"/></label>
+<label>Bottom Text: <input id="edit-bottom-text" type="text" value="ال فاروق اسلامک سینٹر بنو"/></label>
+<label>QR URL: <input id="edit-qr-url" type="text" value="https://example.com"/></label>
+<label>Logo Image: <input id="edit-logo" type="file"/></label>
+<label>Top Photo: <input id="edit-top-photo" type="file"/></label>
+<label>Small Photo: <input id="edit-small-photo" type="file"/></label>
+<!-- Add more fields as needed -->
+<button onclick="addPoster()">Add New</button>
+<button onclick="updatePoster()">Update</button>
+</div>
+<div id="poster-list">
+<h2>Posters</h2>
+<ul id="list"></ul>
+</div>
+<script>
         let db;
         const request = indexedDB.open('PosterDB', 1);
         request.onupgradeneeded = (event) => {
@@ -357,5 +356,22 @@
             });
         }
     </script>
-</body>
+<script type="module">
+  import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
+
+  const swUrl = './sw.js';
+  const wb = new Workbox(swUrl);
+
+  wb.addEventListener('waiting', () => {
+    console.log('A new service worker is waiting to activate.');
+    wb.messageSW({ type: 'SKIP_WAITING' });
+  });
+
+  wb.addEventListener('controlling', () => {
+    console.log('The new service worker is now in control. Reloading page for updates...');
+    window.location.reload();
+  });
+
+  wb.register();
+</script></body>
 </html>

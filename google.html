@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
 
+<html dir="rtl" lang="ur">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jamia Al-Rashid Admission Poster App</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Jamia Al-Rashid Admission Poster App</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
         :root {
             --main-blue: #0f4c75;
             --main-brown: #a65b2e;
@@ -380,136 +380,117 @@
             right: 33%;
         }
     </style>
-</head>
-
+<link href="manifest.json" rel="manifest"/><link href="favicon.ico" rel="icon" type="image/x-icon"/></head>
 <body>
-
-    <div id="controls">
-        <button class="save-btn" onclick="saveData()">Save Changes (CRUD)</button>
-        <button onclick="exportToImage()">Export to High-Res Image</button>
-        <button onclick="exportToPDF()">Export to PDF</button>
-    </div>
-
-    <div id="poster-container">
-        <div class="pushpin pin-1"></div>
-        <div class="pushpin pin-2"></div>
-        <div class="pushpin pin-3"></div>
-
-        <div id="header-section">
-            <div class="logo-text" contenteditable="true" id="hdr-campus">گوجرانوالہ کیمپس</div>
-            <h1 class="main-title">
-                <span contenteditable="true" id="hdr-jamia">جامعہ</span>
-                <div contenteditable="true" id="hdr-alrashid">الرشید</div>
-            </h1>
-            <div class="header-decoration"></div>
-        </div>
-
-        <div id="admission-banner">
-            <h2 class="admission-text" contenteditable="true" id="adm-title">داخلہ جاری ہے</h2>
-            <div class="year-text" contenteditable="true" id="adm-year">1446ھ / 2025ء</div>
-        </div>
-
-        <div id="main-content">
-            <div id="left-sidebar">
-                <div class="contact-section">
-                    <div class="program-title" contenteditable="true" id="prog1-title">معهد الرشید العربی</div>
-                    <div class="date-info">رجسٹریشن کی آخری تاریخ: <span contenteditable="true" id="prog1-date">05 شوال
+<div id="controls">
+<button class="save-btn" onclick="saveData()">Save Changes (CRUD)</button>
+<button onclick="exportToImage()">Export to High-Res Image</button>
+<button onclick="exportToPDF()">Export to PDF</button>
+</div>
+<div id="poster-container">
+<div class="pushpin pin-1"></div>
+<div class="pushpin pin-2"></div>
+<div class="pushpin pin-3"></div>
+<div id="header-section">
+<div class="logo-text" contenteditable="true" id="hdr-campus">گوجرانوالہ کیمپس</div>
+<h1 class="main-title">
+<span contenteditable="true" id="hdr-jamia">جامعہ</span>
+<div contenteditable="true" id="hdr-alrashid">الرشید</div>
+</h1>
+<div class="header-decoration"></div>
+</div>
+<div id="admission-banner">
+<h2 class="admission-text" contenteditable="true" id="adm-title">داخلہ جاری ہے</h2>
+<div class="year-text" contenteditable="true" id="adm-year">1446ھ / 2025ء</div>
+</div>
+<div id="main-content">
+<div id="left-sidebar">
+<div class="contact-section">
+<div class="program-title" contenteditable="true" id="prog1-title">معهد الرشید العربی</div>
+<div class="date-info">رجسٹریشن کی آخری تاریخ: <span contenteditable="true" id="prog1-date">05 شوال
                             المکرم 1446ھ</span></div>
-                    <div class="phone-number">
-                        <span contenteditable="true" id="prog1-phone">03702770214</span>
-                        <span class="phone-icon">📞</span>
-                    </div>
-                </div>
-                <div class="contact-section">
-                    <div class="program-title" contenteditable="true" id="prog2-title">حفاظ ایجوکیشن سسٹم</div>
-                    <div class="date-info">رجسٹریشن کی آخری تاریخ: <span contenteditable="true" id="prog2-date">04 شوال
+<div class="phone-number">
+<span contenteditable="true" id="prog1-phone">03702770214</span>
+<span class="phone-icon">📞</span>
+</div>
+</div>
+<div class="contact-section">
+<div class="program-title" contenteditable="true" id="prog2-title">حفاظ ایجوکیشن سسٹم</div>
+<div class="date-info">رجسٹریشن کی آخری تاریخ: <span contenteditable="true" id="prog2-date">04 شوال
                             المکرم 1446ھ</span></div>
-                    <div class="phone-number">
-                        <span contenteditable="true" id="prog2-phone">03167677645</span>
-                        <span class="phone-icon">📞</span>
-                    </div>
-                </div>
-                <div class="contact-section">
-                    <div class="program-title" contenteditable="true" id="prog3-title">شعبہ تحفیظ القرآن</div>
-                    <div class="date-info">رجسٹریشن کی آخری تاریخ: <span contenteditable="true" id="prog3-date">30 رمضان
+<div class="phone-number">
+<span contenteditable="true" id="prog2-phone">03167677645</span>
+<span class="phone-icon">📞</span>
+</div>
+</div>
+<div class="contact-section">
+<div class="program-title" contenteditable="true" id="prog3-title">شعبہ تحفیظ القرآن</div>
+<div class="date-info">رجسٹریشن کی آخری تاریخ: <span contenteditable="true" id="prog3-date">30 رمضان
                             المبارک 1446ھ</span></div>
-                    <div class="phone-number">
-                        <span contenteditable="true" id="prog3-phone">03313389535</span>
-                        <span class="phone-icon">📞</span>
-                    </div>
-                </div>
-            </div>
-
-            <div id="right-content">
-                <div id="images-qr-section">
-                    <div class="image-container"
-                        style="position: absolute; top: -100px; right: 20px; width: 250px; z-index: 5;">
-                        <img src="https://i.imgur.com/8Q6qQ8c.png" alt="Students">
-                    </div>
-                    <div class="image-container"
-                        style="position: absolute; top: 30px; right: 20px; width: 250px; z-index: 5;">
-                        <img src="https://i.imgur.com/5q3Q3qQ.png" alt="Mosque">
-                    </div>
-                    <div class="image-container"
-                        style="position: absolute; top: 160px; right: 20px; width: 250px; z-index: 5;">
-                        <img src="https://i.imgur.com/2q8Q8qQ.png" alt="Students Studying">
-                    </div>
-
-                    <div class="qr-container" style="position: absolute; top: 350px; left: 20px;">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://example.com/register"
-                            alt="QR Code" class="qr-code">
-                        <div class="qr-text" contenteditable="true" id="qr-text">آن لائن رجسٹریشن کیلئے اسکین کیجیے
+<div class="phone-number">
+<span contenteditable="true" id="prog3-phone">03313389535</span>
+<span class="phone-icon">📞</span>
+</div>
+</div>
+</div>
+<div id="right-content">
+<div id="images-qr-section">
+<div class="image-container" style="position: absolute; top: -100px; right: 20px; width: 250px; z-index: 5;">
+<img alt="Students" src="https://i.imgur.com/8Q6qQ8c.png"/>
+</div>
+<div class="image-container" style="position: absolute; top: 30px; right: 20px; width: 250px; z-index: 5;">
+<img alt="Mosque" src="https://i.imgur.com/5q3Q3qQ.png"/>
+</div>
+<div class="image-container" style="position: absolute; top: 160px; right: 20px; width: 250px; z-index: 5;">
+<img alt="Students Studying" src="https://i.imgur.com/2q8Q8qQ.png"/>
+</div>
+<div class="qr-container" style="position: absolute; top: 350px; left: 20px;">
+<img alt="QR Code" class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=https://example.com/register"/>
+<div class="qr-text" contenteditable="true" id="qr-text">آن لائن رجسٹریشن کیلئے اسکین کیجیے
                         </div>
-                    </div>
-                </div>
-
-                <div id="requirements-section" style="margin-top: 300px;">
-                    <div class="requirement-box">
-                        <div class="req-header" contenteditable="true" id="req1-title">شرائط داخلہ (معهد الرشید العربی)
+</div>
+</div>
+<div id="requirements-section" style="margin-top: 300px;">
+<div class="requirement-box">
+<div class="req-header" contenteditable="true" id="req1-title">شرائط داخلہ (معهد الرشید العربی)
                         </div>
-                        <ul class="req-list">
-                            <li contenteditable="true" id="req1-li1">میٹرک میں کم از کم B گریڈ ہو</li>
-                            <li contenteditable="true" id="req1-li2">عمر زیادہ سے زیادہ 20 سال ہو</li>
-                            <li contenteditable="true" id="req1-li3">قرآن مجید ناظرہ صحیح تلفظ کے ساتھ پڑھا ہو</li>
-                        </ul>
-                    </div>
-
-                    <div class="requirement-box" style="margin-top: 20px;">
-                        <div class="req-header" contenteditable="true" id="req2-title">شرائط داخلہ (حفاظ ایجوکیشن سسٹم)
+<ul class="req-list">
+<li contenteditable="true" id="req1-li1">میٹرک میں کم از کم B گریڈ ہو</li>
+<li contenteditable="true" id="req1-li2">عمر زیادہ سے زیادہ 20 سال ہو</li>
+<li contenteditable="true" id="req1-li3">قرآن مجید ناظرہ صحیح تلفظ کے ساتھ پڑھا ہو</li>
+</ul>
+</div>
+<div class="requirement-box" style="margin-top: 20px;">
+<div class="req-header" contenteditable="true" id="req2-title">شرائط داخلہ (حفاظ ایجوکیشن سسٹم)
                         </div>
-                        <div contenteditable="true" id="req2-subtitle"
-                            style="margin-bottom: 10px; color: var(--main-blue);">حافظ بچوں کے لئے چار سالہ دینی و عصری
+<div contenteditable="true" id="req2-subtitle" style="margin-bottom: 10px; color: var(--main-blue);">حافظ بچوں کے لئے چار سالہ دینی و عصری
                             تعلیمی نظام</div>
-                        <ul class="req-list">
-                            <li contenteditable="true" id="req2-li1">حفظ پختہ ہو</li>
-                            <li contenteditable="true" id="req2-li2">پرائمری کی استعداد ہو</li>
-                            <li contenteditable="true" id="req2-li3">عمر 13 سال سے زائد نہ ہو</li>
-                        </ul>
-                    </div>
-
-                    <div class="requirement-box" style="margin-top: 20px;">
-                        <div class="req-header" contenteditable="true" id="req3-title">شرائط داخلہ (شعبہ تحفیظ القرآن)
+<ul class="req-list">
+<li contenteditable="true" id="req2-li1">حفظ پختہ ہو</li>
+<li contenteditable="true" id="req2-li2">پرائمری کی استعداد ہو</li>
+<li contenteditable="true" id="req2-li3">عمر 13 سال سے زائد نہ ہو</li>
+</ul>
+</div>
+<div class="requirement-box" style="margin-top: 20px;">
+<div class="req-header" contenteditable="true" id="req3-title">شرائط داخلہ (شعبہ تحفیظ القرآن)
                         </div>
-                        <ul class="req-list">
-                            <li contenteditable="true" id="req3-li1">عمر کی حد 8 تا 11 سال ہو</li>
-                            <li contenteditable="true" id="req3-li2">اسکول کم از کم KG-II پڑھا ہوا ہو</li>
-                            <li contenteditable="true" id="req3-li3">داخلہ انٹری ٹیسٹ میں کامیابی سے مشروط ہے</li>
-                            <li contenteditable="true" id="req3-li4">داخلے میں غیر رہائشی بچوں کو ترجیح دی جائے گی</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <img src="https://i.imgur.com/6qQ7qQZ.png" alt="Open Book" class="book-graphic">
-            </div>
-        </div>
-
-        <div id="footer">
-            <span class="footer-icon">📍</span>
-            <div contenteditable="true" id="footer-addr">جامعہ الرشید گوجرانوالہ کیمپس، جی ٹی روڈ، گوجرانوالہ</div>
-        </div>
-    </div>
-
-    <script>
+<ul class="req-list">
+<li contenteditable="true" id="req3-li1">عمر کی حد 8 تا 11 سال ہو</li>
+<li contenteditable="true" id="req3-li2">اسکول کم از کم KG-II پڑھا ہوا ہو</li>
+<li contenteditable="true" id="req3-li3">داخلہ انٹری ٹیسٹ میں کامیابی سے مشروط ہے</li>
+<li contenteditable="true" id="req3-li4">داخلے میں غیر رہائشی بچوں کو ترجیح دی جائے گی</li>
+</ul>
+</div>
+</div>
+<img alt="Open Book" class="book-graphic" src="https://i.imgur.com/6qQ7qQZ.png"/>
+</div>
+</div>
+<div id="footer">
+<span class="footer-icon">📍</span>
+<div contenteditable="true" id="footer-addr">جامعہ الرشید گوجرانوالہ کیمپس، جی ٹی روڈ، گوجرانوالہ</div>
+</div>
+</div>
+<script>
         // --- IndexedDB CRUD Operations ---
         let db;
         const dbName = 'PosterDB';
@@ -611,6 +592,22 @@
             });
         }
     </script>
-</body>
+<script type="module">
+  import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
 
+  const swUrl = './sw.js';
+  const wb = new Workbox(swUrl);
+
+  wb.addEventListener('waiting', () => {
+    console.log('A new service worker is waiting to activate.');
+    wb.messageSW({ type: 'SKIP_WAITING' });
+  });
+
+  wb.addEventListener('controlling', () => {
+    console.log('The new service worker is now in control. Reloading page for updates...');
+    window.location.reload();
+  });
+
+  wb.register();
+</script></body>
 </html>

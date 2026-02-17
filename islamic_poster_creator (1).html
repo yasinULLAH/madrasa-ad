@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+
+<html dir="rtl" lang="ur">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Islamic Poster Creator - Inline Editing</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Islamic Poster Creator - Inline Editing</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
         @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
 
         * {
@@ -461,108 +462,96 @@
             }
         }
     </style>
-</head>
+<link href="manifest.json" rel="manifest"/><link href="favicon.ico" rel="icon" type="image/x-icon"/></head>
 <body>
-    <div class="toolbar">
-        <input type="text" id="posterNameInput" placeholder="پوسٹر کا نام" style="padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-family: 'Noto Nastaliq Urdu', serif; width: 200px;">
-        <button class="btn btn-success" onclick="savePoster()">💾 محفوظ کریں</button>
-        <button class="btn btn-primary" onclick="newPoster()">📄 نیا پوسٹر</button>
-        <button class="btn btn-info" onclick="exportToImage()">📷 تصویر (High Res)</button>
-        <button class="btn btn-warning" onclick="exportToPDF()">📄 PDF</button>
-        <button class="btn btn-secondary" onclick="toggleSidebar()">📋 محفوظ شدہ</button>
-    </div>
-
-    <div class="poster-container">
-        <div class="poster-preview">
-            <div id="posterCanvas">
-                <div class="poster-header deletable">
-                    <button class="delete-btn" onclick="deleteElement(this)">×</button>
-                    <div class="decorative-elements deco-left"></div>
-                    <div class="decorative-elements deco-right"></div>
-                    <div class="poster-title editable" contenteditable="true" data-placeholder="عنوان لکھیں">اعلان داخلہ</div>
-                    <div class="poster-dates">
-                        <span class="editable" contenteditable="true">1445</span>
-                        <span>/</span>
-                        <span class="editable" contenteditable="true">2024</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-around; margin-top: 10px; font-size: 18px;">
-                        <span><span class="date-badge editable" contenteditable="true">10</span> <span class="editable" contenteditable="true">شوال 1445</span></span>
-                        <span><span class="date-badge editable" contenteditable="true">20</span> <span class="editable" contenteditable="true">اپریل 2024</span></span>
-                    </div>
-                </div>
-
-                <div class="sections-container" id="mainSections">
-                    <div class="section-card deletable">
-                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
-                        <div class="section-title editable" contenteditable="true" data-placeholder="عنوان">تصوری علمیم</div>
-                        <div class="section-content editable" contenteditable="true" data-placeholder="تفصیل لکھیں">اندرونی مذہبی تعلیم کی فراہمی کے ساتھ معاشرے کے لیے مفید انسان تیار کریں</div>
-                    </div>
-
-                    <div class="section-card deletable" style="background: #2C5F4F;">
-                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
-                        <div class="section-title editable" contenteditable="true" style="background: rgba(255,255,255,0.2);">تجویدالقرآن</div>
-                        <div class="section-content editable" contenteditable="true" style="background: #E6B0AA; color: #000; border-color: #8B4513;">حافظہ قرآن کریم اور تجوید کی تعلیم</div>
-                    </div>
-
-                    <div class="section-card deletable">
-                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
-                        <div class="section-title editable" contenteditable="true">دروس نظامی</div>
-                        <div class="section-content editable" contenteditable="true">اولاد کی تعلیم و تربیت کی فکر ہے تو ابھی داخلہ لیں</div>
-                    </div>
-                </div>
-                <div class="add-section-btn" onclick="addMainSection()">+ نیا سیکشن شامل کریں</div>
-
-                <div class="timing-section editable deletable" contenteditable="true" data-placeholder="اوقات لکھیں">
-                    <button class="delete-btn" onclick="deleteElement(this)">×</button>
+<div class="toolbar">
+<input id="posterNameInput" placeholder="پوسٹر کا نام" style="padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-family: 'Noto Nastaliq Urdu', serif; width: 200px;" type="text"/>
+<button class="btn btn-success" onclick="savePoster()">💾 محفوظ کریں</button>
+<button class="btn btn-primary" onclick="newPoster()">📄 نیا پوسٹر</button>
+<button class="btn btn-info" onclick="exportToImage()">📷 تصویر (High Res)</button>
+<button class="btn btn-warning" onclick="exportToPDF()">📄 PDF</button>
+<button class="btn btn-secondary" onclick="toggleSidebar()">📋 محفوظ شدہ</button>
+</div>
+<div class="poster-container">
+<div class="poster-preview">
+<div id="posterCanvas">
+<div class="poster-header deletable">
+<button class="delete-btn" onclick="deleteElement(this)">×</button>
+<div class="decorative-elements deco-left"></div>
+<div class="decorative-elements deco-right"></div>
+<div class="poster-title editable" contenteditable="true" data-placeholder="عنوان لکھیں">اعلان داخلہ</div>
+<div class="poster-dates">
+<span class="editable" contenteditable="true">1445</span>
+<span>/</span>
+<span class="editable" contenteditable="true">2024</span>
+</div>
+<div style="display: flex; justify-content: space-around; margin-top: 10px; font-size: 18px;">
+<span><span class="date-badge editable" contenteditable="true">10</span> <span class="editable" contenteditable="true">شوال 1445</span></span>
+<span><span class="date-badge editable" contenteditable="true">20</span> <span class="editable" contenteditable="true">اپریل 2024</span></span>
+</div>
+</div>
+<div class="sections-container" id="mainSections">
+<div class="section-card deletable">
+<button class="delete-btn" onclick="deleteElement(this)">×</button>
+<div class="section-title editable" contenteditable="true" data-placeholder="عنوان">تصوری علمیم</div>
+<div class="section-content editable" contenteditable="true" data-placeholder="تفصیل لکھیں">اندرونی مذہبی تعلیم کی فراہمی کے ساتھ معاشرے کے لیے مفید انسان تیار کریں</div>
+</div>
+<div class="section-card deletable" style="background: #2C5F4F;">
+<button class="delete-btn" onclick="deleteElement(this)">×</button>
+<div class="section-title editable" contenteditable="true" style="background: rgba(255,255,255,0.2);">تجویدالقرآن</div>
+<div class="section-content editable" contenteditable="true" style="background: #E6B0AA; color: #000; border-color: #8B4513;">حافظہ قرآن کریم اور تجوید کی تعلیم</div>
+</div>
+<div class="section-card deletable">
+<button class="delete-btn" onclick="deleteElement(this)">×</button>
+<div class="section-title editable" contenteditable="true">دروس نظامی</div>
+<div class="section-content editable" contenteditable="true">اولاد کی تعلیم و تربیت کی فکر ہے تو ابھی داخلہ لیں</div>
+</div>
+</div>
+<div class="add-section-btn" onclick="addMainSection()">+ نیا سیکشن شامل کریں</div>
+<div class="timing-section editable deletable" contenteditable="true" data-placeholder="اوقات لکھیں">
+<button class="delete-btn" onclick="deleteElement(this)">×</button>
                     اوقات داخلہ: صبح 8:00 تا 12:30
                 </div>
-
-                <div class="deletable" style="background: #2C5F4F; padding: 15px; border-radius: 10px; margin-bottom: 15px; color: white; text-align: center;">
-                    <button class="delete-btn" onclick="deleteElement(this)">×</button>
-                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;" class="editable" contenteditable="true">شعبہ حفظ کی تفصیلات</div>
-                    <div class="editable" contenteditable="true" style="font-size: 14px; line-height: 1.6;" data-placeholder="تفصیل لکھیں">10 شوال سے مسلسل 20 اپریل تک اور روس اتفاقی کے طلباء کے لیے 13 شوال 23 اپریل سے مسلسل شروع</div>
-                </div>
-
-                <div class="bottom-sections" id="bottomSections">
-                    <div class="bottom-card deletable">
-                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
-                        <div class="bottom-card-title editable" contenteditable="true">ضروری نوٹ</div>
-                        <div class="bottom-card-content editable" contenteditable="true" data-placeholder="نوٹ لکھیں">حافظہ ہو جانے والا طالب علم، ارادے کے ساتھ دارالعلوم میں داخلہ لے اور کی فضیلت</div>
-                    </div>
-
-                    <div class="middle-section deletable">
-                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
-                        <div class="middle-title editable" contenteditable="true">دینی اور عصری علوم کا حسین امتزاج</div>
-                        <div class="middle-content editable" contenteditable="true" data-placeholder="تفصیل">دینی تعلیمات کے ساتھ عصری علوم کی تعلیم۔ قرآن، حدیث، فقہ اور عربی زبان کے ساتھ انگلش، اردو، ریاضی اور سائنس</div>
-                    </div>
-
-                    <div class="bottom-card deletable">
-                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
-                        <div class="bottom-card-title editable" contenteditable="true">خاص نوٹ</div>
-                        <div class="bottom-card-content editable" contenteditable="true" data-placeholder="نوٹ لکھیں">اولاد کی تعلیم و تربیت کی فکر ہے تو ہمارے ساتھ رابطہ کریں اور اپنے بچوں کو دینی اور عصری تعلیم سے آراستہ کریں</div>
-                    </div>
-                </div>
-                <div class="add-section-btn" onclick="addBottomSection()">+ نچلا سیکشن شامل کریں</div>
-
-                <div class="footer-section deletable">
-                    <button class="delete-btn" onclick="deleteElement(this)">×</button>
-                    <div class="footer-phone editable" contenteditable="true" data-placeholder="فون نمبر">📞 0336-9586656 | 0311-5342747 | 0312-3550107</div>
-                    <div class="footer-address">
-                        <div class="editable" contenteditable="true" data-placeholder="پتہ">مدرسہ عربیہ اسلامیہ میمل</div>
-                        <div class="editable" contenteditable="true" style="font-size: 14px; margin-top: 5px;" data-placeholder="مکمل پتہ">شاہراہ حصہ پل ہرن مسجد شریف کراچی</div>
-                    </div>
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #FFA500, #FFD700); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="sidebar" id="sidebar" style="display: none;">
-            <h3>📋 محفوظ شدہ پوسٹرز</h3>
-            <div class="poster-list" id="posterList"></div>
-        </div>
-    </div>
-
-    <script>
+<div class="deletable" style="background: #2C5F4F; padding: 15px; border-radius: 10px; margin-bottom: 15px; color: white; text-align: center;">
+<button class="delete-btn" onclick="deleteElement(this)">×</button>
+<div class="editable" contenteditable="true" style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">شعبہ حفظ کی تفصیلات</div>
+<div class="editable" contenteditable="true" data-placeholder="تفصیل لکھیں" style="font-size: 14px; line-height: 1.6;">10 شوال سے مسلسل 20 اپریل تک اور روس اتفاقی کے طلباء کے لیے 13 شوال 23 اپریل سے مسلسل شروع</div>
+</div>
+<div class="bottom-sections" id="bottomSections">
+<div class="bottom-card deletable">
+<button class="delete-btn" onclick="deleteElement(this)">×</button>
+<div class="bottom-card-title editable" contenteditable="true">ضروری نوٹ</div>
+<div class="bottom-card-content editable" contenteditable="true" data-placeholder="نوٹ لکھیں">حافظہ ہو جانے والا طالب علم، ارادے کے ساتھ دارالعلوم میں داخلہ لے اور کی فضیلت</div>
+</div>
+<div class="middle-section deletable">
+<button class="delete-btn" onclick="deleteElement(this)">×</button>
+<div class="middle-title editable" contenteditable="true">دینی اور عصری علوم کا حسین امتزاج</div>
+<div class="middle-content editable" contenteditable="true" data-placeholder="تفصیل">دینی تعلیمات کے ساتھ عصری علوم کی تعلیم۔ قرآن، حدیث، فقہ اور عربی زبان کے ساتھ انگلش، اردو، ریاضی اور سائنس</div>
+</div>
+<div class="bottom-card deletable">
+<button class="delete-btn" onclick="deleteElement(this)">×</button>
+<div class="bottom-card-title editable" contenteditable="true">خاص نوٹ</div>
+<div class="bottom-card-content editable" contenteditable="true" data-placeholder="نوٹ لکھیں">اولاد کی تعلیم و تربیت کی فکر ہے تو ہمارے ساتھ رابطہ کریں اور اپنے بچوں کو دینی اور عصری تعلیم سے آراستہ کریں</div>
+</div>
+</div>
+<div class="add-section-btn" onclick="addBottomSection()">+ نچلا سیکشن شامل کریں</div>
+<div class="footer-section deletable">
+<button class="delete-btn" onclick="deleteElement(this)">×</button>
+<div class="footer-phone editable" contenteditable="true" data-placeholder="فون نمبر">📞 0336-9586656 | 0311-5342747 | 0312-3550107</div>
+<div class="footer-address">
+<div class="editable" contenteditable="true" data-placeholder="پتہ">مدرسہ عربیہ اسلامیہ میمل</div>
+<div class="editable" contenteditable="true" data-placeholder="مکمل پتہ" style="font-size: 14px; margin-top: 5px;">شاہراہ حصہ پل ہرن مسجد شریف کراچی</div>
+</div>
+<div style="width: 60px; height: 60px; background: linear-gradient(135deg, #FFA500, #FFD700); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);"></div>
+</div>
+</div>
+</div>
+<div class="sidebar" id="sidebar" style="display: none;">
+<h3>📋 محفوظ شدہ پوسٹرز</h3>
+<div class="poster-list" id="posterList"></div>
+</div>
+</div>
+<script>
         // IndexedDB Setup
         let db;
         const DB_NAME = 'IslamicPosterDB';
@@ -817,5 +806,22 @@
             }, 5000);
         });
     </script>
-</body>
+<script type="module">
+  import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
+
+  const swUrl = './sw.js';
+  const wb = new Workbox(swUrl);
+
+  wb.addEventListener('waiting', () => {
+    console.log('A new service worker is waiting to activate.');
+    wb.messageSW({ type: 'SKIP_WAITING' });
+  });
+
+  wb.addEventListener('controlling', () => {
+    console.log('The new service worker is now in control. Reloading page for updates...');
+    window.location.reload();
+  });
+
+  wb.register();
+</script></body>
 </html>

@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+
+<html dir="rtl" lang="ur">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>جامعۃ الشہید - ایڈیٹر</title>
-
 <!-- Google Fonts for Arabic/Urdu -->
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Noto+Nastaliq+Urdu:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
   :root {
     --gold: #C9A84C;
@@ -926,328 +924,291 @@
     left: 50%;
   }
 </style>
-</head>
+<link href="manifest.json" rel="manifest"/><link href="favicon.ico" rel="icon" type="image/x-icon"/></head>
 <body>
-
 <!-- TOOLBAR -->
 <div class="toolbar">
-  <button class="btn btn-green" onclick="saveRecord()"><i class="fas fa-save"></i> Save</button>
-  <button class="btn btn-blue" onclick="openRecords()"><i class="fas fa-folder-open"></i> Records</button>
-  <button class="btn btn-orange" onclick="newFlyer()"><i class="fas fa-plus"></i> New</button>
-  <div class="separator"></div>
-  <button class="btn btn-gold" onclick="toggleEditMode()"><i class="fas fa-edit" id="editIcon"></i> <span id="editBtnText">Edit Mode</span></button>
-  <div class="separator"></div>
-  <button class="btn btn-purple" onclick="exportImage()"><i class="fas fa-image"></i> Export PNG</button>
-  <button class="btn btn-red" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> Export PDF</button>
-  <div class="separator"></div>
-  <button class="btn btn-red" onclick="deleteRecord()"><i class="fas fa-trash"></i> Delete</button>
-
-  <div class="toolbar-title">🕌 جامعۃ الشہید ایڈیٹر</div>
+<button class="btn btn-green" onclick="saveRecord()"><i class="fas fa-save"></i> Save</button>
+<button class="btn btn-blue" onclick="openRecords()"><i class="fas fa-folder-open"></i> Records</button>
+<button class="btn btn-orange" onclick="newFlyer()"><i class="fas fa-plus"></i> New</button>
+<div class="separator"></div>
+<button class="btn btn-gold" onclick="toggleEditMode()"><i class="fas fa-edit" id="editIcon"></i> <span id="editBtnText">Edit Mode</span></button>
+<div class="separator"></div>
+<button class="btn btn-purple" onclick="exportImage()"><i class="fas fa-image"></i> Export PNG</button>
+<button class="btn btn-red" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> Export PDF</button>
+<div class="separator"></div>
+<button class="btn btn-red" onclick="deleteRecord()"><i class="fas fa-trash"></i> Delete</button>
+<div class="toolbar-title">🕌 جامعۃ الشہید ایڈیٹر</div>
 </div>
-
 <!-- APP CONTAINER -->
 <div class="app-container">
-
-  <!-- SIDEBAR -->
-  <div class="sidebar" id="sidebar">
-
-    <!-- Header Section -->
-    <div class="sidebar-section">
-      <h3><i class="fas fa-university"></i> کالج معلومات</h3>
-
-      <div class="field-group">
-        <label>کالج کا نام (بڑا)</label>
-        <input type="text" id="s_collegeName" value="جامعۃ الشہید" oninput="updateFlyer()">
-      </div>
-      <div class="field-group">
-        <label>کیمپس</label>
-        <input type="text" id="s_campus" value="گوجرانوالہ کیمپس" oninput="updateFlyer()">
-      </div>
-      <div class="field-group">
-        <label>اعلان عنوان</label>
-        <input type="text" id="s_annTitle" value="اعلان" oninput="updateFlyer()">
-      </div>
-      <div class="field-group">
-        <label>اعلان ذیلی عنوان</label>
-        <input type="text" id="s_annSub" value="داخلہ" oninput="updateFlyer()">
-      </div>
-      <div class="field-group">
-        <label>سال</label>
-        <input type="text" id="s_year" value="2025/1446ھ" oninput="updateFlyer()">
-      </div>
-    </div>
-
-    <!-- Department Section -->
-    <div class="sidebar-section">
-      <h3><i class="fas fa-book-quran"></i> شعبہ معلومات</h3>
-
-      <div class="field-group">
-        <label>شعبہ بڑا لفظ</label>
-        <input type="text" id="s_shuba" value="شعبہ" oninput="updateFlyer()">
-      </div>
-      <div class="field-group">
-        <label>شعبہ عنوان</label>
-        <input type="text" id="s_shubaTxt" value="تحفیظ القرآن" oninput="updateFlyer()">
-      </div>
-      <div class="field-group">
-        <label>شعبہ ذیلی لائن ۱</label>
-        <input type="text" id="s_shubaSub1" value="داخلہ برائے" oninput="updateFlyer()">
-      </div>
-      <div class="field-group">
-        <label>شعبہ ذیلی لائن ۲</label>
-        <input type="text" id="s_shubaSub2" value="نورانی قاعدہ، ناظرہ، حفظ اور گردان" oninput="updateFlyer()">
-      </div>
-      <div class="field-group">
-        <label>ماڈل کلاس بیج</label>
-        <input type="text" id="s_modelBadge" value="ماڈل کلاس / غیر رہائشی" oninput="updateFlyer()">
-      </div>
-    </div>
-
-    <!-- Schedule Section -->
-    <div class="sidebar-section">
-      <h3><i class="fas fa-calendar"></i> تاریخیں</h3>
-      <div class="field-group">
-        <label>رجسٹریشن آخری تاریخ</label>
-        <input type="text" id="s_regDate" value="رجسٹریشن کی آخری تاریخ: 30 رمضان المبارک 1446ھ" oninput="updateFlyer()">
-      </div>
-      <div class="field-group">
-        <label>داخلہ کی تاریخ</label>
-        <input type="text" id="s_admDate" value="داخلہ کی تاریخ: 13 اپریل 2025ء" oninput="updateFlyer()">
-      </div>
-    </div>
-
-    <!-- Conditions -->
-    <div class="sidebar-section">
-      <h3><i class="fas fa-list-check"></i> شرائط داخلہ</h3>
-      <div id="conditionsList"></div>
-      <button class="btn btn-green" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;" onclick="addCondition()">
-        <i class="fas fa-plus"></i> شرط شامل کریں
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+<!-- Header Section -->
+<div class="sidebar-section">
+<h3><i class="fas fa-university"></i> کالج معلومات</h3>
+<div class="field-group">
+<label>کالج کا نام (بڑا)</label>
+<input id="s_collegeName" oninput="updateFlyer()" type="text" value="جامعۃ الشہید"/>
+</div>
+<div class="field-group">
+<label>کیمپس</label>
+<input id="s_campus" oninput="updateFlyer()" type="text" value="گوجرانوالہ کیمپس"/>
+</div>
+<div class="field-group">
+<label>اعلان عنوان</label>
+<input id="s_annTitle" oninput="updateFlyer()" type="text" value="اعلان"/>
+</div>
+<div class="field-group">
+<label>اعلان ذیلی عنوان</label>
+<input id="s_annSub" oninput="updateFlyer()" type="text" value="داخلہ"/>
+</div>
+<div class="field-group">
+<label>سال</label>
+<input id="s_year" oninput="updateFlyer()" type="text" value="2025/1446ھ"/>
+</div>
+</div>
+<!-- Department Section -->
+<div class="sidebar-section">
+<h3><i class="fas fa-book-quran"></i> شعبہ معلومات</h3>
+<div class="field-group">
+<label>شعبہ بڑا لفظ</label>
+<input id="s_shuba" oninput="updateFlyer()" type="text" value="شعبہ"/>
+</div>
+<div class="field-group">
+<label>شعبہ عنوان</label>
+<input id="s_shubaTxt" oninput="updateFlyer()" type="text" value="تحفیظ القرآن"/>
+</div>
+<div class="field-group">
+<label>شعبہ ذیلی لائن ۱</label>
+<input id="s_shubaSub1" oninput="updateFlyer()" type="text" value="داخلہ برائے"/>
+</div>
+<div class="field-group">
+<label>شعبہ ذیلی لائن ۲</label>
+<input id="s_shubaSub2" oninput="updateFlyer()" type="text" value="نورانی قاعدہ، ناظرہ، حفظ اور گردان"/>
+</div>
+<div class="field-group">
+<label>ماڈل کلاس بیج</label>
+<input id="s_modelBadge" oninput="updateFlyer()" type="text" value="ماڈل کلاس / غیر رہائشی"/>
+</div>
+</div>
+<!-- Schedule Section -->
+<div class="sidebar-section">
+<h3><i class="fas fa-calendar"></i> تاریخیں</h3>
+<div class="field-group">
+<label>رجسٹریشن آخری تاریخ</label>
+<input id="s_regDate" oninput="updateFlyer()" type="text" value="رجسٹریشن کی آخری تاریخ: 30 رمضان المبارک 1446ھ"/>
+</div>
+<div class="field-group">
+<label>داخلہ کی تاریخ</label>
+<input id="s_admDate" oninput="updateFlyer()" type="text" value="داخلہ کی تاریخ: 13 اپریل 2025ء"/>
+</div>
+</div>
+<!-- Conditions -->
+<div class="sidebar-section">
+<h3><i class="fas fa-list-check"></i> شرائط داخلہ</h3>
+<div id="conditionsList"></div>
+<button class="btn btn-green" onclick="addCondition()" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;">
+<i class="fas fa-plus"></i> شرط شامل کریں
       </button>
-    </div>
-
-    <!-- Features -->
-    <div class="sidebar-section">
-      <h3><i class="fas fa-star"></i> سہولیات</h3>
-      <div id="featuresList"></div>
-      <button class="btn btn-green" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;" onclick="addFeature()">
-        <i class="fas fa-plus"></i> سہولت شامل کریں
+</div>
+<!-- Features -->
+<div class="sidebar-section">
+<h3><i class="fas fa-star"></i> سہولیات</h3>
+<div id="featuresList"></div>
+<button class="btn btn-green" onclick="addFeature()" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;">
+<i class="fas fa-plus"></i> سہولت شامل کریں
       </button>
-    </div>
-
-    <!-- Contact -->
-    <div class="sidebar-section">
-      <h3><i class="fas fa-phone"></i> رابطہ</h3>
-      <div class="field-group">
-        <label>نمبر ۱</label>
-        <input type="text" id="s_phone1" value="03167677646" oninput="updateFlyer()">
-      </div>
-      <div class="field-group">
-        <label>نمبر ۲</label>
-        <input type="text" id="s_phone2" value="03167677643" oninput="updateFlyer()">
-      </div>
-      <div class="field-group">
-        <label>پتہ</label>
-        <textarea id="s_address" oninput="updateFlyer()">ایڈریس: ساہیوال میں تحصیل دفتر کے ساتھ، گوجرانوالہ</textarea>
-      </div>
-      <div class="field-group">
-        <label>رابطہ نوٹ</label>
-        <input type="text" id="s_contactNote" value="تفصیل کے لیے رابطہ کریں" oninput="updateFlyer()">
-      </div>
-    </div>
-
-    <!-- Colors -->
-    <div class="sidebar-section">
-      <h3><i class="fas fa-palette"></i> رنگ</h3>
-      <div class="field-group">
-        <label>بنیادی سنہری رنگ</label>
-        <input type="color" id="c_gold" value="#C9A84C" oninput="updateColors()">
-      </div>
-      <div class="field-group">
-        <label>بھورا رنگ</label>
-        <input type="color" id="c_brown" value="#3D2008" oninput="updateColors()">
-      </div>
-      <div class="field-group">
-        <label>پس منظر کا رنگ</label>
-        <input type="color" id="c_bg" value="#FBF6ED" oninput="updateColors()">
-      </div>
-    </div>
-
-    <!-- Images -->
-    <div class="sidebar-section">
-      <h3><i class="fas fa-image"></i> تصاویر</h3>
-
-      <div class="field-group">
-        <label>اوپر کی پٹی تصویر</label>
-        <div class="img-upload-area">
-          <label><i class="fas fa-upload"></i> تصویر اپ لوڈ کریں
-            <input type="file" accept="image/*" onchange="uploadImage('photoStrip', this)">
-          </label>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <label>لوگو تصویر</label>
-        <div class="img-upload-area">
-          <label><i class="fas fa-upload"></i> لوگو اپ لوڈ کریں
-            <input type="file" accept="image/*" onchange="uploadImage('logo', this)">
-          </label>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- CANVAS -->
-  <div class="canvas-wrapper">
-    <div id="flyer">
-      <!-- Top decorative border -->
-      <div class="decorative-border-top"></div>
-
-      <!-- HEADER -->
-      <div class="flyer-header">
-        <!-- Announcement Box (Left) -->
-        <div class="announcement-box">
-          <div class="ann-top editable-field" contenteditable="false" id="f_annTitle">اعلان</div>
-          <div class="ann-bottom editable-field" contenteditable="false" id="f_annSub">داخلہ</div>
-        </div>
-
-        <!-- Center Logos -->
-        <div class="header-logos">
-          <div class="logo-badge" id="logo-main">
-            <i class="fas fa-mosque"></i>
-          </div>
-          <div class="logo-badge logo-badge-small" id="logo-small">
-            <i class="fas fa-star-and-crescent"></i>
-          </div>
-        </div>
-
-        <!-- College Name (Right) -->
-        <div class="college-name-box">
-          <div class="college-name-main editable-field" contenteditable="false" id="f_collegeName">جامعۃ الشہید</div>
-          <div class="college-name-sub editable-field" contenteditable="false" id="f_campus">گوجرانوالہ کیمپس</div>
-        </div>
-      </div>
-
-      <!-- Year Banner -->
-      <div class="year-banner">
-        <span class="editable-field" contenteditable="false" id="f_year">2025/1446ھ</span>
-      </div>
-
-      <!-- Photo Strip -->
-      <div class="photo-strip" id="photoStripDiv">
-        <div class="photo-strip-placeholder" id="photoPlaceholder">
-          <div style="display:flex;gap:8px;align-items:center;justify-content:center;z-index:1;">
-            <div class="photo-figure">👨</div>
-            <div class="photo-figure" style="height:110px;width:60px;">👨‍🎓</div>
-            <div class="photo-figure" style="height:120px;width:65px;font-size:28px;">🧔</div>
-            <div class="photo-figure">👦</div>
-            <div class="photo-figure">👦</div>
-          </div>
-          <div class="photo-overlay"></div>
-        </div>
-      </div>
-
-      <!-- Shu'ba Section -->
-      <div class="shuba-section">
-        <div class="shuba-details">
-          <div class="shuba-title editable-field" contenteditable="false" id="f_shubaTxt">تحفیظ القرآن</div>
-          <div class="shuba-subtitle editable-field" contenteditable="false" id="f_shubaSub1">داخلہ برائے</div>
-          <div class="shuba-subtitle editable-field" contenteditable="false" id="f_shubaSub2">نورانی قاعدہ، ناظرہ، حفظ اور گردان</div>
-        </div>
-        <div class="shuba-word editable-field" contenteditable="false" id="f_shuba">شعبہ</div>
-      </div>
-
-      <!-- Model Badge -->
-      <div class="model-badge editable-field" contenteditable="false" id="f_modelBadge">
+</div>
+<!-- Contact -->
+<div class="sidebar-section">
+<h3><i class="fas fa-phone"></i> رابطہ</h3>
+<div class="field-group">
+<label>نمبر ۱</label>
+<input id="s_phone1" oninput="updateFlyer()" type="text" value="03167677646"/>
+</div>
+<div class="field-group">
+<label>نمبر ۲</label>
+<input id="s_phone2" oninput="updateFlyer()" type="text" value="03167677643"/>
+</div>
+<div class="field-group">
+<label>پتہ</label>
+<textarea id="s_address" oninput="updateFlyer()">ایڈریس: ساہیوال میں تحصیل دفتر کے ساتھ، گوجرانوالہ</textarea>
+</div>
+<div class="field-group">
+<label>رابطہ نوٹ</label>
+<input id="s_contactNote" oninput="updateFlyer()" type="text" value="تفصیل کے لیے رابطہ کریں"/>
+</div>
+</div>
+<!-- Colors -->
+<div class="sidebar-section">
+<h3><i class="fas fa-palette"></i> رنگ</h3>
+<div class="field-group">
+<label>بنیادی سنہری رنگ</label>
+<input id="c_gold" oninput="updateColors()" type="color" value="#C9A84C"/>
+</div>
+<div class="field-group">
+<label>بھورا رنگ</label>
+<input id="c_brown" oninput="updateColors()" type="color" value="#3D2008"/>
+</div>
+<div class="field-group">
+<label>پس منظر کا رنگ</label>
+<input id="c_bg" oninput="updateColors()" type="color" value="#FBF6ED"/>
+</div>
+</div>
+<!-- Images -->
+<div class="sidebar-section">
+<h3><i class="fas fa-image"></i> تصاویر</h3>
+<div class="field-group">
+<label>اوپر کی پٹی تصویر</label>
+<div class="img-upload-area">
+<label><i class="fas fa-upload"></i> تصویر اپ لوڈ کریں
+            <input accept="image/*" onchange="uploadImage('photoStrip', this)" type="file"/>
+</label>
+</div>
+</div>
+<div class="field-group">
+<label>لوگو تصویر</label>
+<div class="img-upload-area">
+<label><i class="fas fa-upload"></i> لوگو اپ لوڈ کریں
+            <input accept="image/*" onchange="uploadImage('logo', this)" type="file"/>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- CANVAS -->
+<div class="canvas-wrapper">
+<div id="flyer">
+<!-- Top decorative border -->
+<div class="decorative-border-top"></div>
+<!-- HEADER -->
+<div class="flyer-header">
+<!-- Announcement Box (Left) -->
+<div class="announcement-box">
+<div class="ann-top editable-field" contenteditable="false" id="f_annTitle">اعلان</div>
+<div class="ann-bottom editable-field" contenteditable="false" id="f_annSub">داخلہ</div>
+</div>
+<!-- Center Logos -->
+<div class="header-logos">
+<div class="logo-badge" id="logo-main">
+<i class="fas fa-mosque"></i>
+</div>
+<div class="logo-badge logo-badge-small" id="logo-small">
+<i class="fas fa-star-and-crescent"></i>
+</div>
+</div>
+<!-- College Name (Right) -->
+<div class="college-name-box">
+<div class="college-name-main editable-field" contenteditable="false" id="f_collegeName">جامعۃ الشہید</div>
+<div class="college-name-sub editable-field" contenteditable="false" id="f_campus">گوجرانوالہ کیمپس</div>
+</div>
+</div>
+<!-- Year Banner -->
+<div class="year-banner">
+<span class="editable-field" contenteditable="false" id="f_year">2025/1446ھ</span>
+</div>
+<!-- Photo Strip -->
+<div class="photo-strip" id="photoStripDiv">
+<div class="photo-strip-placeholder" id="photoPlaceholder">
+<div style="display:flex;gap:8px;align-items:center;justify-content:center;z-index:1;">
+<div class="photo-figure">👨</div>
+<div class="photo-figure" style="height:110px;width:60px;">👨‍🎓</div>
+<div class="photo-figure" style="height:120px;width:65px;font-size:28px;">🧔</div>
+<div class="photo-figure">👦</div>
+<div class="photo-figure">👦</div>
+</div>
+<div class="photo-overlay"></div>
+</div>
+</div>
+<!-- Shu'ba Section -->
+<div class="shuba-section">
+<div class="shuba-details">
+<div class="shuba-title editable-field" contenteditable="false" id="f_shubaTxt">تحفیظ القرآن</div>
+<div class="shuba-subtitle editable-field" contenteditable="false" id="f_shubaSub1">داخلہ برائے</div>
+<div class="shuba-subtitle editable-field" contenteditable="false" id="f_shubaSub2">نورانی قاعدہ، ناظرہ، حفظ اور گردان</div>
+</div>
+<div class="shuba-word editable-field" contenteditable="false" id="f_shuba">شعبہ</div>
+</div>
+<!-- Model Badge -->
+<div class="model-badge editable-field" contenteditable="false" id="f_modelBadge">
         ماڈل کلاس / غیر رہائشی
       </div>
-
-      <!-- Schedule Bar -->
-      <div class="schedule-bar">
-        <div class="schedule-item">
-          <div class="schedule-icon"><i class="fas fa-calendar-check"></i></div>
-          <div class="schedule-text editable-field" contenteditable="false" id="f_regDate">
+<!-- Schedule Bar -->
+<div class="schedule-bar">
+<div class="schedule-item">
+<div class="schedule-icon"><i class="fas fa-calendar-check"></i></div>
+<div class="schedule-text editable-field" contenteditable="false" id="f_regDate">
             رجسٹریشن کی آخری تاریخ: 30 رمضان المبارک 1446ھ
           </div>
-        </div>
-        <div class="schedule-item">
-          <div class="schedule-icon"><i class="fas fa-door-open"></i></div>
-          <div class="schedule-text editable-field" contenteditable="false" id="f_admDate">
+</div>
+<div class="schedule-item">
+<div class="schedule-icon"><i class="fas fa-door-open"></i></div>
+<div class="schedule-text editable-field" contenteditable="false" id="f_admDate">
             داخلہ کی تاریخ: 13 اپریل 2025ء
           </div>
-        </div>
-      </div>
-
-      <!-- Conditions Section -->
-      <div class="conditions-section">
-        <div class="conditions-header">شرائط داخلہ</div>
-        <div id="f_conditionsList">
-          <!-- Generated by JS -->
-        </div>
-      </div>
-
-      <!-- Features Section -->
-      <div style="padding:12px;background:var(--cream);position:relative;">
-        <!-- Central model class badge -->
-        <div style="display:flex;justify-content:center;margin-bottom:12px;">
-          <div class="model-class-badge">
-            <div class="mc-title editable-field" contenteditable="false">ماڈل کلاس</div>
-            <div class="mc-subtitle editable-field" contenteditable="false">سہولیات</div>
-          </div>
-        </div>
-
-        <!-- Features Grid -->
-        <div id="f_featuresList" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <!-- Generated by JS -->
-        </div>
-      </div>
-
-      <!-- Contact Section -->
-      <div class="contact-section">
-        <div class="contact-numbers">
-          <div class="contact-label editable-field" contenteditable="false" id="f_contactNote">تفصیل کے لیے رابطہ کریں</div>
-          <div class="contact-number editable-field" contenteditable="false" id="f_phone1">03167677646</div>
-          <div class="contact-number editable-field" contenteditable="false" id="f_phone2">03167677643</div>
-        </div>
-        <div class="phone-icon-big">📞</div>
-        <div class="qr-box">
-          <div style="font-size:8px;color:#333;text-align:center;line-height:1.4;">QR Code<br>رابطہ<br>نمبر</div>
-        </div>
-      </div>
-
-      <!-- Address Footer -->
-      <div class="address-footer editable-field" contenteditable="false" id="f_address">
+</div>
+</div>
+<!-- Conditions Section -->
+<div class="conditions-section">
+<div class="conditions-header">شرائط داخلہ</div>
+<div id="f_conditionsList">
+<!-- Generated by JS -->
+</div>
+</div>
+<!-- Features Section -->
+<div style="padding:12px;background:var(--cream);position:relative;">
+<!-- Central model class badge -->
+<div style="display:flex;justify-content:center;margin-bottom:12px;">
+<div class="model-class-badge">
+<div class="mc-title editable-field" contenteditable="false">ماڈل کلاس</div>
+<div class="mc-subtitle editable-field" contenteditable="false">سہولیات</div>
+</div>
+</div>
+<!-- Features Grid -->
+<div id="f_featuresList" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+<!-- Generated by JS -->
+</div>
+</div>
+<!-- Contact Section -->
+<div class="contact-section">
+<div class="contact-numbers">
+<div class="contact-label editable-field" contenteditable="false" id="f_contactNote">تفصیل کے لیے رابطہ کریں</div>
+<div class="contact-number editable-field" contenteditable="false" id="f_phone1">03167677646</div>
+<div class="contact-number editable-field" contenteditable="false" id="f_phone2">03167677643</div>
+</div>
+<div class="phone-icon-big">📞</div>
+<div class="qr-box">
+<div style="font-size:8px;color:#333;text-align:center;line-height:1.4;">QR Code<br/>رابطہ<br/>نمبر</div>
+</div>
+</div>
+<!-- Address Footer -->
+<div class="address-footer editable-field" contenteditable="false" id="f_address">
         ایڈریس: ساہیوال میں تحصیل دفتر کے ساتھ، گوجرانوالہ
       </div>
-
-      <!-- Bottom decorative border -->
-      <div class="decorative-border-bottom"></div>
-    </div>
-  </div>
-
+<!-- Bottom decorative border -->
+<div class="decorative-border-bottom"></div>
 </div>
-
+</div>
+</div>
 <!-- RECORDS MODAL -->
 <div class="modal-overlay" id="recordsModal">
-  <div class="modal">
-    <h2>
-      <button class="modal-close" onclick="closeModal('recordsModal')">×</button>
+<div class="modal">
+<h2>
+<button class="modal-close" onclick="closeModal('recordsModal')">×</button>
       محفوظ ریکارڈز
     </h2>
-    <div id="recordsList">
-      <div style="color:rgba(255,255,255,0.5);text-align:center;padding:20px;font-family:Arial;">
+<div id="recordsList">
+<div style="color:rgba(255,255,255,0.5);text-align:center;padding:20px;font-family:Arial;">
         کوئی ریکارڈ نہیں
       </div>
-    </div>
-  </div>
 </div>
-
+</div>
+</div>
 <!-- EDIT INDICATOR -->
 <div class="edit-indicator" id="editIndicator">✏️ Edit Mode ON - Click text to edit</div>
-
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
-
 <script>
 // ========== STATE ==========
 let currentData = {
@@ -1795,5 +1756,22 @@ window.addEventListener('DOMContentLoaded', () => {
   updateFlyer();
 });
 </script>
-</body>
+<script type="module">
+  import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
+
+  const swUrl = './sw.js';
+  const wb = new Workbox(swUrl);
+
+  wb.addEventListener('waiting', () => {
+    console.log('A new service worker is waiting to activate.');
+    wb.messageSW({ type: 'SKIP_WAITING' });
+  });
+
+  wb.addEventListener('controlling', () => {
+    console.log('The new service worker is now in control. Reloading page for updates...');
+    window.location.reload();
+  });
+
+  wb.register();
+</script></body>
 </html>

@@ -1,1455 +1,1299 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+
+<html dir="rtl" lang="ur">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Islamic Madrasa Admission Poster Creator</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Amiri:wght@400;700&display=swap"
-    rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Noto Nastaliq Urdu', 'Amiri', serif;
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .header {
-      background: linear-gradient(135deg, #ffffff, #f1f5f9);
-      padding: 25px;
-      border-radius: 20px;
-      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
-      margin-bottom: 30px;
-      text-align: center;
-      border: 3px solid #f59e0b;
-    }
-
-    .header h1 {
-      color: #0c4a6e;
-      font-size: 2.8em;
-      margin-bottom: 10px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .header p {
-      color: #475569;
-      font-size: 1.3em;
-      font-weight: 600;
-    }
-
-    .controls {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .btn {
-      padding: 14px 28px;
-      border: none;
-      border-radius: 10px;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-      font-family: 'Noto Nastaliq Urdu', sans-serif;
-    }
-
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #0c4a6e, #075985);
-      color: white;
-    }
-
-    .btn-success {
-      background: linear-gradient(135deg, #047857, #065f46);
-      color: white;
-    }
-
-    .btn-warning {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: white;
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, #dc2626, #b91c1c);
-      color: white;
-    }
-
-    .btn-info {
-      background: linear-gradient(135deg, #0284c7, #0369a1);
-      color: white;
-    }
-
-    .poster-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-      gap: 30px;
-      margin-bottom: 30px;
-    }
-
-    .poster-card {
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-      transition: transform 0.3s ease;
-      border: 4px solid #f59e0b;
-    }
-
-    .poster-card:hover {
-      transform: translateY(-8px) scale(1.02);
-    }
-
-    .poster-preview {
-      width: 100%;
-      height: auto;
-      cursor: pointer;
-    }
-
-    .poster-actions {
-      padding: 18px;
-      display: flex;
-      gap: 12px;
-      justify-content: space-around;
-      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-    }
-
-    .poster-actions button {
-      flex: 1;
-      padding: 10px;
-      font-size: 15px;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 1000;
-      overflow-y: auto;
-      padding: 20px;
-    }
-
-    .modal.active {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-content {
-      background: white;
-      border-radius: 20px;
-      padding: 35px;
-      max-width: 1000px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      position: relative;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      font-size: 35px;
-      cursor: pointer;
-      color: #dc2626;
-      background: none;
-      border: none;
-      font-weight: bold;
-    }
-
-    .modal-close:hover {
-      color: #991b1b;
-    }
-
-    .form-group {
-      margin-bottom: 22px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: 700;
-      color: #1e293b;
-      font-size: 17px;
-    }
-
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      width: 100%;
-      padding: 14px;
-      border: 3px solid #cbd5e1;
-      border-radius: 10px;
-      font-size: 16px;
-      font-family: 'Noto Nastaliq Urdu', sans-serif;
-      transition: border 0.3s ease;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus {
-      outline: none;
-      border-color: #f59e0b;
-    }
-
-    .form-group textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
-    }
-
-    .poster-template {
-      width: 700px;
-      height: 990px;
-      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #e0f2fe 100%);
-      position: relative;
-      overflow: hidden;
-      margin: 0 auto;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .decorative-minaret {
-      position: absolute;
-      width: 80px;
-      height: 200px;
-      background: linear-gradient(135deg, #92400e, #78350f);
-      top: 40px;
-    }
-
-    .decorative-minaret.left {
-      left: 30px;
-    }
-
-    .decorative-minaret.right {
-      right: 30px;
-    }
-
-    .minaret-dome {
-      width: 40px;
-      height: 40px;
-      background: #14b8a6;
-      border-radius: 50% 50% 0 0;
-      position: absolute;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .minaret-spire {
-      width: 8px;
-      height: 35px;
-      background: #115e59;
-      position: absolute;
-      top: -60px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .minaret-crescent {
-      width: 20px;
-      height: 20px;
-      border: 3px solid #fbbf24;
-      border-radius: 50%;
-      position: absolute;
-      top: -75px;
-      left: 50%;
-      transform: translateX(-50%);
-      clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%);
-    }
-
-    .decorative-lantern {
-      position: absolute;
-      width: 50px;
-      height: 80px;
-      top: 120px;
-    }
-
-    .decorative-lantern.left {
-      left: 130px;
-    }
-
-    .decorative-lantern.right {
-      right: 130px;
-    }
-
-    .lantern-body {
-      width: 100%;
-      height: 60px;
-      background: linear-gradient(135deg, #0891b2, #06b6d4);
-      border-radius: 10px;
-      position: relative;
-      box-shadow: 0 0 20px rgba(8, 145, 178, 0.6);
-    }
-
-    .lantern-top {
-      width: 80%;
-      height: 15px;
-      background: #fbbf24;
-      position: absolute;
-      top: -12px;
-      left: 10%;
-      border-radius: 5px 5px 0 0;
-    }
-
-    .lantern-bottom {
-      width: 60%;
-      height: 10px;
-      background: #fbbf24;
-      position: absolute;
-      bottom: -8px;
-      left: 20%;
-      clip-path: polygon(0 0, 100% 0, 85% 100%, 15% 100%);
-    }
-
-    .decorative-crescent {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      top: 50px;
-    }
-
-    .decorative-crescent.left {
-      left: 20px;
-    }
-
-    .decorative-crescent.right {
-      right: 20px;
-    }
-
-    .crescent-shape {
-      width: 80px;
-      height: 80px;
-      background: #fbbf24;
-      border-radius: 50%;
-      position: relative;
-      box-shadow: 0 0 30px rgba(251, 191, 36, 0.5);
-    }
-
-    .crescent-inner {
-      width: 60px;
-      height: 60px;
-      background: #e0f2fe;
-      border-radius: 50%;
-      position: absolute;
-      top: 10px;
-      right: 5px;
-    }
-
-    .diamond-shape {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, #0c4a6e, #0369a1);
-      transform: rotate(45deg);
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      box-shadow: 0 0 20px rgba(12, 74, 110, 0.5);
-    }
-
-    .poster-main-header {
-      background: linear-gradient(135deg, #b91c1c 0%, #dc2626 50%, #b91c1c 100%);
-      margin: 250px 100px 30px 100px;
-      padding: 25px 40px;
-      border-radius: 25px;
-      text-align: center;
-      position: relative;
-      box-shadow: 0 10px 30px rgba(185, 28, 28, 0.5);
-      border: 5px solid #fbbf24;
-    }
-
-    .poster-main-header::before,
-    .poster-main-header::after {
-      content: '';
-      position: absolute;
-      width: 150px;
-      height: 100%;
-      background: linear-gradient(135deg, #fbbf24, #f59e0b);
-      top: 0;
-    }
-
-    .poster-main-header::before {
-      left: -50px;
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 30% 100%);
-    }
-
-    .poster-main-header::after {
-      right: -50px;
-      clip-path: polygon(0 0, 70% 0, 100% 100%, 0 100%);
-    }
-
-    .main-title {
-      font-size: 42px;
-      color: white;
-      font-weight: bold;
-      margin-bottom: 10px;
-      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-      position: relative;
-      z-index: 1;
-    }
-
-    .subtitle {
-      font-size: 36px;
-      color: white;
-      font-weight: bold;
-      position: relative;
-      z-index: 1;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    .dates-oval {
-      background: linear-gradient(135deg, #0c4a6e, #075985);
-      margin: 0 150px;
-      padding: 20px;
-      border-radius: 50%;
-      text-align: center;
-      position: relative;
-      box-shadow: 0 8px 25px rgba(12, 74, 110, 0.4);
-      border: 4px solid #fbbf24;
-    }
-
-    .date-item {
-      color: white;
-      font-size: 22px;
-      font-weight: bold;
-      margin: 5px 0;
-    }
-
-    .date-number {
-      display: inline-block;
-      background: white;
-      color: #0c4a6e;
-      padding: 5px 15px;
-      border-radius: 50%;
-      margin-left: 10px;
-      font-weight: bold;
-    }
-
-    .three-sections {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin: 30px 25px;
-    }
-
-    .section-box {
-      text-align: center;
-    }
-
-    .section-header {
-      padding: 15px;
-      border-radius: 15px;
-      font-size: 24px;
-      font-weight: bold;
-      color: white;
-      margin-bottom: 15px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .section-header.orange {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-    }
-
-    .section-header.green {
-      background: linear-gradient(135deg, #064e3b, #065f46);
-    }
-
-    .section-content {
-      padding: 20px 15px;
-      border-radius: 0 0 50% 50%;
-      min-height: 180px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      border: 3px dotted white;
-      box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.3);
-    }
-
-    .section-content.blue {
-      background: linear-gradient(135deg, #1e40af, #1e3a8a);
-    }
-
-    .section-content.pink {
-      background: linear-gradient(135deg, #db2777, #be185d);
-    }
-
-    .content-item {
-      color: white;
-      font-size: 16px;
-      text-align: center;
-      line-height: 1.6;
-    }
-
-    .timing-bar {
-      background: linear-gradient(135deg, #14b8a6, #0d9488);
-      margin: 20px 40px;
-      padding: 18px;
-      border-radius: 15px;
-      text-align: center;
-      color: white;
-      font-size: 22px;
-      font-weight: bold;
-      box-shadow: 0 8px 25px rgba(20, 184, 166, 0.4);
-    }
-
-    .location-bar {
-      background: linear-gradient(135deg, #0c4a6e, #075985);
-      margin: 15px 40px;
-      padding: 18px;
-      border-radius: 15px;
-      text-align: center;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-      box-shadow: 0 8px 25px rgba(12, 74, 110, 0.4);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .ornament {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, #dc2626, #b91c1c);
-      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-      box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
-    }
-
-    .bottom-section {
-      display: grid;
-      grid-template-columns: 1fr 2fr 1fr;
-      gap: 15px;
-      margin: 20px 25px;
-    }
-
-    .side-box {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      padding: 20px 15px;
-      border-radius: 15px;
-      color: white;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
-      border: 3px solid #78350f;
-    }
-
-    .side-box-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      text-decoration: underline;
-    }
-
-    .side-box-content {
-      font-size: 15px;
-      line-height: 1.7;
-    }
-
-    .center-box {
-      background: linear-gradient(135deg, #064e3b, #065f46);
-      padding: 25px 20px;
-      border-radius: 20px;
-      color: white;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 12px;
-      box-shadow: 0 8px 25px rgba(6, 78, 59, 0.5);
-      border: 4px solid #fbbf24;
-    }
-
-    .center-box-title {
-      font-size: 26px;
-      font-weight: bold;
-      line-height: 1.5;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    .center-box-content {
-      font-size: 14px;
-      line-height: 1.8;
-    }
-
-    .footer-banner {
-      background: linear-gradient(135deg, #78350f, #92400e);
-      margin: 20px 0 0 0;
-      padding: 20px;
-      text-align: center;
-      color: white;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-    }
-
-    .footer-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    .phone-number {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .footer-text {
-      flex: 1;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .diamond-icon {
-      width: 30px;
-      height: 30px;
-      background: #fbbf24;
-      transform: rotate(45deg);
-      display: inline-block;
-      margin: 0 10px;
-    }
-
-    .loading {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
-      display: none;
-      z-index: 2000;
-      border: 4px solid #f59e0b;
-    }
-
-    .loading.active {
-      display: block;
-    }
-
-    .spinner {
-      width: 60px;
-      height: 60px;
-      border: 6px solid #e2e8f0;
-      border-top-color: #0c4a6e;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .preview-container {
-      max-width: 100%;
-      overflow: auto;
-      background: #f1f5f9;
-      padding: 25px;
-      border-radius: 15px;
-    }
-
-    @media (max-width: 768px) {
-      .poster-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .poster-template {
-        transform: scale(0.45);
-        transform-origin: top center;
-      }
-
-      .modal-content {
-        padding: 20px;
-      }
-
-      .controls {
-        flex-direction: column;
-      }
-
-      .btn {
-        width: 100%;
-      }
-
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" name="viewport" />
+    <title>Islamic Poster Creator - Premium Edition</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Calibri', 'Noto Nastaliq Urdu', 'Amiri', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            padding: 10px;
+            min-height: 100vh;
+        }
+
+        .toolbar {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Calibri', 'Noto Nastaliq Urdu', sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            touch-action: manipulation;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+            color: #000;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+        }
+
+        .poster-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .poster-preview {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+            flex: 1;
+            max-width: 900px;
+            border: 4px solid rgba(255, 255, 255, 0.8);
+            width: 100%;
+        }
+
+        #posterCanvas {
+            width: 100%;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 30%, #FFF8DC 50%, #F0FFF0 70%, #90EE90 100%);
+            border: 5px solid #c41e3a;
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .editable {
+            cursor: text;
+            transition: all 0.3s;
+            position: relative;
+            min-height: 20px;
+            border-radius: 5px;
+        }
+
+        .editable:hover {
+            outline: 3px dashed #667eea;
+            outline-offset: 4px;
+            background: rgba(102, 126, 234, 0.15);
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .editable:focus {
+            outline: 4px solid #667eea;
+            outline-offset: 4px;
+            background: rgba(102, 126, 234, 0.2);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .editable[contenteditable="true"]:empty:before {
+            content: attr(data-placeholder);
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+        }
+
+        .deletable {
+            position: relative;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s;
+            touch-action: manipulation;
+        }
+
+        .delete-btn:active {
+            transform: scale(1.1);
+        }
+
+        .deletable:hover .delete-btn {
+            display: flex;
+        }
+
+        /* Always show delete button on touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            .delete-btn {
+                display: flex !important;
+                opacity: 0.7;
+            }
+
+            .delete-btn:active {
+                opacity: 1;
+            }
+        }
+
+        .poster-header {
+            background: linear-gradient(135deg, #FFA500 0%, #FFD700 30%, #FFA500 60%, #FF8C00 100%);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(255, 165, 0, 0.5), inset 0 2px 10px rgba(255, 255, 255, 0.4);
+            border: 4px solid #FF8C00;
+        }
+
+        .poster-title {
+            background: linear-gradient(135deg, #c41e3a 0%, #8B0000 100%);
+            color: white;
+            font-size: 42px;
+            font-weight: bold;
+            padding: 18px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 6px 20px rgba(196, 30, 58, 0.5), inset 0 2px 10px rgba(255, 255, 255, 0.2);
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            word-wrap: break-word;
+        }
+
+        .poster-dates {
+            background: linear-gradient(135deg, #4169E1 0%, #1E90FF 100%);
+            color: white;
+            font-size: 28px;
+            padding: 12px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 6px 20px rgba(65, 105, 225, 0.5);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            flex-wrap: wrap;
+        }
+
+        .date-badge {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            color: #4169E1;
+            padding: 6px 15px;
+            border-radius: 50%;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 3px solid #4169E1;
+        }
+
+        .sections-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .section-card {
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+            border-radius: 15px;
+            padding: 18px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(255, 140, 0, 0.4);
+            border: 4px solid #FFD700;
+            transition: all 0.3s;
+        }
+
+        .section-card:active {
+            transform: scale(0.98);
+        }
+
+        .section-title {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            word-wrap: break-word;
+        }
+
+        .section-content {
+            background: linear-gradient(135deg, #4169E1 0%, #1E90FF 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            border: 4px dotted white;
+            min-height: 100px;
+            font-size: 15px;
+            line-height: 1.8;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+            word-wrap: break-word;
+        }
+
+        .timing-section {
+            background: linear-gradient(135deg, #2C5F4F 0%, #1a3d32 100%);
+            color: white;
+            padding: 18px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(44, 95, 79, 0.5);
+            border: 4px solid #3d7a64;
+            word-wrap: break-word;
+        }
+
+        .bottom-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .bottom-card {
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+            border-radius: 15px;
+            padding: 18px;
+            border: 4px solid #8B4513;
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.4);
+        }
+
+        .bottom-card-title {
+            background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
+            color: #FFD700;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 2px solid #FFD700;
+            word-wrap: break-word;
+        }
+
+        .bottom-card-content {
+            color: #000;
+            font-size: 14px;
+            line-height: 1.8;
+            font-weight: 500;
+            word-wrap: break-word;
+        }
+
+        .middle-section {
+            background: linear-gradient(135deg, #2C5F4F 0%, #1a3d32 100%);
+            color: white;
+            padding: 18px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(44, 95, 79, 0.5);
+            border: 4px solid #3d7a64;
+        }
+
+        .middle-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            word-wrap: break-word;
+        }
+
+        .middle-content {
+            font-size: 14px;
+            line-height: 1.7;
+            word-wrap: break-word;
+        }
+
+        .footer-section {
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.5);
+            border: 4px solid #654321;
+        }
+
+        .footer-phone {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            word-wrap: break-word;
+        }
+
+        .footer-address {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            word-wrap: break-word;
+        }
+
+        .decorative-elements {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.6);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .deco-left {
+            top: 20px;
+            left: -15px;
+        }
+
+        .deco-right {
+            top: 20px;
+            right: -15px;
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 350px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 4px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .sidebar h3 {
+            text-align: center;
+            color: #c41e3a;
+            margin-bottom: 20px;
+            font-size: 22px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .poster-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .poster-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .poster-item:active {
+            transform: scale(0.98);
+            border-color: #667eea;
+        }
+
+        .poster-item-name {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .poster-item-date {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .poster-item-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 12px;
+            flex: 1;
+        }
+
+        .add-section-btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: 3px dashed white;
+            padding: 12px;
+            text-align: center;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 12px 0;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4);
+            transition: all 0.3s;
+            touch-action: manipulation;
+        }
+
+        .add-section-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.6);
+        }
+
+        .add-section-btn i {
+            margin-left: 8px;
+        }
+
+        .full-width-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+            border: 4px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .full-width-section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            word-wrap: break-word;
+        }
+
+        .full-width-section-content {
+            font-size: 16px;
+            line-height: 1.7;
+            word-wrap: break-word;
+        }
+
+        .centered-small-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 18px 25px;
+            border-radius: 15px;
+            margin: 15px auto;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 8px 25px rgba(240, 147, 251, 0.5);
+            border: 4px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .centered-small-section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            word-wrap: break-word;
+        }
+
+        .centered-small-section-content {
+            font-size: 15px;
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            font-weight: bold;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            max-width: 90%;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            font-family: 'Calibri', 'Noto Nastaliq Urdu', sans-serif;
+            width: 100%;
+            max-width: 250px;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .action-menu {
+            display: flex;
+            gap: 10px;
+            margin: 12px 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-menu .add-section-btn {
+            flex: 1;
+            min-width: 150px;
+            max-width: 300px;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .toolbar {
+                padding: 10px;
+                gap: 8px;
+            }
+
+            .btn {
+                padding: 10px 15px;
+                font-size: 13px;
+                flex: 1;
+                min-width: 120px;
+            }
+
+            input[type="text"] {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .poster-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .poster-preview {
+                padding: 15px;
+                width: 100%;
+            }
+
+            #posterCanvas {
+                padding: 15px;
+                border-width: 3px;
+            }
+
+            .poster-header {
+                padding: 15px;
+            }
+
+            .poster-title {
+                font-size: 28px;
+                padding: 12px;
+            }
+
+            .poster-dates {
+                font-size: 20px;
+                padding: 10px;
+                gap: 8px;
+            }
+
+            .date-badge {
+                padding: 4px 10px;
+                font-size: 14px;
+            }
+
+            .sections-container {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .section-title {
+                font-size: 18px;
+                padding: 8px;
+            }
+
+            .section-content {
+                font-size: 14px;
+                padding: 12px;
+                min-height: 80px;
+            }
+
+            .timing-section {
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            .bottom-sections {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .bottom-card-title {
+                font-size: 15px;
+            }
+
+            .bottom-card-content {
+                font-size: 13px;
+            }
+
+            .middle-title {
+                font-size: 16px;
+            }
+
+            .middle-content {
+                font-size: 13px;
+            }
+
+            .footer-phone,
+            .footer-address {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .decorative-elements {
+                width: 40px;
+                height: 40px;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-width: 100%;
+                padding: 15px;
+            }
+
+            .sidebar h3 {
+                font-size: 18px;
+            }
+
+            .add-section-btn {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .action-menu .add-section-btn {
+                min-width: 100%;
+                flex: 1 1 100%;
+            }
+
+            .full-width-section-title {
+                font-size: 20px;
+            }
+
+            .full-width-section-content {
+                font-size: 14px;
+            }
+
+            .centered-small-section {
+                padding: 15px 20px;
+            }
+
+            .centered-small-section-title {
+                font-size: 18px;
+            }
+
+            .centered-small-section-content {
+                font-size: 14px;
+            }
+
+            .delete-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 18px;
+                top: -10px;
+                right: -10px;
+            }
+
+            .toast {
+                right: 10px;
+                top: 10px;
+                font-size: 13px;
+                padding: 12px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .poster-title {
+                font-size: 24px;
+            }
+
+            .poster-dates {
+                font-size: 18px;
+                flex-direction: column;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .section-content {
+                font-size: 13px;
+            }
+
+            .btn {
+                min-width: 100px;
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+
+        /* Print and Export Optimizations */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .toolbar,
+            .sidebar,
+            .add-section-btn,
+            .action-menu,
+            .delete-btn {
+                display: none !important;
+            }
+        }
+    </style>
+    <link href="manifest.json" rel="manifest" />
+    <link href="favicon.ico" rel="icon" type="image/x-icon" />
 </head>
 
 <body>
-
-  <div class="container">
-    <div class="header">
-      <h1>🕌 مدرسہ اعلان پوسٹر تخلیق کار</h1>
-      <p>Islamic Madrasa Admission Poster Creator & Management System</p>
+    <div class="toolbar">
+        <input id="posterNameInput" placeholder="پوسٹر کا نام لکھیں" type="text" value="" />
+        <button class="btn btn-success" onclick="savePoster()"><i class="fas fa-save"></i> محفوظ کریں</button>
+        <button class="btn btn-primary" onclick="newPoster()"><i class="fas fa-file"></i> نیا پوسٹر</button>
+        <button class="btn btn-info" onclick="exportToImage()"><i class="fas fa-image"></i> تصویر</button>
+        <button class="btn btn-warning" onclick="exportToPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+        <button class="btn btn-secondary" onclick="toggleSidebar()"><i class="fas fa-list"></i> محفوظ شدہ</button>
     </div>
-
-    <div class="controls">
-      <button class="btn btn-primary" onclick="openCreateModal()">➕ نیا اعلان بنائیں</button>
-      <button class="btn btn-success" onclick="exportAllData()">💾 ڈیٹا محفوظ کریں</button>
-      <button class="btn btn-warning" onclick="document.getElementById('importFile').click()">📂 ڈیٹا درآمد
-        کریں</button>
-      <button class="btn btn-danger" onclick="deleteAllPosters()">🗑️ سب حذف کریں</button>
+    <div class="poster-container">
+        <div class="poster-preview">
+            <div id="posterCanvas">
+                <div class="poster-header deletable">
+                    <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                    <div class="decorative-elements deco-left"></div>
+                    <div class="decorative-elements deco-right"></div>
+                    <div class="poster-title editable" contenteditable="true" data-placeholder="عنوان لکھیں">اعلان داخلہ
+                    </div>
+                    <div class="poster-dates">
+                        <span class="editable" contenteditable="true">1445</span>
+                        <span>/</span>
+                        <span class="editable" contenteditable="true">2024</span>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-around; margin-top: 15px; font-size: 20px; flex-wrap: wrap; gap: 10px;">
+                        <span><span class="date-badge editable" contenteditable="true">10</span> <span class="editable"
+                                contenteditable="true">شوال 1445</span></span>
+                        <span><span class="date-badge editable" contenteditable="true">20</span> <span class="editable"
+                                contenteditable="true">اپریل 2024</span></span>
+                    </div>
+                </div>
+                <div class="sections-container" id="mainSections">
+                    <div class="section-card deletable">
+                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                        <div class="section-title editable" contenteditable="true" data-placeholder="عنوان">تصوری علمیم
+                        </div>
+                        <div class="section-content editable" contenteditable="true" data-placeholder="تفصیل لکھیں">
+                            اندرونی مذہبی تعلیم کی فراہمی کے ساتھ معاشرے کے لیے مفید انسان تیار کریں</div>
+                    </div>
+                    <div class="section-card deletable"
+                        style="background: linear-gradient(135deg, #2C5F4F 0%, #1a3d32 100%);">
+                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                        <div class="section-title editable" contenteditable="true"
+                            style="background: rgba(255,255,255,0.2);">تجویدالقرآن</div>
+                        <div class="section-content editable" contenteditable="true"
+                            style="background: linear-gradient(135deg, #E6B0AA 0%, #F5CBA7 100%); color: #000; border-color: #8B4513;">
+                            حافظہ قرآن کریم اور تجوید کی تعلیم</div>
+                    </div>
+                    <div class="section-card deletable">
+                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                        <div class="section-title editable" contenteditable="true">دروس نظامی</div>
+                        <div class="section-content editable" contenteditable="true">اولاد کی تعلیم و تربیت کی فکر ہے تو
+                            ابھی داخلہ لیں</div>
+                    </div>
+                </div>
+                <div class="action-menu">
+                    <div class="add-section-btn" onclick="addMainSection()">
+                        <i class="fas fa-plus-circle"></i> نیا سیکشن
+                    </div>
+                    <div class="add-section-btn" onclick="addFullWidthSection()"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-arrows-alt-h"></i> پورا چوڑا سیکشن
+                    </div>
+                    <div class="add-section-btn" onclick="addCenteredSmallSection()"
+                        style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="fas fa-align-center"></i> چھوٹا سیکشن
+                    </div>
+                </div>
+                <div class="timing-section editable deletable" contenteditable="true" data-placeholder="اوقات لکھیں">
+                    <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                    اوقات داخلہ: صبح 8:00 تا 12:30
+                </div>
+                <div class="deletable"
+                    style="background: linear-gradient(135deg, #2C5F4F 0%, #1a3d32 100%); padding: 20px; border-radius: 15px; margin-bottom: 20px; color: white; text-align: center; box-shadow: 0 8px 25px rgba(44, 95, 79, 0.5); border: 4px solid #3d7a64;">
+                    <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                    <div class="editable" contenteditable="true"
+                        style="font-size: 22px; font-weight: bold; margin-bottom: 12px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                        شعبہ حفظ کی تفصیلات</div>
+                    <div class="editable" contenteditable="true" data-placeholder="تفصیل لکھیں"
+                        style="font-size: 16px; line-height: 1.8;">10 شوال سے مسلسل 20 اپریل تک اور روس اتفاقی کے طلباء
+                        کے لیے 13 شوال 23 اپریل سے مسلسل شروع</div>
+                </div>
+                <div class="bottom-sections" id="bottomSections">
+                    <div class="bottom-card deletable">
+                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                        <div class="bottom-card-title editable" contenteditable="true">ضروری نوٹ</div>
+                        <div class="bottom-card-content editable" contenteditable="true" data-placeholder="نوٹ لکھیں">
+                            حافظہ ہو جانے والا طالب علم، ارادے کے ساتھ دارالعلوم میں داخلہ لے اور کی فضیلت</div>
+                    </div>
+                    <div class="middle-section deletable">
+                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                        <div class="middle-title editable" contenteditable="true">دینی اور عصری علوم کا حسین امتزاج
+                        </div>
+                        <div class="middle-content editable" contenteditable="true" data-placeholder="تفصیل">دینی
+                            تعلیمات کے ساتھ عصری علوم کی تعلیم۔ قرآن، حدیث، فقہ اور عربی زبان کے ساتھ انگلش، اردو، ریاضی
+                            اور سائنس</div>
+                    </div>
+                    <div class="bottom-card deletable">
+                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                        <div class="bottom-card-title editable" contenteditable="true">خاص نوٹ</div>
+                        <div class="bottom-card-content editable" contenteditable="true" data-placeholder="نوٹ لکھیں">
+                            اولاد کی تعلیم و تربیت کی فکر ہے تو ہمارے ساتھ رابطہ کریں اور اپنے بچوں کو دینی اور عصری
+                            تعلیم سے آراستہ کریں</div>
+                    </div>
+                </div>
+                <div class="add-section-btn" onclick="addBottomSection()"><i class="fas fa-plus-circle"></i> نچلا سیکشن
+                    شامل کریں</div>
+                <div class="footer-section deletable">
+                    <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                    <div>
+                        <div class="footer-phone editable" contenteditable="true" data-placeholder="فون نمبر">📞
+                            0336-9586656 | 0311-5342747 | 0312-3550107</div>
+                        <div class="footer-address">
+                            <div class="editable" contenteditable="true" data-placeholder="پتہ">مدرسہ عربیہ اسلامیہ میمل
+                            </div>
+                            <div class="editable" contenteditable="true" data-placeholder="مکمل پتہ"
+                                style="font-size: 16px; margin-top: 8px;">شاہراہ حصہ پل ہرن مسجد شریف کراچی</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar" id="sidebar" style="display: none;">
+            <h3><i class="fas fa-bookmark"></i> محفوظ شدہ پوسٹرز</h3>
+            <div class="poster-list" id="posterList"></div>
+        </div>
     </div>
+    <script>
+        // IndexedDB Setup
+        let db;
+        const DB_NAME = 'IslamicPosterDB';
+        const STORE_NAME = 'posters';
 
-    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+        function initDB() {
+            const request = indexedDB.open(DB_NAME, 1);
 
-    <div class="poster-grid" id="posterGrid"></div>
-  </div>
+            request.onerror = () => {
+                console.error('Database failed to open');
+            };
 
-  <div class="modal" id="editorModal">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closeModal()">×</button>
-      <h2 style="margin-bottom: 30px; color: #0c4a6e; text-align: center; font-size: 2em;">📝 پوسٹر ایڈیٹر</h2>
-      <form id="posterForm" onsubmit="savePoster(event)">
-        <input type="hidden" id="posterId">
+            request.onsuccess = () => {
+                db = request.result;
+                loadPosterList();
+            };
 
-        <div class="form-group">
-          <label>مرکزی عنوان (Main Title)</label>
-          <input type="text" id="mainTitle" required>
-        </div>
+            request.onupgradeneeded = (e) => {
+                db = e.target.result;
+                const objectStore = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                objectStore.createIndex('name', 'name', { unique: false });
+                objectStore.createIndex('timestamp', 'timestamp', { unique: false });
+            };
+        }
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>تاریخ اسلامی (Islamic Date)</label>
-            <input type="text" id="islamicDate" required>
-          </div>
-          <div class="form-group">
-            <label>تاریخ عیسوی (Gregorian Date)</label>
-            <input type="text" id="gregorianDate" required>
-          </div>
-        </div>
+        function savePoster() {
+            const posterName = document.getElementById('posterNameInput').value || 'بے نام پوسٹر ' + new Date().toLocaleString('ur-PK');
+            const posterHTML = document.getElementById('posterCanvas').innerHTML;
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>شروع تاریخ (Start Date)</label>
-            <input type="text" id="startDate" required>
-          </div>
-          <div class="form-group">
-            <label>آخری تاریخ (End Date)</label>
-            <input type="text" id="endDate" required>
-          </div>
-        </div>
+            const posterData = {
+                name: posterName,
+                timestamp: new Date().toISOString(),
+                html: posterHTML
+            };
 
-        <div class="form-group">
-          <label>سیکشن 1 عنوان (Section 1 Title)</label>
-          <input type="text" id="section1Title" required>
-        </div>
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.add(posterData);
 
-        <div class="form-group">
-          <label>سیکشن 1 مواد (Section 1 Content - علامت سے الگ کریں)</label>
-          <textarea id="section1Content" required></textarea>
-        </div>
+            request.onsuccess = () => {
+                showToast('✅ پوسٹر کامیابی سے محفوظ ہو گیا!', 'success');
+                loadPosterList();
+                document.getElementById('posterNameInput').value = '';
+            };
 
-        <div class="form-group">
-          <label>سیکشن 2 عنوان (Section 2 Title)</label>
-          <input type="text" id="section2Title" required>
-        </div>
+            request.onerror = () => {
+                showToast('❌ محفوظ کرنے میں خرابی!', 'error');
+            };
+        }
 
-        <div class="form-group">
-          <label>سیکشن 2 مواد (Section 2 Content - علامت سے الگ کریں)</label>
-          <textarea id="section2Content" required></textarea>
-        </div>
+        function loadPosterList() {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.getAll();
 
-        <div class="form-group">
-          <label>سیکشن 3 عنوان (Section 3 Title)</label>
-          <input type="text" id="section3Title" required>
-        </div>
+            request.onsuccess = () => {
+                const posters = request.result;
+                const listContainer = document.getElementById('posterList');
+                listContainer.innerHTML = '';
 
-        <div class="form-group">
-          <label>سیکشن 3 مواد (Section 3 Content - علامت سے الگ کریں)</label>
-          <textarea id="section3Content" required></textarea>
-        </div>
+                if (posters.length === 0) {
+                    listContainer.innerHTML = '<p style="text-align: center; color: #999; padding: 30px;">کوئی محفوظ شدہ پوسٹر نہیں</p>';
+                    return;
+                }
 
-        <div class="form-group">
-          <label>اوقات (Timing)</label>
-          <input type="text" id="timing" required>
-        </div>
+                posters.reverse().forEach(poster => {
+                    const item = document.createElement('div');
+                    item.className = 'poster-item';
 
-        <div class="form-group">
-          <label>مقام معلومات (Location Info)</label>
-          <textarea id="locationInfo" rows="2" required></textarea>
-        </div>
+                    const date = new Date(poster.timestamp).toLocaleString('ur-PK');
 
-        <div class="form-group">
-          <label>بائیں باکس عنوان (Left Box Title)</label>
-          <input type="text" id="leftBoxTitle" required>
-        </div>
+                    item.innerHTML = `
+                        <div class="poster-item-name"><i class="fas fa-file-alt"></i> ${poster.name}</div>
+                        <div class="poster-item-date"><i class="far fa-clock"></i> ${date}</div>
+                        <div class="poster-item-actions">
+                            <button class="btn btn-primary btn-small" onclick="loadPoster(${poster.id})">
+                                <i class="fas fa-download"></i> لوڈ
+                            </button>
+                            <button class="btn btn-danger btn-small" onclick="deletePoster(${poster.id})">
+                                <i class="fas fa-trash"></i> حذف
+                            </button>
+                        </div>
+                    `;
+                    listContainer.appendChild(item);
+                });
+            };
+        }
 
-        <div class="form-group">
-          <label>بائیں باکس مواد (Left Box Content - علامت سے الگ کریں)</label>
-          <textarea id="leftBoxContent" required></textarea>
-        </div>
+        function loadPoster(id) {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.get(id);
 
-        <div class="form-group">
-          <label>مرکزی باکس عنوان (Center Box Title)</label>
-          <input type="text" id="centerBoxTitle" required>
-        </div>
+            request.onsuccess = () => {
+                const poster = request.result;
+                if (poster) {
+                    document.getElementById('posterCanvas').innerHTML = poster.html;
+                    document.getElementById('posterNameInput').value = poster.name;
+                    showToast('✅ پوسٹر لوڈ ہو گیا!', 'success');
+                }
+            };
+        }
 
-        <div class="form-group">
-          <label>مرکزی باکس مواد (Center Box Content)</label>
-          <textarea id="centerBoxContent" required></textarea>
-        </div>
+        function deletePoster(id) {
+            if (!confirm('کیا آپ واقعی اس پوسٹر کو حذف کرنا چاہتے ہیں؟')) return;
 
-        <div class="form-group">
-          <label>دائیں باکس عنوان (Right Box Title)</label>
-          <input type="text" id="rightBoxTitle" required>
-        </div>
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.delete(id);
 
-        <div class="form-group">
-          <label>دائیں باکس مواد (Right Box Content - علامت سے الگ کریں)</label>
-          <textarea id="rightBoxContent" required></textarea>
-        </div>
+            request.onsuccess = () => {
+                showToast('✅ پوسٹر حذف ہو گیا!', 'success');
+                loadPosterList();
+            };
+        }
 
-        <div class="form-group">
-          <label>رابطہ نمبرز (Contact Numbers - کوما سے الگ کریں)</label>
-          <input type="text" id="contactNumbers" required>
-        </div>
-
-        <div class="form-group">
-          <label>مدرسہ کا نام (Madrasa Name)</label>
-          <input type="text" id="madrasaName" required>
-        </div>
-
-        <div class="form-group">
-          <label>مدرسہ کا پتہ (Madrasa Address)</label>
-          <textarea id="madrasaAddress" rows="2" required></textarea>
-        </div>
-
-        <div style="display: flex; gap: 18px; margin-top: 30px;">
-          <button type="submit" class="btn btn-success" style="flex: 1;">💾 محفوظ کریں</button>
-          <button type="button" class="btn btn-danger" onclick="closeModal()" style="flex: 1;">❌ منسوخ کریں</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="modal" id="previewModal">
-    <div class="modal-content" style="max-width: 750px;">
-      <button class="modal-close" onclick="closePreviewModal()">×</button>
-      <h2 style="margin-bottom: 25px; text-align: center; color: #0c4a6e; font-size: 2em;">👁️ پوسٹر پیش نظارہ</h2>
-      <div class="preview-container" id="previewContainer"></div>
-      <div style="display: flex; gap: 18px; margin-top: 25px;">
-        <button class="btn btn-primary" onclick="exportToPNG()" style="flex: 1;">🖼️ PNG ڈاؤن لوڈ</button>
-        <button class="btn btn-info" onclick="exportToPDF()" style="flex: 1;">📄 PDF ڈاؤن لوڈ</button>
-        <button class="btn btn-danger" onclick="closePreviewModal()" style="flex: 1;">❌ بند کریں</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="loading" id="loadingOverlay">
-    <div class="spinner"></div>
-    <p style="text-align: center; font-weight: 700; color: #0c4a6e; font-size: 18px;">⏳ براہ کرم انتظار کریں...</p>
-  </div>
-
-  <script>
-    let db;
-    let currentPosterId = null;
-    let currentPosterData = null;
-
-    const initDB = () => {
-      return new Promise((resolve, reject) => {
-        const request = indexedDB.open('MadrasaPosterDB', 1);
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => {
-          db = request.result;
-          resolve(db);
-        };
-        request.onupgradeneeded = (event) => {
-          const database = event.target.result;
-          if (!database.objectStoreNames.contains('posters')) {
-            const objectStore = database.createObjectStore('posters', { keyPath: 'id', autoIncrement: true });
-            objectStore.createIndex('mainTitle', 'mainTitle', { unique: false });
-            objectStore.createIndex('createdAt', 'createdAt', { unique: false });
-          }
-        };
-      });
-    };
-
-    const seedInitialData = async () => {
-      const transaction = db.transaction(['posters'], 'readonly');
-      const objectStore = transaction.objectStore('posters');
-      const countRequest = objectStore.count();
-      countRequest.onsuccess = async () => {
-        if (countRequest.result === 0) {
-          const seedData = [
-            {
-              mainTitle: 'اعلان داخلہ',
-              islamicDate: '1445ھ',
-              gregorianDate: '2024ء',
-              startDate: '10 شوال المکرم 1445',
-              endDate: '20 اپریل 2024',
-              section1Title: 'عصری علوم',
-              section1Content: 'انگریزی زبان کی تعلیم|دینی تعلیم کے ساتھ|ماہرین کے ساتھ حفظ کریں|میٹرک کے ساتھ معیاری عصری تعلیم',
-              section2Title: 'تجویدالقرآن',
-              section2Content: 'حافظ بننے کے لیے بہترین ماحول|مؤثق العلماء کے زیر نظرانیس|قران کریم کی صحیح تلاوت|حفظ سے محبوب رسول کی آواز سننا|نفائج',
-              section3Title: 'درس نظامی',
-              section3Content: 'اولیٰ سے عالمیہ تک تعلیم|مہارت فن حاصل کریں|دینی تربیت کے ساتھ صاحب عالم|اسلامی تعلیم سیکھنے کا سنہری|موقع',
-              timing: 'اوقات داخلہ: صبح 8:00 تا 12:30',
-              locationInfo: 'شیڈول حفظ سے متعلق 10 شوال بہ مطابق 20 اپریل اور درس نظامی کے طلباء کے لیے 13 شوال 23 اپریل سے محفوظ رہیں',
-              leftBoxTitle: 'مزید کے لیے',
-              leftBoxContent: 'ماہانہ معاشرہ سولہ صد|اپریڈ احاطہ گارڈنز کے قریب|صبح سے رات کو مہدیانہ تک کارآمد|کا عالمی',
-              centerBoxTitle: 'دینی اور عصری علوم کا حسین امتزاج',
-              centerBoxContent: 'ہم نہ بچوں کی تربیت کے حوالے سے مکمل تحقیق و جستجو کے بعد ایک بہترین نصاب تعلیم۔۔۔ مقرر: 13000 روپے فیس: 10000 روپے',
-              rightBoxTitle: 'گھر آ کے داخلہ',
-              rightBoxTitle: 'گھر آ کے داخلہ',
-              rightBoxContent: 'اولیٰ سے لے کر دوسری جماعت تک|بے جمہ حفظ کے لیے 60 سے زائد|کتاب کے ایسے نوٹس کے باعث واضح|تفسیر والے مؤثق اساتذہ سنئیر اساتذہ سے استفادہ کریں علامہ بننے کا موقع',
-              contactNumbers: '0336-9586656, 0311-5342747, 0312-3550107',
-              madrasaName: 'مدرسہ عربیہ اسلامیہ محمد پل',
-              madrasaAddress: 'شاہ جہاں آباد سرائے کرائی',
-              createdAt: Date.now()
-            },
-            {
-              mainTitle: 'برائے داخلہ درسگاہ',
-              islamicDate: '1446ھ',
-              gregorianDate: '2025ء',
-              startDate: '1 محرم الحرام 1446',
-              endDate: '15 اگست 2025',
-              section1Title: 'حفظ القرآن',
-              section1Content: 'قرآن کریم کی حفظ|تجوید کی تعلیم|عربی گرامر|نماز کی تعلیم',
-              section2Title: 'دینی تعلیم',
-              section2Content: 'حدیث شریف|فقہ اسلامی|عقائد و اخلاقیات|سیرت النبی صلی اللہ علیہ وسلم',
-              section3Title: 'عصری تعلیم',
-              section3Content: 'اردو زبان|انگریزی زبان|ریاضی کی تعلیم|سائنس و سوشل اسٹڈیز',
-              timing: 'اوقات: صبح 7:00 تا دوپہر 1:00',
-              locationInfo: 'داخلے کی آخری تاریخ 15 اگست 2025 تک رہے گی براہ کرم جلد رجسٹریشن کروائیں',
-              leftBoxTitle: 'سہولیات',
-              leftBoxContent: 'مفت تعلیم|رہائش کی سہولت|مفت کتب|صحت کی دیکھ بھال',
-              centerBoxTitle: 'تعلیم و تربیت کا بہترین مرکز',
-              centerBoxContent: 'ہمارا مقصد طلباء کو دینی اور دنیاوی تعلیم دونوں میں ماہر بنانا ہے تاکہ وہ معاشرے کے لیے مفید شہری بن سکیں',
-              rightBoxTitle: 'شرائط داخلہ',
-              rightBoxContent: 'عمر کم از کم 8 سال|تعلیمی سرٹیفکیٹ|والدین کی اجازت|میڈیکل سرٹیفکیٹ',
-              contactNumbers: '0300-1234567, 0321-9876543, 0333-5555555',
-              madrasaName: 'جامعہ نصرت العلوم',
-              madrasaAddress: 'محلہ شیخاں، پشاور، خیبر پختونخوا',
-              createdAt: Date.now() - 86400000
-            },
-            {
-              mainTitle: 'اعلان برائے تعلیم',
-              islamicDate: '1447ھ',
-              gregorianDate: '2026ء',
-              startDate: '5 رمضان المبارک 1447',
-              endDate: '10 مارچ 2026',
-              section1Title: 'دینیات',
-              section1Content: 'قرآن مجید|احادیث نبویہ|فقہ و اصول|عربی ادب',
-              section2Title: 'علوم اسلامیہ',
-              section2Content: 'تفسیر قرآن|علم حدیث|اصول فقہ|تاریخ اسلام',
-              section3Title: 'جدید علوم',
-              section3Content: 'کمپیوٹر سائنس|انگریزی ادب|ریاضی و سائنس|سماجی علوم',
-              timing: 'اوقات: صبح 6:30 تا ظہر 12:30',
-              locationInfo: 'طلباء کو مطلع کیا جاتا ہے کہ داخلے کے لیے 10 مارچ تک ضرور رابطہ کریں',
-              leftBoxTitle: 'امتیازات',
-              leftBoxContent: 'تجربہ کار اساتذہ|جدید لائبریری|سپورٹس کی سہولیات|ڈیجیٹل کلاس رومز',
-              centerBoxTitle: 'اسلامی تعلیم کا مرکز',
-              centerBoxContent: 'طلباء کو دینی اور عصری تعلیم کے ساتھ ساتھ اخلاقی تربیت بھی دی جاتی ہے تاکہ وہ بہتر مسلمان اور شہری بن سکیں',
-              rightBoxTitle: 'ضروریات',
-              rightBoxContent: 'میٹرک سرٹیفکیٹ|دو تصاویر|فیس 5000 روپے|سابقہ سکول کا ریکارڈ',
-              contactNumbers: '0345-7778888, 0301-2223333, 0322-4445555',
-              madrasaName: 'دارالعلوم فیضان مدینہ',
-              madrasaAddress: 'گنج گیٹ، پشاور، خیبر پختونخوا',
-              createdAt: Date.now() - 172800000
-            },
-            {
-              mainTitle: 'نیا تعلیمی سیشن',
-              islamicDate: '1445ھ',
-              gregorianDate: '2024ء',
-              startDate: '25 ذی القعدہ 1445',
-              endDate: '1 جون 2024',
-              section1Title: 'قرآنی علوم',
-              section1Content: 'ناظرہ قرآن|حفظ قرآن|تفسیر|قرات',
-              section2Title: 'حدیث و فقہ',
-              section2Content: 'بخاری شریف|مسلم شریف|ترمذی شریف|ابو داؤد شریف',
-              section3Title: 'معاصر علوم',
-              section3Content: 'اردو ادب|انگریزی|کمپیوٹر|عام سائنس',
-              timing: 'اوقات: صبح 8:30 تا دوپہر 2:00',
-              locationInfo: 'داخلے کے خواہشمند طلباء 1 جون تک رجسٹریشن کروا سکتے ہیں',
-              leftBoxTitle: 'خصوصیات',
-              leftBoxContent: 'ماہر اساتذہ|مفت کتب|رہائش|کھانے کی سہولت',
-              centerBoxTitle: 'علم و عمل کا سنگم',
-              centerBoxContent: 'ہمارا ادارہ طلباء کو علم کے ساتھ ساتھ عمل کی تربیت بھی فراہم کرتا ہے تاکہ وہ عملی زندگی میں کامیاب ہوں',
-              rightBoxTitle: 'داخلہ شرائط',
-              rightBoxContent: 'کم از کم آٹھویں پاس|صحت کا سرٹیفکیٹ|والدین کی تحریری اجازت|پولیس تصدیق',
-              contactNumbers: '0333-1112222, 0344-3334444, 0355-6667777',
-              madrasaName: 'جامعہ ابو بکر صدیق',
-              madrasaAddress: 'یونیورسٹی روڈ، پشاور، خیبر پختونخوا',
-              createdAt: Date.now() - 259200000
+        function newPoster() {
+            if (confirm('کیا آپ نیا پوسٹر بنانا چاہتے ہیں؟ موجودہ تبدیلیاں ضائع ہو جائیں گی۔')) {
+                location.reload();
             }
-          ];
-          for (const data of seedData) {
-            await addPoster(data);
-          }
-          loadPosters();
         }
-      };
-    };
 
-    const addPoster = (data) => {
-      return new Promise((resolve, reject) => {
-        const transaction = db.transaction(['posters'], 'readwrite');
-        const objectStore = transaction.objectStore('posters');
-        const request = objectStore.add(data);
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
-    };
-
-    const updatePoster = (id, data) => {
-      return new Promise((resolve, reject) => {
-        const transaction = db.transaction(['posters'], 'readwrite');
-        const objectStore = transaction.objectStore('posters');
-        const request = objectStore.put({ ...data, id });
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
-    };
-
-    const deletePoster = (id) => {
-      return new Promise((resolve, reject) => {
-        const transaction = db.transaction(['posters'], 'readwrite');
-        const objectStore = transaction.objectStore('posters');
-        const request = objectStore.delete(id);
-        request.onsuccess = () => resolve();
-        request.onerror = () => reject(request.error);
-      });
-    };
-
-    const getAllPosters = () => {
-      return new Promise((resolve, reject) => {
-        const transaction = db.transaction(['posters'], 'readonly');
-        const objectStore = transaction.objectStore('posters');
-        const request = objectStore.getAll();
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
-    };
-
-    const createPosterHTML = (data) => {
-      const section1Items = data.section1Content.split('|');
-      const section2Items = data.section2Content.split('|');
-      const section3Items = data.section3Content.split('|');
-      const leftBoxItems = data.leftBoxContent.split('|');
-      const rightBoxItems = data.rightBoxContent.split('|');
-      const contacts = data.contactNumbers.split(',');
-
-      return `
-<div class="poster-template" id="poster-${data.id}">
-<div class="decorative-minaret left">
-<div class="minaret-crescent"></div>
-<div class="minaret-spire"></div>
-<div class="minaret-dome"></div>
-</div>
-<div class="decorative-minaret right">
-<div class="minaret-crescent"></div>
-<div class="minaret-spire"></div>
-<div class="minaret-dome"></div>
-</div>
-
-<div class="decorative-lantern left">
-<div class="lantern-top"></div>
-<div class="lantern-body"></div>
-<div class="lantern-bottom"></div>
-</div>
-<div class="decorative-lantern right">
-<div class="lantern-top"></div>
-<div class="lantern-body"></div>
-<div class="lantern-bottom"></div>
-</div>
-
-<div class="decorative-crescent left">
-<div class="crescent-shape">
-<div class="crescent-inner"></div>
-</div>
-<div class="diamond-shape"></div>
-</div>
-<div class="decorative-crescent right">
-<div class="crescent-shape">
-<div class="crescent-inner"></div>
-</div>
-<div class="diamond-shape"></div>
-</div>
-
-<div class="poster-main-header">
-<h1 class="main-title">${data.mainTitle}</h1>
-<h2 class="subtitle">${data.islamicDate}/${data.gregorianDate}</h2>
-</div>
-
-<div class="dates-oval">
-<div class="date-item">
-<span class="date-number">10</span>
-${data.startDate}
-</div>
-<div class="date-item">
-<span class="date-number">20</span>
-${data.endDate}
-</div>
-</div>
-
-<div class="three-sections">
-<div class="section-box">
-<div class="section-header orange">${data.section1Title}</div>
-<div class="section-content blue">
-${section1Items.map(item => `<div class="content-item">${item.trim()}</div>`).join('')}
-</div>
-</div>
-
-<div class="section-box">
-<div class="section-header green">${data.section2Title}</div>
-<div class="section-content pink">
-${section2Items.map(item => `<div class="content-item">${item.trim()}</div>`).join('')}
-</div>
-</div>
-
-<div class="section-box">
-<div class="section-header orange">${data.section3Title}</div>
-<div class="section-content blue">
-${section3Items.map(item => `<div class="content-item">${item.trim()}</div>`).join('')}
-</div>
-</div>
-</div>
-
-<div class="timing-bar">
-${data.timing}
-</div>
-
-<div class="location-bar">
-<div class="ornament"></div>
-<div style="flex: 1;">${data.locationInfo}</div>
-<div class="ornament"></div>
-</div>
-
-<div class="bottom-section">
-<div class="side-box">
-<div class="side-box-title">${data.leftBoxTitle}</div>
-<div class="side-box-content">
-${leftBoxItems.map(item => `<div>${item.trim()}</div>`).join('')}
-</div>
-</div>
-
-<div class="center-box">
-<div class="center-box-title">${data.centerBoxTitle}</div>
-<div class="center-box-content">${data.centerBoxContent}</div>
-</div>
-
-<div class="side-box">
-<div class="side-box-title">${data.rightBoxTitle}</div>
-<div class="side-box-content">
-${rightBoxItems.map(item => `<div>${item.trim()}</div>`).join('')}
-</div>
-</div>
-</div>
-
-<div class="footer-banner">
-<div class="footer-item">
-<div class="diamond-icon"></div>
-${contacts.map(c => `<div class="phone-number">${c.trim()}</div>`).join('<br>')}
-</div>
-<div class="footer-text">${data.madrasaName}<br>${data.madrasaAddress}</div>
-<div class="footer-item">
-<div class="diamond-icon"></div>
-</div>
-</div>
-</div>
-`;
-    };
-
-    const loadPosters = async () => {
-      const posters = await getAllPosters();
-      const grid = document.getElementById('posterGrid');
-      grid.innerHTML = '';
-      for (const poster of posters) {
-        const posterHTML = createPosterHTML(poster);
-        const card = document.createElement('div');
-        card.className = 'poster-card';
-        card.innerHTML = `
-<div onclick="previewPoster(${poster.id})" style="cursor: pointer;">
-${posterHTML}
-</div>
-<div class="poster-actions">
-<button class="btn btn-info" onclick="editPoster(${poster.id})">✏️ ترمیم</button>
-<button class="btn btn-success" onclick="duplicatePoster(${poster.id})">📋 نقل</button>
-<button class="btn btn-danger" onclick="confirmDelete(${poster.id})">🗑️ حذف</button>
-</div>
-`;
-        grid.appendChild(card);
-      }
-    };
-
-    const openCreateModal = () => {
-      document.getElementById('posterForm').reset();
-      document.getElementById('posterId').value = '';
-      document.getElementById('editorModal').classList.add('active');
-    };
-
-    const closeModal = () => {
-      document.getElementById('editorModal').classList.remove('active');
-    };
-
-    const closePreviewModal = () => {
-      document.getElementById('previewModal').classList.remove('active');
-      currentPosterData = null;
-    };
-
-    const editPoster = async (id) => {
-      const transaction = db.transaction(['posters'], 'readonly');
-      const objectStore = transaction.objectStore('posters');
-      const request = objectStore.get(id);
-      request.onsuccess = () => {
-        const poster = request.result;
-        document.getElementById('posterId').value = poster.id;
-        document.getElementById('mainTitle').value = poster.mainTitle;
-        document.getElementById('islamicDate').value = poster.islamicDate;
-        document.getElementById('gregorianDate').value = poster.gregorianDate;
-        document.getElementById('startDate').value = poster.startDate;
-        document.getElementById('endDate').value = poster.endDate;
-        document.getElementById('section1Title').value = poster.section1Title;
-        document.getElementById('section1Content').value = poster.section1Content;
-        document.getElementById('section2Title').value = poster.section2Title;
-        document.getElementById('section2Content').value = poster.section2Content;
-        document.getElementById('section3Title').value = poster.section3Title;
-        document.getElementById('section3Content').value = poster.section3Content;
-        document.getElementById('timing').value = poster.timing;
-        document.getElementById('locationInfo').value = poster.locationInfo;
-        document.getElementById('leftBoxTitle').value = poster.leftBoxTitle;
-        document.getElementById('leftBoxContent').value = poster.leftBoxContent;
-        document.getElementById('centerBoxTitle').value = poster.centerBoxTitle;
-        document.getElementById('centerBoxContent').value = poster.centerBoxContent;
-        document.getElementById('rightBoxTitle').value = poster.rightBoxTitle;
-        document.getElementById('rightBoxContent').value = poster.rightBoxContent;
-        document.getElementById('contactNumbers').value = poster.contactNumbers;
-        document.getElementById('madrasaName').value = poster.madrasaName;
-        document.getElementById('madrasaAddress').value = poster.madrasaAddress;
-        document.getElementById('editorModal').classList.add('active');
-      };
-    };
-
-    const savePoster = async (event) => {
-      event.preventDefault();
-      const id = document.getElementById('posterId').value;
-      const posterData = {
-        mainTitle: document.getElementById('mainTitle').value,
-        islamicDate: document.getElementById('islamicDate').value,
-        gregorianDate: document.getElementById('gregorianDate').value,
-        startDate: document.getElementById('startDate').value,
-        endDate: document.getElementById('endDate').value,
-        section1Title: document.getElementById('section1Title').value,
-        section1Content: document.getElementById('section1Content').value,
-        section2Title: document.getElementById('section2Title').value,
-        section2Content: document.getElementById('section2Content').value,
-        section3Title: document.getElementById('section3Title').value,
-        section3Content: document.getElementById('section3Content').value,
-        timing: document.getElementById('timing').value,
-        locationInfo: document.getElementById('locationInfo').value,
-        leftBoxTitle: document.getElementById('leftBoxTitle').value,
-        leftBoxContent: document.getElementById('leftBoxContent').value,
-        centerBoxTitle: document.getElementById('centerBoxTitle').value,
-        centerBoxContent: document.getElementById('centerBoxContent').value,
-        rightBoxTitle: document.getElementById('rightBoxTitle').value,
-        rightBoxContent: document.getElementById('rightBoxContent').value,
-        contactNumbers: document.getElementById('contactNumbers').value,
-        madrasaName: document.getElementById('madrasaName').value,
-        madrasaAddress: document.getElementById('madrasaAddress').value,
-        createdAt: id ? undefined : Date.now()
-      };
-      if (id) {
-        await updatePoster(parseInt(id), posterData);
-      } else {
-        await addPoster(posterData);
-      }
-      closeModal();
-      await loadPosters();
-    };
-
-    const confirmDelete = (id) => {
-      if (confirm('کیا آپ واقعی یہ پوسٹر حذف کرنا چاہتے ہیں؟')) {
-        deletePoster(id).then(() => loadPosters());
-      }
-    };
-
-    const duplicatePoster = async (id) => {
-      const transaction = db.transaction(['posters'], 'readonly');
-      const objectStore = transaction.objectStore('posters');
-      const request = objectStore.get(id);
-      request.onsuccess = async () => {
-        const poster = request.result;
-        delete poster.id;
-        poster.mainTitle += ' (نقل)';
-        poster.createdAt = Date.now();
-        await addPoster(poster);
-        await loadPosters();
-      };
-    };
-
-    const deleteAllPosters = () => {
-      if (confirm('کیا آپ تمام پوسٹر حذف کرنا چاہتے ہیں؟ یہ عمل واپس نہیں ہو سکتا۔')) {
-        const transaction = db.transaction(['posters'], 'readwrite');
-        const objectStore = transaction.objectStore('posters');
-        objectStore.clear();
-        transaction.oncomplete = () => loadPosters();
-      }
-    };
-
-    const previewPoster = async (id) => {
-      showLoading();
-      const transaction = db.transaction(['posters'], 'readonly');
-      const objectStore = transaction.objectStore('posters');
-      const request = objectStore.get(id);
-      request.onsuccess = async () => {
-        currentPosterData = request.result;
-        currentPosterId = id;
-        const posterHTML = createPosterHTML(currentPosterData);
-        document.getElementById('previewContainer').innerHTML = posterHTML;
-        document.getElementById('previewModal').classList.add('active');
-        hideLoading();
-      };
-    };
-
-    const exportToPNG = async () => {
-      if (!currentPosterData) return;
-      showLoading();
-      const posterElement = document.querySelector('#previewContainer .poster-template');
-      const canvas = await html2canvas(posterElement, {
-        scale: 4,
-        useCORS: true,
-        backgroundColor: '#bae6fd',
-        logging: false,
-        width: 700,
-        height: 990
-      });
-      canvas.toBlob((blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${currentPosterData.mainTitle.replace(/\s+/g, '_')}_poster_${Date.now()}.png`;
-        a.click();
-        URL.revokeObjectURL(url);
-        hideLoading();
-      }, 'image/png', 1.0);
-    };
-
-    const exportToPDF = async () => {
-      if (!currentPosterData) return;
-      showLoading();
-      const posterElement = document.querySelector('#previewContainer .poster-template');
-      const canvas = await html2canvas(posterElement, {
-        scale: 4,
-        useCORS: true,
-        backgroundColor: '#bae6fd',
-        logging: false,
-        width: 700,
-        height: 990
-      });
-      const imgData = canvas.toDataURL('image/png', 1.0);
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-        compress: true
-      });
-      const imgWidth = 210;
-      const imgHeight = 297;
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
-      pdf.save(`${currentPosterData.mainTitle.replace(/\s+/g, '_')}_poster_${Date.now()}.pdf`);
-      hideLoading();
-    };
-
-    const exportAllData = async () => {
-      const posters = await getAllPosters();
-      const dataStr = JSON.stringify(posters, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `madrasa_posters_backup_${Date.now()}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    };
-
-    const importData = (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        try {
-          const data = JSON.parse(e.target.result);
-          if (!Array.isArray(data)) {
-            alert('غلط فائل فارمیٹ');
-            return;
-          }
-          for (const poster of data) {
-            delete poster.id;
-            await addPoster(poster);
-          }
-          await loadPosters();
-          alert('ڈیٹا کامیابی سے درآمد ہو گیا');
-        } catch (error) {
-          alert('فائل پڑھنے میں خرابی: ' + error.message);
+        function deleteElement(btn) {
+            if (confirm('کیا آپ اس عنصر کو حذف کرنا چاہتے ہیں؟')) {
+                const element = btn.parentElement;
+                element.remove();
+                showToast('✅ عنصر حذف ہو گیا', 'success');
+            }
         }
-      };
-      reader.readAsText(file);
-      event.target.value = '';
-    };
 
-    const showLoading = () => {
-      document.getElementById('loadingOverlay').classList.add('active');
-    };
+        function addMainSection() {
+            const container = document.getElementById('mainSections');
+            const newSection = document.createElement('div');
+            newSection.className = 'section-card deletable';
+            newSection.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                <div class="section-title editable" contenteditable="true" data-placeholder="عنوان لکھیں">نیا سیکشن</div>
+                <div class="section-content editable" contenteditable="true" data-placeholder="تفصیل لکھیں">یہاں اپنی تفصیل لکھیں</div>
+            `;
+            container.appendChild(newSection);
+            showToast('✅ نیا سیکشن شامل ہو گیا', 'success');
+        }
 
-    const hideLoading = () => {
-      document.getElementById('loadingOverlay').classList.remove('active');
-    };
+        function addFullWidthSection() {
+            const canvas = document.getElementById('posterCanvas');
+            const newSection = document.createElement('div');
+            newSection.className = 'full-width-section deletable';
+            newSection.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                <div class="full-width-section-title editable" contenteditable="true" data-placeholder="عنوان">پورا چوڑا سیکشن</div>
+                <div class="full-width-section-content editable" contenteditable="true" data-placeholder="مواد لکھیں">یہاں اپنا مواد لکھیں۔ یہ سیکشن پوری چوڑائی میں ظاہر ہوگا۔</div>
+            `;
+            canvas.insertBefore(newSection, canvas.querySelector('.footer-section'));
+            showToast('✅ پورا چوڑا سیکشن شامل ہو گیا', 'success');
+        }
 
-    window.addEventListener('DOMContentLoaded', async () => {
-      await initDB();
-      await seedInitialData();
-      await loadPosters();
-    });
-  </script>
+        function addCenteredSmallSection() {
+            const canvas = document.getElementById('posterCanvas');
+            const newSection = document.createElement('div');
+            newSection.className = 'centered-small-section deletable';
+            newSection.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                <div class="centered-small-section-title editable" contenteditable="true" data-placeholder="عنوان">چھوٹا سیکشن</div>
+                <div class="centered-small-section-content editable" contenteditable="true" data-placeholder="مواد">یہ ایک چھوٹا سیکشن ہے جو وسط میں ہے۔</div>
+            `;
+            canvas.insertBefore(newSection, canvas.querySelector('.footer-section'));
+            showToast('✅ چھوٹا سیکشن شامل ہو گیا', 'success');
+        }
 
+        function addBottomSection() {
+            const container = document.getElementById('bottomSections');
+            const newSection = document.createElement('div');
+            newSection.className = 'bottom-card deletable';
+            newSection.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                <div class="bottom-card-title editable" contenteditable="true" data-placeholder="عنوان">نیا سیکشن</div>
+                <div class="bottom-card-content editable" contenteditable="true" data-placeholder="مواد لکھیں">یہاں اپنا مواد لکھیں</div>
+            `;
+            container.appendChild(newSection);
+            showToast('✅ نیا سیکشن شامل ہو گیا', 'success');
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.style.display = sidebar.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function exportToImage() {
+            const canvas = document.getElementById('posterCanvas');
+
+            // Hide all add-section buttons, delete buttons, and stop animations
+            const addButtons = canvas.querySelectorAll('.add-section-btn, .action-menu');
+            const deleteButtons = canvas.querySelectorAll('.delete-btn');
+            const decoratives = canvas.querySelectorAll('.decorative-elements');
+
+            addButtons.forEach(btn => btn.style.display = 'none');
+            deleteButtons.forEach(btn => btn.style.display = 'none');
+            decoratives.forEach(deco => deco.style.animation = 'none');
+
+            try {
+                const downloadCanvas = await html2canvas(canvas, {
+                    scale: 3,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    width: canvas.offsetWidth,
+                    height: canvas.offsetHeight
+                });
+
+                const link = document.createElement('a');
+                link.download = `islamic-poster-${Date.now()}.png`;
+                link.href = downloadCanvas.toDataURL('image/png', 1.0);
+                link.click();
+
+                showToast('✅ تصویر کامیابی سے ڈاؤن لوڈ ہو گئی!', 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showToast('❌ ایکسپورٹ میں خرابی!', 'error');
+            }
+
+            // Restore all elements
+            addButtons.forEach(btn => btn.style.display = '');
+            deleteButtons.forEach(btn => btn.style.display = '');
+            decoratives.forEach(deco => deco.style.animation = '');
+        }
+
+        async function exportToPDF() {
+            const canvas = document.getElementById('posterCanvas');
+
+            // Hide all add-section buttons, delete buttons, and stop animations
+            const addButtons = canvas.querySelectorAll('.add-section-btn, .action-menu');
+            const deleteButtons = canvas.querySelectorAll('.delete-btn');
+            const decoratives = canvas.querySelectorAll('.decorative-elements');
+
+            addButtons.forEach(btn => btn.style.display = 'none');
+            deleteButtons.forEach(btn => btn.style.display = 'none');
+            decoratives.forEach(deco => deco.style.animation = 'none');
+
+            try {
+                const downloadCanvas = await html2canvas(canvas, {
+                    scale: 2.5,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff'
+                });
+
+                const imgData = downloadCanvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const imgWidth = 210;
+                const imgHeight = (downloadCanvas.height * imgWidth) / downloadCanvas.width;
+
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                pdf.save(`islamic-poster-${Date.now()}.pdf`);
+
+                showToast('✅ PDF کامیابی سے ڈاؤن لوڈ ہو گئی!', 'success');
+            } catch (error) {
+                console.error('PDF export error:', error);
+                showToast('❌ PDF ایکسپورٹ میں خرابی!', 'error');
+            }
+
+            // Restore all elements
+            addButtons.forEach(btn => btn.style.display = '');
+            deleteButtons.forEach(btn => btn.style.display = '');
+            decoratives.forEach(deco => deco.style.animation = '');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            toast.style.background = type === 'success'
+                ? 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)'
+                : 'linear-gradient(135deg, #eb3349 0%, #f45c43 100%)';
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Initialize
+        window.onload = () => {
+            initDB();
+        };
+    </script>
+    <script type="module">
+        import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
+
+        const swUrl = './sw.js';
+        const wb = new Workbox(swUrl);
+
+        wb.addEventListener('waiting', () => {
+            console.log('A new service worker is waiting to activate.');
+            wb.messageSW({ type: 'SKIP_WAITING' });
+        });
+
+        wb.addEventListener('controlling', () => {
+            console.log('The new service worker is now in control. Reloading page for updates...');
+            window.location.reload();
+        });
+
+        wb.register();
+    </script>
 </body>
 
 </html>
