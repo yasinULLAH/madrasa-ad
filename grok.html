@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poster Maker App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            direction: rtl;
+            text-align: right;
+        }
+        #poster {
+            width: 800px;
+            height: 1200px;
+            background-color: #00a65c;
+            position: relative;
+            margin: 0 auto;
+            overflow: hidden;
+            color: white;
+            border: 1px solid black;
+        }
+        #logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+        }
+        #top-photo {
+            position: absolute;
+            top: 50px;
+            left: 100px;
+            width: 300px;
+            height: 200px;
+        }
+        #small-photo {
+            position: absolute;
+            top: 300px;
+            right: 50px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+        }
+        .orange-bubble {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: orange;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 20px;
+        }
+        .hexagon {
+            position: absolute;
+            top: 100px;
+            left: 200px;
+            width: 400px;
+            height: 200px;
+            background-color: orange;
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+        }
+        #big-title {
+            position: absolute;
+            top: 150px;
+            left: 200px;
+            font-size: 50px;
+            color: white;
+        }
+        /* Add more styles for other elements to match the layout as closely as possible */
+        #qr-code {
+            position: absolute;
+            top: 500px;
+            left: 350px;
+            width: 150px;
+            height: 150px;
+            background: white;
+        }
+        #conditions {
+            position: absolute;
+            top: 450px;
+            right: 50px;
+            font-size: 20px;
+        }
+        #calendar {
+            position: absolute;
+            top: 700px;
+            left: 300px;
+            font-size: 25px;
+        }
+        #phone {
+            position: absolute;
+            top: 800px;
+            left: 300px;
+            font-size: 20px;
+            color: red;
+        }
+        #bottom-text {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 25px;
+            color: green;
+        }
+        /* Editor section */
+        #editor {
+            margin: 20px;
+        }
+        input, textarea {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        #poster-list {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Poster Maker App</h1>
+    <div id="poster">
+        <img id="poster-logo" src="">
+        <img id="poster-top-photo" src="">
+        <img id="poster-small-photo" src="">
+        <div class="orange-bubble" id="orange-title"></div>
+        <div class="hexagon"><span id="big-title"></span></div>
+        <div id="sub-title"></div>
+        <div id="organization"></div>
+        <div id="date"></div>
+        <!-- Add more spans/divs for other texts -->
+        <div id="qr-code"></div>
+        <div id="conditions">
+            <h3 id="conditions-title"></h3>
+            <ul>
+                <li id="condition1"></li>
+                <li id="condition2"></li>
+                <li id="condition3"></li>
+            </ul>
+        </div>
+        <div id="calendar">
+            <span id="from-date"></span> سے <span id="to-date"></span> <span id="month"></span>
+        </div>
+        <div id="phone"></div>
+        <div id="bottom-text"></div>
+    </div>
+    <button onclick="exportToPNG()">Export to PNG</button>
+    <button onclick="exportToPDF()">Export to PDF</button>
+
+    <div id="editor">
+        <h2>Edit Poster</h2>
+        <input type="hidden" id="current-id">
+        <label>Orange Title: <input type="text" id="edit-orange-title" value="مجلس تکمیل قرآن حکیم"></label>
+        <label>Big Title: <input type="text" id="edit-big-title" value="مدرسه دار الشہید"></label>
+        <label>Sub Title: <input type="text" id="edit-sub-title" value="کا اجلاس فراغت"></label>
+        <label>Organization: <input type="text" id="edit-organization" value="انجمن دعوت و اصلاح"></label>
+        <label>Date: <input type="text" id="edit-date" value="14/4/2025"></label>
+        <label>Conditions Title: <input type="text" id="edit-conditions-title" value="شرائط"></label>
+        <label>Condition 1: <input type="text" id="edit-condition1" value="F.A , B.A کر لی ہو۔"></label>
+        <label>Condition 2: <input type="text" id="edit-condition2" value="عمر 20 سال سے زائد"></label>
+        <label>Condition 3: <input type="text" id="edit-condition3" value=""></label>
+        <label>From Date: <input type="text" id="edit-from-date" value="5"></label>
+        <label>To Date: <input type="text" id="edit-to-date" value="9"></label>
+        <label>Month: <input type="text" id="edit-month" value="رمضان المبارک"></label>
+        <label>Location: <input type="text" id="edit-location" value="بولند بالا ، کرم"></label>
+        <label>Phone: <input type="text" id="edit-phone" value="0370270214 / 0316776745"></label>
+        <label>Bottom Text: <input type="text" id="edit-bottom-text" value="ال فاروق اسلامک سینٹر بنو"></label>
+        <label>QR URL: <input type="text" id="edit-qr-url" value="https://example.com"></label>
+        <label>Logo Image: <input type="file" id="edit-logo"></label>
+        <label>Top Photo: <input type="file" id="edit-top-photo"></label>
+        <label>Small Photo: <input type="file" id="edit-small-photo"></label>
+        <!-- Add more fields as needed -->
+        <button onclick="addPoster()">Add New</button>
+        <button onclick="updatePoster()">Update</button>
+    </div>
+    <div id="poster-list">
+        <h2>Posters</h2>
+        <ul id="list"></ul>
+    </div>
+
+    <script>
+        let db;
+        const request = indexedDB.open('PosterDB', 1);
+        request.onupgradeneeded = (event) => {
+            db = event.target.result;
+            db.createObjectStore('posters', { keyPath: 'id', autoIncrement: true });
+        };
+        request.onsuccess = (event) => {
+            db = event.target.result;
+            loadPosters();
+        };
+
+        async function getFileBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function getDataFromForm() {
+            const data = {
+                orangeTitle: document.getElementById('edit-orange-title').value,
+                bigTitle: document.getElementById('edit-big-title').value,
+                subTitle: document.getElementById('edit-sub-title').value,
+                organization: document.getElementById('edit-organization').value,
+                date: document.getElementById('edit-date').value,
+                conditionsTitle: document.getElementById('edit-conditions-title').value,
+                condition1: document.getElementById('edit-condition1').value,
+                condition2: document.getElementById('edit-condition2').value,
+                condition3: document.getElementById('edit-condition3').value,
+                fromDate: document.getElementById('edit-from-date').value,
+                toDate: document.getElementById('edit-to-date').value,
+                month: document.getElementById('edit-month').value,
+                location: document.getElementById('edit-location').value,
+                phone: document.getElementById('edit-phone').value,
+                bottomText: document.getElementById('edit-bottom-text').value,
+                qrUrl: document.getElementById('edit-qr-url').value,
+            };
+            const logoFile = document.getElementById('edit-logo').files[0];
+            if (logoFile) data.logoSrc = await getFileBase64(logoFile);
+            const topPhotoFile = document.getElementById('edit-top-photo').files[0];
+            if (topPhotoFile) data.topPhotoSrc = await getFileBase64(topPhotoFile);
+            const smallPhotoFile = document.getElementById('edit-small-photo').files[0];
+            if (smallPhotoFile) data.smallPhotoSrc = await getFileBase64(smallPhotoFile);
+            return data;
+        }
+
+        function addPoster() {
+            getDataFromForm().then(data => {
+                const tx = db.transaction('posters', 'readwrite');
+                tx.objectStore('posters').add(data);
+                tx.onsuccess = () => loadPosters();
+            });
+        }
+
+        function updatePoster() {
+            getDataFromForm().then(data => {
+                data.id = parseInt(document.getElementById('current-id').value);
+                const tx = db.transaction('posters', 'readwrite');
+                tx.objectStore('posters').put(data);
+                tx.onsuccess = () => loadPosters();
+            });
+        }
+
+        function deletePoster(id) {
+            const tx = db.transaction('posters', 'readwrite');
+            tx.objectStore('posters').delete(id);
+            tx.onsuccess = () => loadPosters();
+        }
+
+        function loadPosters() {
+            const tx = db.transaction('posters', 'readonly');
+            const store = tx.objectStore('posters');
+            const req = store.getAll();
+            req.onsuccess = (event) => {
+                const posters = event.target.result;
+                const list = document.getElementById('list');
+                list.innerHTML = '';
+                posters.forEach(p => {
+                    const li = document.createElement('li');
+                    li.textContent = `Poster ${p.id}`;
+                    const editBtn = document.createElement('button');
+                    editBtn.textContent = 'Edit';
+                    editBtn.onclick = () => edit(p);
+                    const delBtn = document.createElement('button');
+                    delBtn.textContent = 'Delete';
+                    delBtn.onclick = () => deletePoster(p.id);
+                    const viewBtn = document.createElement('button');
+                    viewBtn.textContent = 'View';
+                    viewBtn.onclick = () => renderPoster(p);
+                    li.appendChild(editBtn);
+                    li.appendChild(delBtn);
+                    li.appendChild(viewBtn);
+                    list.appendChild(li);
+                });
+            };
+        }
+
+        function edit(data) {
+            document.getElementById('current-id').value = data.id;
+            document.getElementById('edit-orange-title').value = data.orangeTitle || '';
+            document.getElementById('edit-big-title').value = data.bigTitle || '';
+            // Set all other fields similarly
+            document.getElementById('edit-sub-title').value = data.subTitle || '';
+            document.getElementById('edit-organization').value = data.organization || '';
+            document.getElementById('edit-date').value = data.date || '';
+            document.getElementById('edit-conditions-title').value = data.conditionsTitle || '';
+            document.getElementById('edit-condition1').value = data.condition1 || '';
+            document.getElementById('edit-condition2').value = data.condition2 || '';
+            document.getElementById('edit-condition3').value = data.condition3 || '';
+            document.getElementById('edit-from-date').value = data.fromDate || '';
+            document.getElementById('edit-to-date').value = data.toDate || '';
+            document.getElementById('edit-month').value = data.month || '';
+            document.getElementById('edit-location').value = data.location || '';
+            document.getElementById('edit-phone').value = data.phone || '';
+            document.getElementById('edit-bottom-text').value = data.bottomText || '';
+            document.getElementById('edit-qr-url').value = data.qrUrl || '';
+            // For images, can't set file input, but can render current
+            renderPoster(data);
+        }
+
+        function renderPoster(data) {
+            document.getElementById('orange-title').innerText = data.orangeTitle || '';
+            document.getElementById('big-title').innerText = data.bigTitle || '';
+            // Set all other texts
+            document.getElementById('sub-title').innerText = data.subTitle || '';
+            document.getElementById('organization').innerText = data.organization || '';
+            document.getElementById('date').innerText = data.date || '';
+            document.getElementById('conditions-title').innerText = data.conditionsTitle || '';
+            document.getElementById('condition1').innerText = data.condition1 || '';
+            document.getElementById('condition2').innerText = data.condition2 || '';
+            document.getElementById('condition3').innerText = data.condition3 || '';
+            document.getElementById('from-date').innerText = data.fromDate || '';
+            document.getElementById('to-date').innerText = data.toDate || '';
+            document.getElementById('month').innerText = data.month || '';
+            document.getElementById('phone').innerText = data.phone || '';
+            document.getElementById('bottom-text').innerText = data.bottomText || '';
+            document.getElementById('poster-logo').src = data.logoSrc || 'https://placehold.co/100x100';
+            document.getElementById('poster-top-photo').src = data.topPhotoSrc || 'https://placehold.co/300x200';
+            document.getElementById('poster-small-photo').src = data.smallPhotoSrc || 'https://placehold.co/150x150';
+            const qrDiv = document.getElementById('qr-code');
+            qrDiv.innerHTML = '';
+            new QRCode(qrDiv, data.qrUrl || 'https://example.com');
+        }
+
+        function exportToPNG() {
+            html2canvas(document.getElementById('poster'), {scale: 4}).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'poster.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function exportToPDF() {
+            html2canvas(document.getElementById('poster'), {scale: 4}).then(canvas => {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'px',
+                    format: [canvas.width / 4, canvas.height / 4]  // Adjust for scale
+                });
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+                pdf.save('poster.pdf');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Madrasa Admission Flyer Editor</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --gold: #c8993a;
+    --gold-light: #e8c068;
+    --gold-dark: #8b6520;
+    --brown: #3d2b0e;
+    --brown-mid: #6b4c1e;
+    --brown-light: #a07840;
+    --cream: #f5e8c8;
+    --cream-dark: #e8d4a0;
+    --white: #fff;
+    --text-dark: #2a1800;
+    --green-dark: #1a3a1a;
+    --olive: #4a5e2a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Nastaliq Urdu', 'Amiri', serif;
+    background: #1a1208;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  /* ============ TOOLBAR ============ */
+  #toolbar {
+    width: 100%;
+    max-width: 900px;
+    background: linear-gradient(135deg, #2a1800, #4a2e0a);
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    direction: ltr;
+  }
+
+  #toolbar h1 {
+    width: 100%;
+    text-align: center;
+    color: var(--gold-light);
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    font-family: 'Amiri', serif;
+  }
+
+  .btn {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--brown);
+    border: 1px solid var(--gold-light);
+  }
+  .btn-gold:hover { background: linear-gradient(135deg, var(--gold-light), var(--gold)); box-shadow: 0 0 10px rgba(200,153,58,0.5); }
+
+  .btn-green {
+    background: linear-gradient(135deg, #2e5e1a, #1a3a0e);
+    color: #b8e870;
+    border: 1px solid #4a8a2a;
+  }
+  .btn-green:hover { background: linear-gradient(135deg, #3e7e2a, #2e5e1a); }
+
+  .btn-red {
+    background: linear-gradient(135deg, #7a1a1a, #4a0e0e);
+    color: #ffaaaa;
+    border: 1px solid #aa3a3a;
+  }
+  .btn-red:hover { background: linear-gradient(135deg, #aa2a2a, #7a1a1a); }
+
+  .btn-blue {
+    background: linear-gradient(135deg, #1a3a7a, #0e1a4a);
+    color: #aac8ff;
+    border: 1px solid #3a5aaa;
+  }
+  .btn-blue:hover { background: linear-gradient(135deg, #2a5aaa, #1a3a7a); }
+
+  .btn-purple {
+    background: linear-gradient(135deg, #5a1a7a, #2e0e4a);
+    color: #d8aaff;
+    border: 1px solid #8a3aaa;
+  }
+  .btn-purple:hover { background: linear-gradient(135deg, #7a2aaa, #5a1a7a); }
+
+  #recordsList {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .record-chip {
+    background: rgba(200,153,58,0.2);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    padding: 4px 14px;
+    color: var(--gold-light);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    direction: ltr;
+  }
+  .record-chip:hover, .record-chip.active { background: rgba(200,153,58,0.5); }
+
+  /* ============ EDITOR MODAL ============ */
+  #editorOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #editorOverlay.open { display: flex; }
+
+  #editorModal {
+    background: linear-gradient(160deg, #2a1a08, #3d2b0e);
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 24px;
+    direction: rtl;
+  }
+
+  #editorModal h2 {
+    color: var(--gold-light);
+    font-size: 1.3rem;
+    margin-bottom: 18px;
+    text-align: center;
+    border-bottom: 1px solid var(--gold-dark);
+    padding-bottom: 12px;
+  }
+
+  .form-section {
+    background: rgba(200,153,58,0.08);
+    border: 1px solid var(--gold-dark);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .form-section h3 {
+    color: var(--gold);
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+    direction: rtl;
+  }
+
+  label {
+    display: block;
+    color: var(--cream);
+    font-size: 0.82rem;
+    margin-bottom: 4px;
+  }
+
+  input[type="text"], input[type="tel"], input[type="date"], textarea, select {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--gold-dark);
+    border-radius: 6px;
+    color: var(--cream);
+    padding: 7px 10px;
+    font-family: 'Noto Nastaliq Urdu', serif;
+    font-size: 0.88rem;
+    direction: rtl;
+    outline: none;
+    transition: border 0.2s;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--gold); }
+  textarea { resize: vertical; min-height: 60px; }
+
+  .conditions-list { display: flex; flex-direction: column; gap: 6px; }
+  .condition-item { display: flex; gap: 8px; align-items: center; }
+  .condition-item input { flex: 1; }
+  .btn-icon { padding: 6px 10px; font-size: 0.9rem; border-radius: 6px; }
+
+  .circles-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .circle-editor { background: rgba(255,255,255,0.04); border-radius: 8px; padding: 10px; border: 1px solid rgba(200,153,58,0.2); }
+  .circle-editor label { color: var(--gold-light); font-size: 0.8rem; margin-bottom: 6px; }
+
+  .modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-direction: ltr; }
+
+  /* ============ FLYER ============ */
+  #flyerWrapper {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #flyer {
+    width: 520px;
+    min-height: 900px;
+    background: #c8993a;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Noto Nastaliq Urdu', 'Amiri', serif;
+    direction: rtl;
+    border-radius: 4px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+  }
+
+  /* ---- Background pattern ---- */
+  .flyer-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 80% 20%, rgba(200,153,58,0.6) 0%, transparent 55%),
+      radial-gradient(ellipse at 20% 80%, rgba(139,101,32,0.5) 0%, transparent 55%),
+      linear-gradient(160deg, #b8881e 0%, #c8993a 40%, #a07020 100%);
+    z-index: 0;
+  }
+
+  .flyer-pattern {
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 20px),
+      repeating-linear-gradient(-45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 20px);
+    z-index: 0;
+  }
+
+  /* Decorative corner arcs */
+  .arc-tl, .arc-tr, .arc-bl, .arc-br {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border: 3px solid rgba(255,255,255,0.15);
+    border-radius: 50%;
+    z-index: 1;
+  }
+  .arc-tl { top: -40px; left: -40px; }
+  .arc-tr { top: -40px; right: -40px; }
+  .arc-bl { bottom: -40px; left: -40px; }
+  .arc-br { bottom: -40px; right: -40px; }
+
+  .flyer-inner {
+    position: relative;
+    z-index: 2;
+    padding: 16px;
+  }
+
+  /* ---- Top section ---- */
+  .top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+
+  /* Announcement badge */
+  .announcement-badge {
+    background: linear-gradient(135deg, #8b1a1a, #c02020);
+    border: 3px solid #e8c068;
+    border-radius: 12px;
+    padding: 8px 16px;
+    text-align: center;
+    min-width: 120px;
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.4);
+  }
+
+  .announcement-badge .announce-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #e8c068;
+    line-height: 1.1;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+
+  .announcement-badge .announce-subtitle {
+    font-size: 1.1rem;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .announcement-badge .announce-year {
+    font-size: 0.95rem;
+    color: #e8c068;
+    font-weight: 700;
+    margin-top: 4px;
+    direction: ltr;
+  }
+
+  /* Logos area */
+  .logos-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .logo-badge {
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+    border: 2px solid rgba(255,255,255,0.4);
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.45rem;
+    color: #fff;
+    text-align: center;
+    font-weight: 700;
+    padding: 4px;
+    overflow: hidden;
+  }
+
+  .institute-name-badge {
+    background: linear-gradient(135deg, #3d2b0e, #6b4c1e);
+    border: 2px solid var(--gold-light);
+    border-radius: 30px;
+    padding: 5px 14px;
+    color: var(--gold-light);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: center;
+    max-width: 170px;
+    margin-top: 4px;
+  }
+
+  .institute-name-badge .campus-tag {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--cream);
+    margin-top: 1px;
+  }
+
+  /* Hero image band */
+  .hero-photo-band {
+    width: 100%;
+    height: 110px;
+    background: linear-gradient(135deg, #1a2e1a, #2a4a2a);
+    border-radius: 10px;
+    margin: 10px 0;
+    overflow: hidden;
+    position: relative;
+    border: 3px solid var(--gold-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-photo-band img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+  }
+
+  .hero-photo-placeholder {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  /* Main title area */
+  .main-content-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .left-panel {
+    flex: 0 0 180px;
+  }
+
+  .right-panel {
+    flex: 1;
+  }
+
+  .conditions-box {
+    background: linear-gradient(135deg, #3d2b0e, #5a3d18);
+    border: 2px solid var(--gold);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+
+  .conditions-box .box-title {
+    color: var(--gold-light);
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+    border-bottom: 1px solid var(--gold-dark);
+    padding-bottom: 5px;
+    margin-bottom: 6px;
+  }
+
+  .conditions-box ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .conditions-box ul li {
+    color: var(--cream);
+    font-size: 0.78rem;
+    padding: 2px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    line-height: 1.4;
+  }
+
+  .conditions-box ul li::before {
+    content: '◄';
+    color: var(--gold);
+    font-size: 0.6rem;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+
+  /* Shoba title */
+  .shoba-word {
+    color: var(--brown);
+    font-size: 3.8rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: right;
+    text-shadow: 3px 3px 0 rgba(255,255,255,0.2), -1px -1px 0 rgba(0,0,0,0.1);
+    font-family: 'Noto Nastaliq Urdu', serif;
+  }
+
+  .tahfiz-title {
+    color: var(--brown);
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: right;
+    line-height: 1.2;
+  }
+
+  .entry-subtitle {
+    color: var(--brown);
+    font-size: 1rem;
+    text-align: right;
+    margin-top: 4px;
+  }
+
+  .noorani-tag {
+    background: rgba(255,255,255,0.15);
+    border-radius: 6px;
+    padding: 3px 10px;
+    color: var(--brown);
+    font-size: 0.85rem;
+    display: inline-block;
+    margin-top: 4px;
+  }
+
+  .model-class-badge {
+    background: linear-gradient(135deg, #8b1a1a, #c02020);
+    border: 2px solid #e8c068;
+    border-radius: 20px;
+    padding: 5px 14px;
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 8px;
+    display: inline-block;
+    width: 100%;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+  }
+
+  /* Date row */
+  .dates-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    align-items: center;
+  }
+
+  .clock-icon {
+    font-size: 2rem;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .dates-info {
+    flex: 1;
+  }
+
+  .date-line {
+    background: linear-gradient(90deg, rgba(61,43,14,0.8), rgba(61,43,14,0.4));
+    border-radius: 6px;
+    padding: 4px 10px;
+    margin-bottom: 4px;
+    color: var(--cream);
+    font-size: 0.8rem;
+  }
+
+  .date-line .date-label {
+    color: var(--gold-light);
+    font-weight: 700;
+  }
+
+  /* Model class central */
+  .model-class-central {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  .model-class-circle {
+    background: linear-gradient(135deg, #6b4c1e, #3d2b0e);
+    border: 4px solid var(--gold);
+    border-radius: 50%;
+    width: 160px;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4), 0 0 0 2px var(--gold-light);
+    padding: 10px;
+  }
+
+  .model-class-circle .mc-line1 {
+    color: var(--gold-light);
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .model-class-circle .mc-line2 {
+    color: var(--cream);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* Circles grid */
+  .circles-section {
+    position: relative;
+    padding: 0 10px;
+    margin-bottom: 14px;
+  }
+
+  .circles-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .feature-circle-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .feature-circle {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 3px solid var(--gold);
+    overflow: hidden;
+    background: linear-gradient(135deg, #2a1a08, #4a2e10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    flex-shrink: 0;
+  }
+
+  .feature-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .feature-circle-placeholder {
+    color: rgba(255,255,255,0.3);
+    font-size: 0.6rem;
+    text-align: center;
+    padding: 8px;
+  }
+
+  .feature-caption {
+    color: var(--brown);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-align: center;
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 2px 8px;
+    max-width: 120px;
+  }
+
+  /* Connecting lines */
+  .connector {
+    position: absolute;
+    background: var(--gold-dark);
+    opacity: 0.6;
+  }
+
+  /* Contact section */
+  .contact-section {
+    background: linear-gradient(135deg, #3d2b0e, #5a3d18);
+    border: 2px solid var(--gold);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .contact-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .phone-icon {
+    font-size: 2.2rem;
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+  }
+
+  .phone-numbers {
+    direction: ltr;
+  }
+
+  .phone-numbers div {
+    color: var(--cream);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    font-family: 'Amiri', serif;
+  }
+
+  .phone-note {
+    color: var(--cream-dark);
+    font-size: 0.7rem;
+    margin-top: 2px;
+  }
+
+  .qr-box {
+    width: 70px;
+    height: 70px;
+    background: #fff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    color: #333;
+    text-align: center;
+    border: 2px solid var(--gold-dark);
+    overflow: hidden;
+  }
+
+  .qr-box canvas {
+    width: 66px !important;
+    height: 66px !important;
+  }
+
+  /* Footer */
+  .flyer-footer {
+    background: linear-gradient(90deg, #3d2b0e, #6b4c1e, #3d2b0e);
+    border-top: 2px solid var(--gold);
+    padding: 8px 14px;
+    color: var(--cream);
+    font-size: 0.78rem;
+    text-align: center;
+    border-radius: 0 0 4px 4px;
+    margin: 0 -16px -16px;
+  }
+
+  /* ============ STATUS BAR ============ */
+  #statusBar {
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
+    color: var(--gold-light);
+    font-size: 0.8rem;
+    margin-top: 10px;
+    padding: 6px;
+    background: rgba(200,153,58,0.1);
+    border-radius: 6px;
+    direction: ltr;
+  }
+
+  /* Loading overlay */
+  #loadingOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+  }
+  #loadingOverlay.show { display: flex; }
+  #loadingOverlay p { color: var(--gold-light); font-size: 1.1rem; }
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--gold-dark);
+    border-top-color: var(--gold-light);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Responsive */
+  @media (max-width: 560px) {
+    #flyer { width: 100%; min-width: 320px; }
+    .flyer-inner { padding: 12px; }
+    .shoba-word { font-size: 2.8rem; }
+    .model-class-circle { width: 130px; height: 130px; }
+    .feature-circle { width: 85px; height: 85px; }
+  }
+
+  /* Edit highlights on hover */
+  .editable-hint {
+    position: relative;
+    cursor: pointer;
+  }
+  .editable-hint::after {
+    content: '✎';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    background: var(--gold);
+    color: var(--brown);
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  .editable-hint:hover::after { display: flex; }
+  .editable-hint:hover { outline: 2px dashed rgba(200,153,58,0.6); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <p id="loadingMsg">Processing...</p>
+</div>
+
+<!-- ============ TOOLBAR ============ -->
+<div id="toolbar">
+  <h1>🕌 Madrasa Flyer CRUD Editor</h1>
+  <button class="btn btn-green" onclick="openEditor(null)">➕ New Flyer</button>
+  <button class="btn btn-gold" onclick="saveFlyer()">💾 Save</button>
+  <button class="btn btn-gold" onclick="exportImage()">🖼️ Export Image (HD)</button>
+  <button class="btn btn-blue" onclick="exportPDF()">📄 Export PDF</button>
+  <button class="btn btn-red" onclick="deleteCurrentFlyer()">🗑️ Delete</button>
+  <div id="recordsList"></div>
+</div>
+
+<!-- ============ EDITOR MODAL ============ -->
+<div id="editorOverlay">
+  <div id="editorModal">
+    <h2>📝 Edit Flyer Content</h2>
+
+    <!-- Institution -->
+    <div class="form-section">
+      <h3>🏛️ Institution Info</h3>
+      <div class="form-group"><label>Institution Name (اردو)</label><input type="text" id="f_institutionName" value="جامعۃ الشہید"></div>
+      <div class="form-group"><label>Campus / Branch</label><input type="text" id="f_campus" value="گوجرانوالہ کیمپس"></div>
+      <div class="form-group"><label>Logo Text / Symbol</label><input type="text" id="f_logoText" value="J.S"></div>
+      <div class="form-group"><label>Footer Address</label><input type="text" id="f_footerAddress" value="ادارہ شاہ مین ٹاؤن روڈ گوجرانوالہ"></div>
+    </div>
+
+    <!-- Announcement -->
+    <div class="form-section">
+      <h3>📢 Announcement Header</h3>
+      <div class="form-group"><label>Big Title (اعلان)</label><input type="text" id="f_announceTitle" value="اعلان"></div>
+      <div class="form-group"><label>Sub Title (داخلہ)</label><input type="text" id="f_announceSubtitle" value="داخلہ"></div>
+      <div class="form-group"><label>Year (Hijri / Gregorian)</label><input type="text" id="f_year" value="1446/2025"></div>
+    </div>
+
+    <!-- Department -->
+    <div class="form-section">
+      <h3>📖 Department / Shoba</h3>
+      <div class="form-group"><label>Main Big Word (شعبہ)</label><input type="text" id="f_shoba" value="شعبہ"></div>
+      <div class="form-group"><label>Department Name (تحفیظ القران)</label><input type="text" id="f_departmentName" value="تحفیظ القران"></div>
+      <div class="form-group"><label>Entry For (داخلہ برائے)</label><input type="text" id="f_entryFor" value="داخلہ برائے"></div>
+      <div class="form-group"><label>Sub description</label><input type="text" id="f_noorani" value="نورانی قاعدہ ناظرہ حفظ وگردان"></div>
+      <div class="form-group"><label>Class Badge (ماڈل کلاس/غیر رہائشی)</label><input type="text" id="f_classBadge" value="ماڈل کلاس/غیر رہائشی"></div>
+    </div>
+
+    <!-- Conditions -->
+    <div class="form-section">
+      <h3>📋 Admission Conditions (شرائط داخلہ)</h3>
+      <div class="form-group"><label>Section Title</label><input type="text" id="f_conditionsTitle" value="شرائط داخلہ"></div>
+      <div id="conditionsList" class="conditions-list"></div>
+      <button class="btn btn-green btn-icon" style="margin-top:8px;direction:ltr" onclick="addCondition()">+ Add Condition</button>
+    </div>
+
+    <!-- Dates -->
+    <div class="form-section">
+      <h3>📅 Important Dates</h3>
+      <div class="form-group"><label>Registration Last Date (Label)</label><input type="text" id="f_regLabel" value="رجسٹریشن کی آخری تاریخ"></div>
+      <div class="form-group"><label>Registration Date (Value)</label><input type="text" id="f_regDate" value="30 مضان المبارک 1446ھ"></div>
+      <div class="form-group"><label>Admission Last Date (Label)</label><input type="text" id="f_admLabel" value="داخلہ کی آخری تاریخ"></div>
+      <div class="form-group"><label>Admission Date (Value)</label><input type="text" id="f_admDate" value="13 اپریل 2025ء"></div>
+    </div>
+
+    <!-- Central Circle -->
+    <div class="form-section">
+      <h3>⭕ Center Circle Text</h3>
+      <div class="form-group"><label>Line 1</label><input type="text" id="f_circleLine1" value="ماڈل کلاس"></div>
+      <div class="form-group"><label>Line 2</label><input type="text" id="f_circleLine2" value="سہولیات"></div>
+    </div>
+
+    <!-- Feature Circles -->
+    <div class="form-section">
+      <h3>🔵 Feature Circles (4 image captions)</h3>
+      <div class="circles-grid">
+        <div class="circle-editor">
+          <label>Circle 1 Caption</label>
+          <input type="text" id="f_cap1" value="ایک نظم ودرس بچیں">
+          <label style="margin-top:6px">Circle 1 Image URL (optional)</label>
+          <input type="text" id="f_img1" placeholder="https://...">
+        </div>
+        <div class="circle-editor">
+          <label>Circle 2 Caption</label>
+          <input type="text" id="f_cap2" value="منفی و ہاس استاد تام">
+          <label style="margin-top:6px">Circle 2 Image URL (optional)</label>
+          <input type="text" id="f_img2" placeholder="https://...">
+        </div>
+        <div class="circle-editor">
+          <label>Circle 3 Caption</label>
+          <input type="text" id="f_cap3" value="بچوں کو رہائے کا اہتمام">
+          <label style="margin-top:6px">Circle 3 Image URL (optional)</label>
+          <input type="text" id="f_img3" placeholder="https://...">
+        </div>
+        <div class="circle-editor">
+          <label>Circle 4 Caption</label>
+          <input type="text" id="f_cap4" value="بچوں کو کھیل کا میدان">
+          <label style="margin-top:6px">Circle 4 Image URL (optional)</label>
+          <input type="text" id="f_img4" placeholder="https://...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="form-section">
+      <h3>📞 Contact Info</h3>
+      <div class="form-group"><label>Phone 1</label><input type="tel" id="f_phone1" value="03167677646" dir="ltr"></div>
+      <div class="form-group"><label>Phone 2</label><input type="tel" id="f_phone2" value="03167677643" dir="ltr"></div>
+      <div class="form-group"><label>Contact Note</label><input type="text" id="f_contactNote" value="تفصیل کیلیے رابطہ کر سکتے ہیں"></div>
+    </div>
+
+    <!-- Hero Photo -->
+    <div class="form-section">
+      <h3>🖼️ Hero Banner Image</h3>
+      <div class="form-group"><label>Image URL</label><input type="text" id="f_heroImg" placeholder="https://... or leave blank"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-gold" onclick="applyEdits()">✅ Apply Changes</button>
+      <button class="btn btn-red" onclick="closeEditor()">✖ Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FLYER ============ -->
+<div id="flyerWrapper">
+  <div id="flyer">
+    <div class="flyer-bg"></div>
+    <div class="flyer-pattern"></div>
+    <div class="arc-tl"></div>
+    <div class="arc-tr"></div>
+    <div class="arc-bl"></div>
+    <div class="arc-br"></div>
+
+    <div class="flyer-inner">
+
+      <!-- TOP ROW -->
+      <div class="top-row">
+        <!-- Announcement badge (left in RTL = right visually) -->
+        <div class="announcement-badge editable-hint" onclick="openEditor('announce')">
+          <div class="announce-title" id="d_announceTitle">اعلان</div>
+          <div class="announce-subtitle" id="d_announceSubtitle">داخلہ</div>
+          <div class="announce-year" id="d_year">1446/2025 ھ</div>
+        </div>
+
+        <!-- Logos right side -->
+        <div class="logos-area">
+          <div class="logo-badge" id="d_logoBadge">
+            <span id="d_logoText" style="font-size:1rem;font-weight:700;color:var(--gold-light)">J.S</span>
+          </div>
+          <div class="institute-name-badge editable-hint" onclick="openEditor('institution')">
+            <span id="d_institutionName">جامعۃ الشہید</span>
+            <span class="campus-tag" id="d_campus">گوجرانوالہ کیمپس</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- HERO PHOTO BAND -->
+      <div class="hero-photo-band editable-hint" onclick="openEditor('hero')">
+        <div class="hero-photo-placeholder" id="d_heroArea">
+          <div style="font-size:2rem;margin-bottom:4px">👨‍🎓👨‍🎓👨‍🎓</div>
+          <div>Hero banner image (click to set)</div>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT ROW -->
+      <div class="main-content-row">
+
+        <!-- LEFT: Conditions box -->
+        <div class="left-panel">
+          <div class="conditions-box editable-hint" onclick="openEditor('conditions')">
+            <div class="box-title" id="d_conditionsTitle">شرائط داخلہ</div>
+            <ul id="d_conditionsList">
+              <li>عمر 8 تا 11 سال</li>
+              <li>اسکول ازکم KG-II تک پڑھاہو</li>
+              <li>داخلہ اعلان میں شرط ہے۔ شرائط سے پاس</li>
+              <li>ماڈل کلاس ٹیسٹ کے بغیر داخلہ نہیں ہوگا</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- RIGHT: Shoba / title -->
+        <div class="right-panel editable-hint" onclick="openEditor('dept')">
+          <div class="shoba-word" id="d_shoba">شعبہ</div>
+          <div class="tahfiz-title" id="d_departmentName">تحفیظ القران</div>
+          <div class="entry-subtitle" id="d_entryFor">داخلہ برائے</div>
+          <div class="noorani-tag" id="d_noorani">نورانی قاعدہ ناظرہ حفظ وگردان</div>
+          <div class="model-class-badge" id="d_classBadge">ماڈل کلاس/غیر رہائشی</div>
+        </div>
+      </div>
+
+      <!-- DATES -->
+      <div class="dates-row editable-hint" onclick="openEditor('dates')">
+        <div class="clock-icon">🕐</div>
+        <div class="dates-info">
+          <div class="date-line">
+            <span class="date-label" id="d_regLabel">رجسٹریشن کی آخری تاریخ</span>:
+            <span id="d_regDate">30 مضان المبارک 1446ھ</span>
+          </div>
+          <div class="date-line">
+            <span class="date-label" id="d_admLabel">داخلہ کی آخری تاریخ</span>:
+            <span id="d_admDate">13 اپریل 2025ء</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CIRCLES + CENTRAL -->
+      <div class="circles-section">
+
+        <!-- Top two circles -->
+        <div style="display:flex;justify-content:space-around;margin-bottom:10px">
+          <div class="feature-circle-wrap editable-hint" onclick="openEditor('circles')">
+            <div class="feature-circle" id="d_circle1">
+              <div class="feature-circle-placeholder">📚<br>Circle 1</div>
+            </div>
+            <div class="feature-caption" id="d_cap1">ایک نظم ودرس بچیں</div>
+          </div>
+
+          <div class="model-class-central">
+            <div class="model-class-circle editable-hint" onclick="openEditor('circle_center')">
+              <div class="mc-line1" id="d_circleLine1">ماڈل کلاس</div>
+              <div class="mc-line2" id="d_circleLine2">سہولیات</div>
+            </div>
+          </div>
+
+          <div class="feature-circle-wrap editable-hint" onclick="openEditor('circles')">
+            <div class="feature-circle" id="d_circle2">
+              <div class="feature-circle-placeholder">👨‍🏫<br>Circle 2</div>
+            </div>
+            <div class="feature-caption" id="d_cap2">منفی و ہاس استاد تام</div>
+          </div>
+        </div>
+
+        <!-- Bottom two circles -->
+        <div style="display:flex;justify-content:space-around;">
+          <div class="feature-circle-wrap editable-hint" onclick="openEditor('circles')">
+            <div class="feature-circle" id="d_circle3">
+              <div class="feature-circle-placeholder">🍽️<br>Circle 3</div>
+            </div>
+            <div class="feature-caption" id="d_cap3">بچوں کو رہائے کا اہتمام</div>
+          </div>
+
+          <div class="feature-circle-wrap editable-hint" onclick="openEditor('circles')">
+            <div class="feature-circle" id="d_circle4">
+              <div class="feature-circle-placeholder">⚽<br>Circle 4</div>
+            </div>
+            <div class="feature-caption" id="d_cap4">بچوں کو کھیل کا میدان</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="contact-section editable-hint" onclick="openEditor('contact')">
+        <div class="contact-left">
+          <div class="phone-icon">📞</div>
+          <div>
+            <div class="phone-numbers">
+              <div id="d_phone1">03167677646</div>
+              <div id="d_phone2">03167677643</div>
+            </div>
+            <div class="phone-note" id="d_contactNote">تفصیل کیلیے رابطہ کر سکتے ہیں</div>
+          </div>
+        </div>
+        <div class="qr-box" id="d_qrBox">
+          <div style="text-align:center;font-size:0.55rem;color:#666">QR<br>Code</div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="flyer-footer editable-hint" onclick="openEditor('institution')">
+        📍 <span id="d_footerAddress">ادارہ شاہ مین ٹاؤن روڈ گوجرانوالہ</span>
+      </div>
+
+    </div><!-- /flyer-inner -->
+  </div><!-- /flyer -->
+</div>
+
+<div id="statusBar">Ready — Click any flyer section to edit, or use the toolbar buttons.</div>
+
+<script>
+// =============================
+// IndexedDB Setup
+// =============================
+const DB_NAME = 'MadrasaFlyerDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'flyers';
+let db;
+let currentId = null;
+let currentConditions = [
+  'عمر 8 تا 11 سال',
+  'اسکول ازکم KG-II تک پڑھاہو',
+  'داخلہ اعلان میں شرط ہے۔ شرائط سے پاس',
+  'ماڈل کلاس ٹیسٹ کے بغیر داخلہ نہیں ہوگا'
+];
+
+function initDB() {
+  const req = indexedDB.open(DB_NAME, DB_VERSION);
+  req.onupgradeneeded = (e) => {
+    const store = e.target.result.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+    store.createIndex('name', 'name', { unique: false });
+  };
+  req.onsuccess = (e) => {
+    db = e.target.result;
+    loadAllRecords();
+    setStatus('Database ready ✅');
+  };
+  req.onerror = () => setStatus('DB Error ❌');
+}
+
+function dbGetAll(cb) {
+  const tx = db.transaction(STORE_NAME, 'readonly');
+  const store = tx.objectStore(STORE_NAME);
+  const req = store.getAll();
+  req.onsuccess = () => cb(req.result);
+}
+
+function dbSave(data, cb) {
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  const store = tx.objectStore(STORE_NAME);
+  const req = data.id ? store.put(data) : store.add(data);
+  req.onsuccess = () => cb(req.result);
+}
+
+function dbDelete(id, cb) {
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  const store = tx.objectStore(STORE_NAME);
+  store.delete(id).onsuccess = cb;
+}
+
+function dbGet(id, cb) {
+  const tx = db.transaction(STORE_NAME, 'readonly');
+  const store = tx.objectStore(STORE_NAME);
+  const req = store.get(id);
+  req.onsuccess = () => cb(req.result);
+}
+
+// =============================
+// Flyer Data Model
+// =============================
+function getFlyerData() {
+  return {
+    id: currentId,
+    name: document.getElementById('f_institutionName').value || 'Unnamed Flyer',
+    institutionName: document.getElementById('f_institutionName').value,
+    campus: document.getElementById('f_campus').value,
+    logoText: document.getElementById('f_logoText').value,
+    footerAddress: document.getElementById('f_footerAddress').value,
+    announceTitle: document.getElementById('f_announceTitle').value,
+    announceSubtitle: document.getElementById('f_announceSubtitle').value,
+    year: document.getElementById('f_year').value,
+    shoba: document.getElementById('f_shoba').value,
+    departmentName: document.getElementById('f_departmentName').value,
+    entryFor: document.getElementById('f_entryFor').value,
+    noorani: document.getElementById('f_noorani').value,
+    classBadge: document.getElementById('f_classBadge').value,
+    conditionsTitle: document.getElementById('f_conditionsTitle').value,
+    conditions: currentConditions.slice(),
+    regLabel: document.getElementById('f_regLabel').value,
+    regDate: document.getElementById('f_regDate').value,
+    admLabel: document.getElementById('f_admLabel').value,
+    admDate: document.getElementById('f_admDate').value,
+    circleLine1: document.getElementById('f_circleLine1').value,
+    circleLine2: document.getElementById('f_circleLine2').value,
+    cap1: document.getElementById('f_cap1').value,
+    cap2: document.getElementById('f_cap2').value,
+    cap3: document.getElementById('f_cap3').value,
+    cap4: document.getElementById('f_cap4').value,
+    img1: document.getElementById('f_img1').value,
+    img2: document.getElementById('f_img2').value,
+    img3: document.getElementById('f_img3').value,
+    img4: document.getElementById('f_img4').value,
+    phone1: document.getElementById('f_phone1').value,
+    phone2: document.getElementById('f_phone2').value,
+    contactNote: document.getElementById('f_contactNote').value,
+    heroImg: document.getElementById('f_heroImg').value,
+    createdAt: new Date().toISOString()
+  };
+}
+
+function setFormData(data) {
+  if (!data) return;
+  document.getElementById('f_institutionName').value = data.institutionName || '';
+  document.getElementById('f_campus').value = data.campus || '';
+  document.getElementById('f_logoText').value = data.logoText || '';
+  document.getElementById('f_footerAddress').value = data.footerAddress || '';
+  document.getElementById('f_announceTitle').value = data.announceTitle || '';
+  document.getElementById('f_announceSubtitle').value = data.announceSubtitle || '';
+  document.getElementById('f_year').value = data.year || '';
+  document.getElementById('f_shoba').value = data.shoba || '';
+  document.getElementById('f_departmentName').value = data.departmentName || '';
+  document.getElementById('f_entryFor').value = data.entryFor || '';
+  document.getElementById('f_noorani').value = data.noorani || '';
+  document.getElementById('f_classBadge').value = data.classBadge || '';
+  document.getElementById('f_conditionsTitle').value = data.conditionsTitle || '';
+  currentConditions = data.conditions ? [...data.conditions] : [];
+  renderConditionsList();
+  document.getElementById('f_regLabel').value = data.regLabel || '';
+  document.getElementById('f_regDate').value = data.regDate || '';
+  document.getElementById('f_admLabel').value = data.admLabel || '';
+  document.getElementById('f_admDate').value = data.admDate || '';
+  document.getElementById('f_circleLine1').value = data.circleLine1 || '';
+  document.getElementById('f_circleLine2').value = data.circleLine2 || '';
+  document.getElementById('f_cap1').value = data.cap1 || '';
+  document.getElementById('f_cap2').value = data.cap2 || '';
+  document.getElementById('f_cap3').value = data.cap3 || '';
+  document.getElementById('f_cap4').value = data.cap4 || '';
+  document.getElementById('f_img1').value = data.img1 || '';
+  document.getElementById('f_img2').value = data.img2 || '';
+  document.getElementById('f_img3').value = data.img3 || '';
+  document.getElementById('f_img4').value = data.img4 || '';
+  document.getElementById('f_phone1').value = data.phone1 || '';
+  document.getElementById('f_phone2').value = data.phone2 || '';
+  document.getElementById('f_contactNote').value = data.contactNote || '';
+  document.getElementById('f_heroImg').value = data.heroImg || '';
+}
+
+// =============================
+// Render Flyer from Data
+// =============================
+function renderFlyer(data) {
+  if (!data) return;
+  setText('d_announceTitle', data.announceTitle);
+  setText('d_announceSubtitle', data.announceSubtitle);
+  setText('d_year', data.year + ' ھ');
+  setText('d_institutionName', data.institutionName);
+  setText('d_campus', data.campus);
+  setText('d_logoText', data.logoText);
+  setText('d_shoba', data.shoba);
+  setText('d_departmentName', data.departmentName);
+  setText('d_entryFor', data.entryFor);
+  setText('d_noorani', data.noorani);
+  setText('d_classBadge', data.classBadge);
+  setText('d_conditionsTitle', data.conditionsTitle);
+  setText('d_regLabel', data.regLabel);
+  setText('d_regDate', data.regDate);
+  setText('d_admLabel', data.admLabel);
+  setText('d_admDate', data.admDate);
+  setText('d_circleLine1', data.circleLine1);
+  setText('d_circleLine2', data.circleLine2);
+  setText('d_cap1', data.cap1);
+  setText('d_cap2', data.cap2);
+  setText('d_cap3', data.cap3);
+  setText('d_cap4', data.cap4);
+  setText('d_phone1', data.phone1);
+  setText('d_phone2', data.phone2);
+  setText('d_contactNote', data.contactNote);
+  setText('d_footerAddress', data.footerAddress);
+
+  // Conditions list
+  const cl = document.getElementById('d_conditionsList');
+  cl.innerHTML = '';
+  (data.conditions || []).forEach(c => {
+    const li = document.createElement('li');
+    li.textContent = c;
+    cl.appendChild(li);
+  });
+
+  // Feature circles
+  setCircleImg('d_circle1', data.img1, '📚<br>درس گاہ');
+  setCircleImg('d_circle2', data.img2, '👨‍🏫<br>اساتذہ');
+  setCircleImg('d_circle3', data.img3, '🍽️<br>کھانا');
+  setCircleImg('d_circle4', data.img4, '⚽<br>کھیل');
+
+  // Hero banner
+  const heroArea = document.getElementById('d_heroArea');
+  if (data.heroImg && data.heroImg.trim()) {
+    heroArea.innerHTML = `<img src="${data.heroImg}" alt="Hero" style="width:100%;height:100%;object-fit:cover;">`;
+  } else {
+    heroArea.innerHTML = `<div style="font-size:2rem;margin-bottom:4px">👨‍🎓👨‍🎓👨‍🎓</div><div>Hero banner image (click to set)</div>`;
+  }
+
+  generateQR(data.phone1 || '');
+}
+
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val || '';
+}
+
+function setCircleImg(circleId, imgUrl, placeholder) {
+  const el = document.getElementById(circleId);
+  if (!el) return;
+  if (imgUrl && imgUrl.trim()) {
+    el.innerHTML = `<img src="${imgUrl}" alt="feature" style="width:100%;height:100%;object-fit:cover;">`;
+  } else {
+    el.innerHTML = `<div class="feature-circle-placeholder">${placeholder}</div>`;
+  }
+}
+
+// QR code visual using canvas
+function generateQR(text) {
+  const box = document.getElementById('d_qrBox');
+  // Build a simple visual QR-like pattern
+  const size = 11;
+  let html = '<div style="display:grid;grid-template-columns:repeat('+size+',1fr);gap:0.5px;width:62px;height:62px;padding:3px;background:#fff">';
+  // Pattern: corners + random inner
+  const fixed = {};
+  // Top-left finder
+  for(let r=0;r<3;r++) for(let c=0;c<3;c++) fixed[r+','+c] = (r===0||r===2||c===0||c===2)?1:0;
+  // Top-right finder
+  for(let r=0;r<3;r++) for(let c=size-3;c<size;c++) fixed[r+','+c] = (r===0||r===2||c===size-3||c===size-1)?1:0;
+  // Bottom-left finder
+  for(let r=size-3;r<size;r++) for(let c=0;c<3;c++) fixed[r+','+c] = (r===size-3||r===size-1||c===0||c===2)?1:0;
+  // Timing pattern
+  for(let i=4;i<size-4;i++) { fixed['6,'+i] = i%2===0?1:0; fixed[i+',6'] = i%2===0?1:0; }
+  // Seed from text
+  let seed = 0;
+  for(let ch of text) seed = (seed*31+ch.charCodeAt(0))&0x7fffffff;
+  function rand(){seed=(seed*1103515245+12345)&0x7fffffff;return seed;}
+  for(let r=0;r<size;r++){for(let c=0;c<size;c++){
+    const k=r+','+c;
+    const val = k in fixed ? fixed[k] : (rand()%2);
+    html+=`<div style="background:${val?'#000':'#fff'}"></div>`;
+  }}
+  html += '</div>';
+  box.innerHTML = html;
+}
+
+// =============================
+// Editor open/close
+// =============================
+let editorSection = null;
+
+function openEditor(section) {
+  editorSection = section;
+  document.getElementById('editorOverlay').classList.add('open');
+  // Scroll to relevant section
+  if (section) {
+    const sectionMap = {
+      'institution': 'f_institutionName',
+      'announce': 'f_announceTitle',
+      'dept': 'f_shoba',
+      'conditions': 'f_conditionsTitle',
+      'dates': 'f_regLabel',
+      'circle_center': 'f_circleLine1',
+      'circles': 'f_cap1',
+      'contact': 'f_phone1',
+      'hero': 'f_heroImg'
+    };
+    const targetId = sectionMap[section];
+    if (targetId) {
+      setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
+  }
+}
+
+function closeEditor() {
+  document.getElementById('editorOverlay').classList.remove('open');
+}
+
+function applyEdits() {
+  const data = getFlyerData();
+  renderFlyer(data);
+  closeEditor();
+  setStatus('Changes applied — click Save to persist.');
+}
+
+// =============================
+// Conditions CRUD in form
+// =============================
+function renderConditionsList() {
+  const container = document.getElementById('conditionsList');
+  container.innerHTML = '';
+  currentConditions.forEach((c, i) => {
+    const row = document.createElement('div');
+    row.className = 'condition-item';
+    row.innerHTML = `
+      <input type="text" value="${c.replace(/"/g,'&quot;')}" oninput="currentConditions[${i}]=this.value">
+      <button class="btn btn-red btn-icon" onclick="removeCondition(${i})">✕</button>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function addCondition() {
+  currentConditions.push('');
+  renderConditionsList();
+  const inputs = document.querySelectorAll('#conditionsList input');
+  if (inputs.length) inputs[inputs.length - 1].focus();
+}
+
+function removeCondition(i) {
+  currentConditions.splice(i, 1);
+  renderConditionsList();
+}
+
+// =============================
+// CRUD Operations
+// =============================
+function saveFlyer() {
+  const data = getFlyerData();
+  dbSave(data, (newId) => {
+    if (!data.id) currentId = newId;
+    loadAllRecords();
+    setStatus(`Flyer saved ✅ (ID: ${newId || data.id})`);
+  });
+}
+
+function deleteCurrentFlyer() {
+  if (!currentId) { setStatus('No saved flyer selected.'); return; }
+  if (!confirm('Delete this flyer from the database?')) return;
+  dbDelete(currentId, () => {
+    currentId = null;
+    loadDefaultFlyer();
+    loadAllRecords();
+    setStatus('Flyer deleted 🗑️');
+  });
+}
+
+function loadAllRecords() {
+  dbGetAll((records) => {
+    const list = document.getElementById('recordsList');
+    list.innerHTML = '';
+    if (records.length === 0) {
+      list.innerHTML = '<span style="color:rgba(200,153,58,0.5);font-size:0.78rem">No saved flyers</span>';
+      return;
+    }
+    records.forEach(r => {
+      const chip = document.createElement('div');
+      chip.className = 'record-chip' + (r.id === currentId ? ' active' : '');
+      chip.textContent = `[${r.id}] ${r.name || 'Flyer'}`;
+      chip.onclick = () => loadRecord(r.id);
+      list.appendChild(chip);
+    });
+  });
+}
+
+function loadRecord(id) {
+  dbGet(id, (data) => {
+    if (!data) return;
+    currentId = id;
+    currentConditions = data.conditions ? [...data.conditions] : [];
+    setFormData(data);
+    renderFlyer(data);
+    loadAllRecords();
+    setStatus(`Loaded flyer: "${data.name}" (ID: ${id})`);
+  });
+}
+
+function loadDefaultFlyer() {
+  const defaultData = {
+    institutionName: 'جامعۃ الشہید',
+    campus: 'گوجرانوالہ کیمپس',
+    logoText: 'J.S',
+    footerAddress: 'ادارہ شاہ مین ٹاؤن روڈ گوجرانوالہ',
+    announceTitle: 'اعلان',
+    announceSubtitle: 'داخلہ',
+    year: '1446/2025',
+    shoba: 'شعبہ',
+    departmentName: 'تحفیظ القران',
+    entryFor: 'داخلہ برائے',
+    noorani: 'نورانی قاعدہ ناظرہ حفظ وگردان',
+    classBadge: 'ماڈل کلاس/غیر رہائشی',
+    conditionsTitle: 'شرائط داخلہ',
+    conditions: ['عمر 8 تا 11 سال', 'اسکول ازکم KG-II تک پڑھاہو', 'داخلہ اعلان میں شرط ہے۔ شرائط سے پاس', 'ماڈل کلاس ٹیسٹ کے بغیر داخلہ نہیں ہوگا'],
+    regLabel: 'رجسٹریشن کی آخری تاریخ',
+    regDate: '30 مضان المبارک 1446ھ',
+    admLabel: 'داخلہ کی آخری تاریخ',
+    admDate: '13 اپریل 2025ء',
+    circleLine1: 'ماڈل کلاس',
+    circleLine2: 'سہولیات',
+    cap1: 'ایک نظم ودرس بچیں',
+    cap2: 'منفی و ہاس استاد تام',
+    cap3: 'بچوں کو رہائے کا اہتمام',
+    cap4: 'بچوں کو کھیل کا میدان',
+    img1: '', img2: '', img3: '', img4: '',
+    phone1: '03167677646',
+    phone2: '03167677643',
+    contactNote: 'تفصیل کیلیے رابطہ کر سکتے ہیں',
+    heroImg: ''
+  };
+  currentConditions = [...defaultData.conditions];
+  setFormData(defaultData);
+  renderFlyer(defaultData);
+}
+
+// =============================
+// Export Functions
+// =============================
+function showLoading(msg) {
+  document.getElementById('loadingMsg').textContent = msg || 'Processing...';
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('show');
+}
+
+async function exportImage() {
+  showLoading('Generating high-resolution image...');
+  await new Promise(r => setTimeout(r, 100));
+  try {
+    const flyer = document.getElementById('flyer');
+    // Temporarily remove edit hints for clean export
+    flyer.classList.add('exporting');
+
+    const canvas = await html2canvas(flyer, {
+      scale: 3,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: null,
+      logging: false,
+      width: flyer.offsetWidth,
+      height: flyer.offsetHeight,
+      imageTimeout: 15000,
+      onclone: (cloneDoc) => {
+        // Remove hover effects in clone
+        const hints = cloneDoc.querySelectorAll('.editable-hint');
+        hints.forEach(el => {
+          el.classList.remove('editable-hint');
+        });
+      }
+    });
+
+    const link = document.createElement('a');
+    link.download = `madrasa-flyer-${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png', 1.0);
+    link.click();
+    setStatus('Image exported successfully ✅');
+  } catch(err) {
+    setStatus('Export error: ' + err.message);
+    console.error(err);
+  }
+  hideLoading();
+}
+
+async function exportPDF() {
+  showLoading('Generating PDF...');
+  await new Promise(r => setTimeout(r, 100));
+  try {
+    const flyer = document.getElementById('flyer');
+    const canvas = await html2canvas(flyer, {
+      scale: 3,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#c8993a',
+      logging: false,
+      imageTimeout: 15000,
+      onclone: (cloneDoc) => {
+        const hints = cloneDoc.querySelectorAll('.editable-hint');
+        hints.forEach(el => el.classList.remove('editable-hint'));
+      }
+    });
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.98);
+    const { jsPDF } = window.jspdf;
+
+    const flyerW = flyer.offsetWidth;
+    const flyerH = flyer.offsetHeight;
+    const ratio = flyerH / flyerW;
+
+    // A4 size in mm
+    const pdfW = 148; // A5 width mm (good for flyers)
+    const pdfH = pdfW * ratio;
+
+    const pdf = new jsPDF({
+      orientation: pdfH > pdfW ? 'portrait' : 'landscape',
+      unit: 'mm',
+      format: [pdfW, pdfH]
+    });
+
+    pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH, '', 'FAST');
+    pdf.save(`madrasa-flyer-${Date.now()}.pdf`);
+    setStatus('PDF exported successfully ✅');
+  } catch(err) {
+    setStatus('PDF error: ' + err.message);
+    console.error(err);
+  }
+  hideLoading();
+}
+
+function setStatus(msg) {
+  document.getElementById('statusBar').textContent = msg;
+}
+
+// =============================
+// Close modal on overlay click
+// =============================
+document.getElementById('editorOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeEditor();
+});
+
+// =============================
+// Init
+// =============================
+initDB();
+loadDefaultFlyer();
+</script>
+</body>
+</html>

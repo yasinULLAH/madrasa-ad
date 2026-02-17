@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admission Poster App</title>
+  <style>
+    body { font-family: 'Noto Nastaliq Urdu', serif; }
+    .poster {
+      width: 800px; margin: auto; padding: 20px;
+      border: 2px solid black; background: #fff;
+    }
+    h1 { text-align: center; }
+    .section { margin: 15px 0; }
+  </style>
+</head>
+<body>
+  <div class="poster" id="poster">
+    <h1>اعلان داخلہ 1445/2024</h1>
+    <div class="section" id="details"></div>
+    <button onclick="addEntry()">Add Entry</button>
+    <button onclick="exportImage()">Export Image</button>
+    <button onclick="exportPDF()">Export PDF</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    // IndexedDB setup
+    let db;
+    const request = indexedDB.open("posterDB", 1);
+    request.onupgradeneeded = e => {
+      db = e.target.result;
+      db.createObjectStore("entries", { keyPath: "id", autoIncrement: true });
+    };
+    request.onsuccess = e => { db = e.target.result; displayEntries(); };
+
+    function addEntry() {
+      const tx = db.transaction("entries", "readwrite");
+      const store = tx.objectStore("entries");
+      store.add({ text: "New Admission Entry" });
+      tx.oncomplete = displayEntries;
+    }
+
+    function displayEntries() {
+      const tx = db.transaction("entries", "readonly");
+      const store = tx.objectStore("entries");
+      const req = store.getAll();
+      req.onsuccess = () => {
+        document.getElementById("details").innerHTML =
+          req.result.map(e => `<p>${e.text}</p>`).join("");
+      };
+    }
+
+    async function exportImage() {
+      const canvas = await html2canvas(document.getElementById("poster"));
+      const link = document.createElement("a");
+      link.download = "poster.png";
+      link.href = canvas.toDataURL("image/png", 1.0);
+      link.click();
+    }
+
+    async function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const canvas = await html2canvas(document.getElementById("poster"));
+      const imgData = canvas.toDataURL("image/png", 1.0);
+      const pdf = new jsPDF("p", "mm", "a4");
+      pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
+      pdf.save("poster.pdf");
+    }
+  </script>
+</body>
+</html>

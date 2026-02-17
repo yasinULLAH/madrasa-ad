@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Islamic Poster Creator - Inline Editing</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Nastaliq Urdu', 'Amiri', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .toolbar {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Noto Nastaliq Urdu', 'Amiri', serif;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .poster-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .poster-preview {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            flex: 1;
+            max-width: 800px;
+        }
+
+        #posterCanvas {
+            width: 100%;
+            background: linear-gradient(to bottom, #87CEEB 0%, #f5f5dc 50%, #90EE90 100%);
+            border: 3px solid #c41e3a;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+        }
+
+        .editable {
+            cursor: text;
+            transition: all 0.3s;
+            position: relative;
+            min-height: 20px;
+        }
+
+        .editable:hover {
+            outline: 2px dashed #667eea;
+            outline-offset: 3px;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .editable:focus {
+            outline: 3px solid #667eea;
+            outline-offset: 3px;
+            background: rgba(102, 126, 234, 0.15);
+        }
+
+        .editable[contenteditable="true"]:empty:before {
+            content: attr(data-placeholder);
+            color: rgba(255,255,255,0.5);
+            font-style: italic;
+        }
+
+        .deletable {
+            position: relative;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .deletable:hover .delete-btn {
+            display: flex;
+        }
+
+        .poster-header {
+            background: linear-gradient(90deg, #FFA500 0%, #FFD700 50%, #FFA500 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .poster-title {
+            background: #c41e3a;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .poster-dates {
+            background: #4169E1;
+            color: white;
+            font-size: 32px;
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-badge {
+            background: white;
+            color: #4169E1;
+            padding: 5px 15px;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+
+        .sections-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .section-card {
+            background: #FFA500;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+
+        .section-content {
+            background: #4169E1;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 3px dotted white;
+            min-height: 120px;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .timing-section {
+            background: #2C5F4F;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .bottom-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .bottom-card {
+            background: #FFA500;
+            border-radius: 10px;
+            padding: 15px;
+            border: 3px solid #8B4513;
+        }
+
+        .bottom-card-title {
+            background: #8B4513;
+            color: #FFD700;
+            padding: 8px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .bottom-card-content {
+            color: #000;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .middle-section {
+            background: #2C5F4F;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .middle-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .middle-content {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .footer-section {
+            background: linear-gradient(90deg, #8B4513 0%, #A0522D 50%, #8B4513 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-phone {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .footer-address {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .decorative-elements {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+        }
+
+        .deco-left {
+            top: 20px;
+            left: -10px;
+        }
+
+        .deco-right {
+            top: 20px;
+            right: -10px;
+        }
+
+        .sidebar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 300px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            text-align: center;
+            color: #c41e3a;
+            margin-bottom: 15px;
+        }
+
+        .poster-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .poster-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .poster-item:hover {
+            background: #e9ecef;
+            transform: translateX(-5px);
+        }
+
+        .poster-item-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .poster-item-date {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .poster-item-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .add-section-btn {
+            background: #28a745;
+            color: white;
+            border: 2px dashed white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .add-section-btn:hover {
+            background: #218838;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .color-picker-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+            border-color: #667eea;
+        }
+
+        @media (max-width: 1200px) {
+            .poster-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-width: 800px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <input type="text" id="posterNameInput" placeholder="پوسٹر کا نام" style="padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-family: 'Noto Nastaliq Urdu', serif; width: 200px;">
+        <button class="btn btn-success" onclick="savePoster()">💾 محفوظ کریں</button>
+        <button class="btn btn-primary" onclick="newPoster()">📄 نیا پوسٹر</button>
+        <button class="btn btn-info" onclick="exportToImage()">📷 تصویر (High Res)</button>
+        <button class="btn btn-warning" onclick="exportToPDF()">📄 PDF</button>
+        <button class="btn btn-secondary" onclick="toggleSidebar()">📋 محفوظ شدہ</button>
+    </div>
+
+    <div class="poster-container">
+        <div class="poster-preview">
+            <div id="posterCanvas">
+                <div class="poster-header deletable">
+                    <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                    <div class="decorative-elements deco-left"></div>
+                    <div class="decorative-elements deco-right"></div>
+                    <div class="poster-title editable" contenteditable="true" data-placeholder="عنوان لکھیں">اعلان داخلہ</div>
+                    <div class="poster-dates">
+                        <span class="editable" contenteditable="true">1445</span>
+                        <span>/</span>
+                        <span class="editable" contenteditable="true">2024</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-around; margin-top: 10px; font-size: 18px;">
+                        <span><span class="date-badge editable" contenteditable="true">10</span> <span class="editable" contenteditable="true">شوال 1445</span></span>
+                        <span><span class="date-badge editable" contenteditable="true">20</span> <span class="editable" contenteditable="true">اپریل 2024</span></span>
+                    </div>
+                </div>
+
+                <div class="sections-container" id="mainSections">
+                    <div class="section-card deletable">
+                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                        <div class="section-title editable" contenteditable="true" data-placeholder="عنوان">تصوری علمیم</div>
+                        <div class="section-content editable" contenteditable="true" data-placeholder="تفصیل لکھیں">اندرونی مذہبی تعلیم کی فراہمی کے ساتھ معاشرے کے لیے مفید انسان تیار کریں</div>
+                    </div>
+
+                    <div class="section-card deletable" style="background: #2C5F4F;">
+                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                        <div class="section-title editable" contenteditable="true" style="background: rgba(255,255,255,0.2);">تجویدالقرآن</div>
+                        <div class="section-content editable" contenteditable="true" style="background: #E6B0AA; color: #000; border-color: #8B4513;">حافظہ قرآن کریم اور تجوید کی تعلیم</div>
+                    </div>
+
+                    <div class="section-card deletable">
+                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                        <div class="section-title editable" contenteditable="true">دروس نظامی</div>
+                        <div class="section-content editable" contenteditable="true">اولاد کی تعلیم و تربیت کی فکر ہے تو ابھی داخلہ لیں</div>
+                    </div>
+                </div>
+                <div class="add-section-btn" onclick="addMainSection()">+ نیا سیکشن شامل کریں</div>
+
+                <div class="timing-section editable deletable" contenteditable="true" data-placeholder="اوقات لکھیں">
+                    <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                    اوقات داخلہ: صبح 8:00 تا 12:30
+                </div>
+
+                <div class="deletable" style="background: #2C5F4F; padding: 15px; border-radius: 10px; margin-bottom: 15px; color: white; text-align: center;">
+                    <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;" class="editable" contenteditable="true">شعبہ حفظ کی تفصیلات</div>
+                    <div class="editable" contenteditable="true" style="font-size: 14px; line-height: 1.6;" data-placeholder="تفصیل لکھیں">10 شوال سے مسلسل 20 اپریل تک اور روس اتفاقی کے طلباء کے لیے 13 شوال 23 اپریل سے مسلسل شروع</div>
+                </div>
+
+                <div class="bottom-sections" id="bottomSections">
+                    <div class="bottom-card deletable">
+                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                        <div class="bottom-card-title editable" contenteditable="true">ضروری نوٹ</div>
+                        <div class="bottom-card-content editable" contenteditable="true" data-placeholder="نوٹ لکھیں">حافظہ ہو جانے والا طالب علم، ارادے کے ساتھ دارالعلوم میں داخلہ لے اور کی فضیلت</div>
+                    </div>
+
+                    <div class="middle-section deletable">
+                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                        <div class="middle-title editable" contenteditable="true">دینی اور عصری علوم کا حسین امتزاج</div>
+                        <div class="middle-content editable" contenteditable="true" data-placeholder="تفصیل">دینی تعلیمات کے ساتھ عصری علوم کی تعلیم۔ قرآن، حدیث، فقہ اور عربی زبان کے ساتھ انگلش، اردو، ریاضی اور سائنس</div>
+                    </div>
+
+                    <div class="bottom-card deletable">
+                        <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                        <div class="bottom-card-title editable" contenteditable="true">خاص نوٹ</div>
+                        <div class="bottom-card-content editable" contenteditable="true" data-placeholder="نوٹ لکھیں">اولاد کی تعلیم و تربیت کی فکر ہے تو ہمارے ساتھ رابطہ کریں اور اپنے بچوں کو دینی اور عصری تعلیم سے آراستہ کریں</div>
+                    </div>
+                </div>
+                <div class="add-section-btn" onclick="addBottomSection()">+ نچلا سیکشن شامل کریں</div>
+
+                <div class="footer-section deletable">
+                    <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                    <div class="footer-phone editable" contenteditable="true" data-placeholder="فون نمبر">📞 0336-9586656 | 0311-5342747 | 0312-3550107</div>
+                    <div class="footer-address">
+                        <div class="editable" contenteditable="true" data-placeholder="پتہ">مدرسہ عربیہ اسلامیہ میمل</div>
+                        <div class="editable" contenteditable="true" style="font-size: 14px; margin-top: 5px;" data-placeholder="مکمل پتہ">شاہراہ حصہ پل ہرن مسجد شریف کراچی</div>
+                    </div>
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #FFA500, #FFD700); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar" id="sidebar" style="display: none;">
+            <h3>📋 محفوظ شدہ پوسٹرز</h3>
+            <div class="poster-list" id="posterList"></div>
+        </div>
+    </div>
+
+    <script>
+        // IndexedDB Setup
+        let db;
+        const DB_NAME = 'IslamicPosterDB';
+        const STORE_NAME = 'posters';
+
+        function initDB() {
+            const request = indexedDB.open(DB_NAME, 1);
+
+            request.onerror = () => {
+                console.error('Database failed to open');
+            };
+
+            request.onsuccess = () => {
+                db = request.result;
+                loadPosterList();
+            };
+
+            request.onupgradeneeded = (e) => {
+                db = e.target.result;
+                const objectStore = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                objectStore.createIndex('name', 'name', { unique: false });
+                objectStore.createIndex('timestamp', 'timestamp', { unique: false });
+            };
+        }
+
+        function savePoster() {
+            const posterName = document.getElementById('posterNameInput').value || 'بے نام پوسٹر ' + new Date().toLocaleString('ur-PK');
+            const posterHTML = document.getElementById('posterCanvas').innerHTML;
+
+            const posterData = {
+                name: posterName,
+                timestamp: new Date().toISOString(),
+                html: posterHTML
+            };
+
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.add(posterData);
+
+            request.onsuccess = () => {
+                showToast('✅ پوسٹر کامیابی سے محفوظ ہو گیا!');
+                loadPosterList();
+                document.getElementById('posterNameInput').value = '';
+            };
+
+            request.onerror = () => {
+                showToast('❌ محفوظ کرنے میں خرابی!', 'error');
+            };
+        }
+
+        function loadPosterList() {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.getAll();
+
+            request.onsuccess = () => {
+                const posters = request.result;
+                const listContainer = document.getElementById('posterList');
+                listContainer.innerHTML = '';
+
+                if (posters.length === 0) {
+                    listContainer.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">کوئی محفوظ شدہ پوسٹر نہیں</p>';
+                    return;
+                }
+
+                posters.reverse().forEach(poster => {
+                    const item = document.createElement('div');
+                    item.className = 'poster-item';
+
+                    const date = new Date(poster.timestamp).toLocaleString('ur-PK');
+
+                    item.innerHTML = `
+                        <div class="poster-item-name">${poster.name}</div>
+                        <div class="poster-item-date">${date}</div>
+                        <div class="poster-item-actions">
+                            <button class="btn btn-primary btn-small" onclick="loadPoster(${poster.id})">لوڈ کریں</button>
+                            <button class="btn btn-danger btn-small" onclick="deletePoster(${poster.id})">حذف کریں</button>
+                        </div>
+                    `;
+                    listContainer.appendChild(item);
+                });
+            };
+        }
+
+        function loadPoster(id) {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.get(id);
+
+            request.onsuccess = () => {
+                const poster = request.result;
+                if (poster) {
+                    document.getElementById('posterCanvas').innerHTML = poster.html;
+                    document.getElementById('posterNameInput').value = poster.name;
+                    showToast('✅ پوسٹر لوڈ ہو گیا!');
+                }
+            };
+        }
+
+        function deletePoster(id) {
+            if (!confirm('کیا آپ واقعی اس پوسٹر کو حذف کرنا چاہتے ہیں؟')) return;
+
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.delete(id);
+
+            request.onsuccess = () => {
+                showToast('✅ پوسٹر حذف ہو گیا!');
+                loadPosterList();
+            };
+        }
+
+        function newPoster() {
+            if (confirm('کیا آپ نیا پوسٹر بنانا چاہتے ہیں؟ موجودہ تبدیلیاں ضائع ہو جائیں گی۔')) {
+                location.reload();
+            }
+        }
+
+        function deleteElement(btn) {
+            if (confirm('کیا آپ اس عنصر کو حذف کرنا چاہتے ہیں؟')) {
+                const element = btn.parentElement;
+                element.remove();
+                showToast('✅ عنصر حذف ہو گیا');
+            }
+        }
+
+        function addMainSection() {
+            const container = document.getElementById('mainSections');
+            const newSection = document.createElement('div');
+            newSection.className = 'section-card deletable';
+            newSection.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                <div class="section-title editable" contenteditable="true" data-placeholder="عنوان لکھیں">نیا سیکشن</div>
+                <div class="section-content editable" contenteditable="true" data-placeholder="تفصیل لکھیں">یہاں اپنی تفصیل لکھیں</div>
+            `;
+            container.appendChild(newSection);
+            showToast('✅ نیا سیکشن شامل ہو گیا');
+        }
+
+        function addBottomSection() {
+            const container = document.getElementById('bottomSections');
+            const newSection = document.createElement('div');
+            newSection.className = 'bottom-card deletable';
+            newSection.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">×</button>
+                <div class="bottom-card-title editable" contenteditable="true" data-placeholder="عنوان">نیا سیکشن</div>
+                <div class="bottom-card-content editable" contenteditable="true" data-placeholder="مواد لکھیں">یہاں اپنا مواد لکھیں</div>
+            `;
+            container.appendChild(newSection);
+            showToast('✅ نیا سیکشن شامل ہو گیا');
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.style.display = sidebar.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function exportToImage() {
+            const canvas = document.getElementById('posterCanvas');
+
+            // Hide delete buttons before export
+            const deleteButtons = canvas.querySelectorAll('.delete-btn');
+            deleteButtons.forEach(btn => btn.style.display = 'none');
+
+            try {
+                const downloadCanvas = await html2canvas(canvas, {
+                    scale: 3,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    width: canvas.offsetWidth,
+                    height: canvas.offsetHeight
+                });
+
+                const link = document.createElement('a');
+                link.download = `islamic-poster-${Date.now()}.png`;
+                link.href = downloadCanvas.toDataURL('image/png', 1.0);
+                link.click();
+
+                showToast('✅ تصویر کامیابی سے ڈاؤن لوڈ ہو گئی!');
+            } catch (error) {
+                console.error('Export error:', error);
+                showToast('❌ ایکسپورٹ میں خرابی!', 'error');
+            }
+
+            // Show delete buttons again
+            deleteButtons.forEach(btn => btn.style.display = '');
+        }
+
+        async function exportToPDF() {
+            const canvas = document.getElementById('posterCanvas');
+
+            // Hide delete buttons before export
+            const deleteButtons = canvas.querySelectorAll('.delete-btn');
+            deleteButtons.forEach(btn => btn.style.display = 'none');
+
+            try {
+                const downloadCanvas = await html2canvas(canvas, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff'
+                });
+
+                const imgData = downloadCanvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const imgWidth = 210;
+                const imgHeight = (downloadCanvas.height * imgWidth) / downloadCanvas.width;
+
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                pdf.save(`islamic-poster-${Date.now()}.pdf`);
+
+                showToast('✅ PDF کامیابی سے ڈاؤن لوڈ ہو گئی!');
+            } catch (error) {
+                console.error('PDF export error:', error);
+                showToast('❌ PDF ایکسپورٹ میں خرابی!', 'error');
+            }
+
+            // Show delete buttons again
+            deleteButtons.forEach(btn => btn.style.display = '');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            toast.style.background = type === 'success' ? '#28a745' : '#dc3545';
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Initialize
+        window.onload = () => {
+            initDB();
+        };
+
+        // Auto-save functionality (optional)
+        let autoSaveTimer;
+        document.getElementById('posterCanvas').addEventListener('input', () => {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => {
+                // Optional: Implement auto-save here
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

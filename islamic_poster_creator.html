@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Islamic Poster Creator - اسلامی پوسٹر بنائیں</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Nastaliq Urdu', 'Amiri', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 20px;
+        }
+
+        .control-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .control-panel h2 {
+            text-align: center;
+            color: #c41e3a;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Noto Nastaliq Urdu', 'Amiri', serif;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .color-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-input input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Noto Nastaliq Urdu', 'Amiri', serif;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .poster-preview {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        #posterCanvas {
+            width: 700px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #f5f5dc 50%, #90EE90 100%);
+            border: 3px solid #c41e3a;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+        }
+
+        .poster-header {
+            background: linear-gradient(90deg, #FFA500 0%, #FFD700 50%, #FFA500 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .poster-title {
+            background: #c41e3a;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .poster-dates {
+            background: #4169E1;
+            color: white;
+            font-size: 32px;
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-badge {
+            background: white;
+            color: #4169E1;
+            padding: 5px 15px;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+
+        .sections-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .section-card {
+            background: #FFA500;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+
+        .section-content {
+            background: #4169E1;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 3px dotted white;
+            min-height: 120px;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .timing-section {
+            background: #2C5F4F;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .bottom-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .bottom-card {
+            background: #FFA500;
+            border-radius: 10px;
+            padding: 15px;
+            border: 3px solid #8B4513;
+        }
+
+        .bottom-card-title {
+            background: #8B4513;
+            color: #FFD700;
+            padding: 8px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .bottom-card-content {
+            color: #000;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .middle-section {
+            background: #2C5F4F;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .middle-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .middle-content {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .footer-section {
+            background: linear-gradient(90deg, #8B4513 0%, #A0522D 50%, #8B4513 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-phone {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .footer-address {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .saved-posters {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+        }
+
+        .saved-posters h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .poster-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .poster-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .poster-item-name {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .poster-item-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+            width: auto;
+            margin: 0;
+        }
+
+        .decorative-elements {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+        }
+
+        .deco-left {
+            top: 20px;
+            left: -10px;
+        }
+
+        .deco-right {
+            top: 20px;
+            right: -10px;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            #posterCanvas {
+                width: 100%;
+                max-width: 700px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="control-panel">
+            <h2>🕌 اسلامی پوسٹر بنائیں</h2>
+
+            <div class="form-group">
+                <label>پوسٹر کا نام (Poster Name)</label>
+                <input type="text" id="posterName" placeholder="مثال: رمضان پروگرام 2024">
+            </div>
+
+            <div class="form-group">
+                <label>مرکزی عنوان (Main Title)</label>
+                <input type="text" id="mainTitle" placeholder="اعلان داخلہ">
+            </div>
+
+            <div class="form-group">
+                <label>اسلامی سال (Islamic Year)</label>
+                <input type="text" id="islamicYear" placeholder="1445">
+            </div>
+
+            <div class="form-group">
+                <label>عیسوی سال (Gregorian Year)</label>
+                <input type="text" id="gregorianYear" placeholder="2024">
+            </div>
+
+            <div class="form-group">
+                <label>اسلامی تاریخ (Islamic Date)</label>
+                <input type="text" id="islamicDate" placeholder="10 شوال 1445">
+            </div>
+
+            <div class="form-group">
+                <label>عیسوی تاریخ (Gregorian Date)</label>
+                <input type="text" id="gregorianDate" placeholder="20 اپریل 2024">
+            </div>
+
+            <h3 style="margin-top: 20px; margin-bottom: 10px;">تین بڑے سیکشن (Three Main Sections)</h3>
+
+            <div class="form-group">
+                <label>پہلا سیکشن عنوان (Section 1 Title)</label>
+                <input type="text" id="section1Title" placeholder="تصوری علمیم">
+            </div>
+
+            <div class="form-group">
+                <label>پہلا سیکشن مواد (Section 1 Content)</label>
+                <textarea id="section1Content" placeholder="اندرونی تفصیل..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>دوسرا سیکشن عنوان (Section 2 Title)</label>
+                <input type="text" id="section2Title" placeholder="تجویدالقرآن">
+            </div>
+
+            <div class="form-group">
+                <label>دوسرا سیکشن مواد (Section 2 Content)</label>
+                <textarea id="section2Content" placeholder="تفصیل..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>تیسرا سیکشن عنوان (Section 3 Title)</label>
+                <input type="text" id="section3Title" placeholder="دروس نظامی">
+            </div>
+
+            <div class="form-group">
+                <label>تیسرا سیکشن مواد (Section 3 Content)</label>
+                <textarea id="section3Content" placeholder="تفصیل..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>اوقات (Timing)</label>
+                <input type="text" id="timing" placeholder="صبح 8:00 تا 12:30">
+            </div>
+
+            <div class="form-group">
+                <label>مرکزی معلومات (Central Information)</label>
+                <textarea id="centralInfo" placeholder="شعبہ حفظ کی تفصیلات..."></textarea>
+            </div>
+
+            <h3 style="margin-top: 20px; margin-bottom: 10px;">نچلے تین سیکشن (Bottom Three Sections)</h3>
+
+            <div class="form-group">
+                <label>بائیں سیکشن عنوان (Left Section Title)</label>
+                <input type="text" id="leftTitle" placeholder="ضروری نوٹ">
+            </div>
+
+            <div class="form-group">
+                <label>بائیں سیکشن مواد (Left Section Content)</label>
+                <textarea id="leftContent"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>درمیانی سیکشن عنوان (Middle Section Title)</label>
+                <input type="text" id="middleTitle" placeholder="دینی اور عصری علوم کا حسین امتزاج">
+            </div>
+
+            <div class="form-group">
+                <label>درمیانی سیکشن مواد (Middle Section Content)</label>
+                <textarea id="middleContent"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>دائیں سیکشن عنوان (Right Section Title)</label>
+                <input type="text" id="rightTitle" placeholder="خاص نوٹ">
+            </div>
+
+            <div class="form-group">
+                <label>دائیں سیکشن مواد (Right Section Content)</label>
+                <textarea id="rightContent"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>فون نمبرات (Phone Numbers)</label>
+                <input type="text" id="phoneNumbers" placeholder="0336-9586656 | 0311-5342747 | 0312-3550107">
+            </div>
+
+            <div class="form-group">
+                <label>پتہ (Address)</label>
+                <input type="text" id="address" placeholder="مدرسہ عربیہ اسلامیہ میمل">
+            </div>
+
+            <div class="form-group">
+                <label>مکمل پتہ (Full Address)</label>
+                <input type="text" id="fullAddress" placeholder="شاہراہ حصہ پل ہرن مسجد شریف کراچی">
+            </div>
+
+            <button class="btn btn-primary" onclick="updatePreview()">👁️ پیش منظر دیکھیں</button>
+            <button class="btn btn-success" onclick="savePoster()">💾 محفوظ کریں</button>
+            <button class="btn btn-info" onclick="exportToImage()">📷 تصویر کے طور پر ایکسپورٹ (High Res)</button>
+            <button class="btn btn-warning" onclick="exportToPDF()">📄 PDF کے طور پر ایکسپورٹ</button>
+            <button class="btn btn-danger" onclick="clearForm()">🗑️ صاف کریں</button>
+
+            <div class="saved-posters">
+                <h3>محفوظ شدہ پوسٹرز (Saved Posters)</h3>
+                <div class="poster-list" id="posterList"></div>
+            </div>
+        </div>
+
+        <div class="poster-preview">
+            <div id="posterCanvas">
+                <div class="poster-header">
+                    <div class="decorative-elements deco-left"></div>
+                    <div class="decorative-elements deco-right"></div>
+                    <div class="poster-title" id="previewMainTitle">اعلان داخلہ</div>
+                    <div class="poster-dates">
+                        <span id="previewIslamicYear">1445</span>
+                        <span>/</span>
+                        <span id="previewGregorianYear">2024</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-around; margin-top: 10px; font-size: 18px;">
+                        <span><span class="date-badge">10</span> <span id="previewIslamicDate">شوال 1445</span></span>
+                        <span><span class="date-badge">20</span> <span id="previewGregorianDate">اپریل 2024</span></span>
+                    </div>
+                </div>
+
+                <div class="sections-container">
+                    <div class="section-card">
+                        <div class="section-title" id="previewSection1Title">تصوری علمیم</div>
+                        <div class="section-content" id="previewSection1Content">
+                            اندرونی مذہبی تعلیم کی فراہمی کے ساتھ معاشرے کے لیے مفید انسان تیار کریں
+                        </div>
+                    </div>
+
+                    <div class="section-card" style="background: #2C5F4F;">
+                        <div class="section-title" style="background: rgba(255,255,255,0.2);" id="previewSection2Title">تجویدالقرآن</div>
+                        <div class="section-content" style="background: #E6B0AA; color: #000; border-color: #8B4513;" id="previewSection2Content">
+                            حافظہ قرآن کریم اور تجوید کی تعلیم
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-title" id="previewSection3Title">دروس نظامی</div>
+                        <div class="section-content" id="previewSection3Content">
+                            اولاد کی تعلیم و تربیت کی فکر ہے تو ابھی داخلہ لیں
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timing-section" id="previewTiming">
+                    اوقات داخلہ: صبح 8:00 تا 12:30
+                </div>
+
+                <div style="background: #2C5F4F; padding: 15px; border-radius: 10px; margin-bottom: 15px; color: white; text-align: center;">
+                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
+                        شعبہ حفظ کی تفصیلات
+                    </div>
+                    <div id="previewCentralInfo" style="font-size: 14px; line-height: 1.6;">
+                        10 شوال سے مسلسل 20 اپریل تک اور روس اتفاقی کے طلباء کے لیے 13 شوال 23 اپریل سے مسلسل شروع
+                    </div>
+                </div>
+
+                <div class="bottom-sections">
+                    <div class="bottom-card">
+                        <div class="bottom-card-title" id="previewLeftTitle">ضروری نوٹ</div>
+                        <div class="bottom-card-content" id="previewLeftContent">
+                            حافظہ ہو جانے والا طالب علم، ارادے کے ساتھ دارالعلوم میں داخلہ لے اور کی فضیلت
+                        </div>
+                    </div>
+
+                    <div class="middle-section">
+                        <div class="middle-title" id="previewMiddleTitle">دینی اور عصری علوم کا حسین امتزاج</div>
+                        <div class="middle-content" id="previewMiddleContent">
+                            دینی تعلیمات کے ساتھ عصری علوم کی تعلیم۔ قرآن، حدیث، فقہ اور عربی زبان کے ساتھ انگلش، اردو، ریاضی اور سائنس
+                        </div>
+                    </div>
+
+                    <div class="bottom-card">
+                        <div class="bottom-card-title" id="previewRightTitle">خاص نوٹ</div>
+                        <div class="bottom-card-content" id="previewRightContent">
+                            اولاد کی تعلیم و تربیت کی فکر ہے تو ہمارے ساتھ رابطہ کریں اور اپنے بچوں کو دینی اور عصری تعلیم سے آراستہ کریں
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <div class="footer-phone" id="previewPhoneNumbers">
+                        📞 0336-9586656 | 0311-5342747 | 0312-3550107
+                    </div>
+                    <div class="footer-address">
+                        <div id="previewAddress">مدرسہ عربیہ اسلامیہ میمل</div>
+                        <div id="previewFullAddress" style="font-size: 14px; margin-top: 5px;">شاہراہ حصہ پل ہرن مسجد شریف کراچی</div>
+                    </div>
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #FFA500, #FFD700); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // IndexedDB Setup
+        let db;
+        const DB_NAME = 'IslamicPosterDB';
+        const STORE_NAME = 'posters';
+
+        function initDB() {
+            const request = indexedDB.open(DB_NAME, 1);
+
+            request.onerror = () => {
+                console.error('Database failed to open');
+            };
+
+            request.onsuccess = () => {
+                db = request.result;
+                loadPosterList();
+            };
+
+            request.onupgradeneeded = (e) => {
+                db = e.target.result;
+                const objectStore = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                objectStore.createIndex('name', 'name', { unique: false });
+                objectStore.createIndex('timestamp', 'timestamp', { unique: false });
+            };
+        }
+
+        function updatePreview() {
+            document.getElementById('previewMainTitle').textContent = document.getElementById('mainTitle').value || 'اعلان داخلہ';
+            document.getElementById('previewIslamicYear').textContent = document.getElementById('islamicYear').value || '1445';
+            document.getElementById('previewGregorianYear').textContent = document.getElementById('gregorianYear').value || '2024';
+            document.getElementById('previewIslamicDate').textContent = document.getElementById('islamicDate').value || 'شوال 1445';
+            document.getElementById('previewGregorianDate').textContent = document.getElementById('gregorianDate').value || 'اپریل 2024';
+
+            document.getElementById('previewSection1Title').textContent = document.getElementById('section1Title').value || 'تصوری علمیم';
+            document.getElementById('previewSection1Content').textContent = document.getElementById('section1Content').value || 'اندرونی مذہبی تعلیم';
+
+            document.getElementById('previewSection2Title').textContent = document.getElementById('section2Title').value || 'تجویدالقرآن';
+            document.getElementById('previewSection2Content').textContent = document.getElementById('section2Content').value || 'حافظہ قرآن کریم';
+
+            document.getElementById('previewSection3Title').textContent = document.getElementById('section3Title').value || 'دروس نظامی';
+            document.getElementById('previewSection3Content').textContent = document.getElementById('section3Content').value || 'اولاد کی تعلیم';
+
+            document.getElementById('previewTiming').textContent = document.getElementById('timing').value || 'اوقات داخلہ: صبح 8:00 تا 12:30';
+            document.getElementById('previewCentralInfo').textContent = document.getElementById('centralInfo').value || 'شعبہ حفظ کی تفصیلات';
+
+            document.getElementById('previewLeftTitle').textContent = document.getElementById('leftTitle').value || 'ضروری نوٹ';
+            document.getElementById('previewLeftContent').textContent = document.getElementById('leftContent').value || 'حافظہ ہو جانے والا طالب علم';
+
+            document.getElementById('previewMiddleTitle').textContent = document.getElementById('middleTitle').value || 'دینی اور عصری علوم کا حسین امتزاج';
+            document.getElementById('previewMiddleContent').textContent = document.getElementById('middleContent').value || 'دینی تعلیمات کے ساتھ عصری علوم';
+
+            document.getElementById('previewRightTitle').textContent = document.getElementById('rightTitle').value || 'خاص نوٹ';
+            document.getElementById('previewRightContent').textContent = document.getElementById('rightContent').value || 'اولاد کی تعلیم و تربیت';
+
+            document.getElementById('previewPhoneNumbers').innerHTML = '📞 ' + (document.getElementById('phoneNumbers').value || '0336-9586656');
+            document.getElementById('previewAddress').textContent = document.getElementById('address').value || 'مدرسہ عربیہ اسلامیہ میمل';
+            document.getElementById('previewFullAddress').textContent = document.getElementById('fullAddress').value || 'شاہراہ حصہ پل ہرن مسجد شریف کراچی';
+        }
+
+        function savePoster() {
+            const posterName = document.getElementById('posterName').value || 'بے نام پوسٹر ' + Date.now();
+
+            const posterData = {
+                name: posterName,
+                timestamp: new Date().toISOString(),
+                data: {
+                    mainTitle: document.getElementById('mainTitle').value,
+                    islamicYear: document.getElementById('islamicYear').value,
+                    gregorianYear: document.getElementById('gregorianYear').value,
+                    islamicDate: document.getElementById('islamicDate').value,
+                    gregorianDate: document.getElementById('gregorianDate').value,
+                    section1Title: document.getElementById('section1Title').value,
+                    section1Content: document.getElementById('section1Content').value,
+                    section2Title: document.getElementById('section2Title').value,
+                    section2Content: document.getElementById('section2Content').value,
+                    section3Title: document.getElementById('section3Title').value,
+                    section3Content: document.getElementById('section3Content').value,
+                    timing: document.getElementById('timing').value,
+                    centralInfo: document.getElementById('centralInfo').value,
+                    leftTitle: document.getElementById('leftTitle').value,
+                    leftContent: document.getElementById('leftContent').value,
+                    middleTitle: document.getElementById('middleTitle').value,
+                    middleContent: document.getElementById('middleContent').value,
+                    rightTitle: document.getElementById('rightTitle').value,
+                    rightContent: document.getElementById('rightContent').value,
+                    phoneNumbers: document.getElementById('phoneNumbers').value,
+                    address: document.getElementById('address').value,
+                    fullAddress: document.getElementById('fullAddress').value
+                }
+            };
+
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.add(posterData);
+
+            request.onsuccess = () => {
+                alert('✅ پوسٹر کامیابی سے محفوظ ہو گیا!');
+                loadPosterList();
+            };
+
+            request.onerror = () => {
+                alert('❌ محفوظ کرنے میں خرابی!');
+            };
+        }
+
+        function loadPosterList() {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.getAll();
+
+            request.onsuccess = () => {
+                const posters = request.result;
+                const listContainer = document.getElementById('posterList');
+                listContainer.innerHTML = '';
+
+                if (posters.length === 0) {
+                    listContainer.innerHTML = '<p style="text-align: center; color: #999;">کوئی محفوظ شدہ پوسٹر نہیں</p>';
+                    return;
+                }
+
+                posters.reverse().forEach(poster => {
+                    const item = document.createElement('div');
+                    item.className = 'poster-item';
+                    item.innerHTML = `
+                        <span class="poster-item-name">${poster.name}</span>
+                        <div class="poster-item-actions">
+                            <button class="btn btn-primary btn-small" onclick="loadPoster(${poster.id})">لوڈ</button>
+                            <button class="btn btn-danger btn-small" onclick="deletePoster(${poster.id})">حذف</button>
+                        </div>
+                    `;
+                    listContainer.appendChild(item);
+                });
+            };
+        }
+
+        function loadPoster(id) {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.get(id);
+
+            request.onsuccess = () => {
+                const poster = request.result;
+                if (poster) {
+                    const data = poster.data;
+                    document.getElementById('posterName').value = poster.name;
+                    document.getElementById('mainTitle').value = data.mainTitle || '';
+                    document.getElementById('islamicYear').value = data.islamicYear || '';
+                    document.getElementById('gregorianYear').value = data.gregorianYear || '';
+                    document.getElementById('islamicDate').value = data.islamicDate || '';
+                    document.getElementById('gregorianDate').value = data.gregorianDate || '';
+                    document.getElementById('section1Title').value = data.section1Title || '';
+                    document.getElementById('section1Content').value = data.section1Content || '';
+                    document.getElementById('section2Title').value = data.section2Title || '';
+                    document.getElementById('section2Content').value = data.section2Content || '';
+                    document.getElementById('section3Title').value = data.section3Title || '';
+                    document.getElementById('section3Content').value = data.section3Content || '';
+                    document.getElementById('timing').value = data.timing || '';
+                    document.getElementById('centralInfo').value = data.centralInfo || '';
+                    document.getElementById('leftTitle').value = data.leftTitle || '';
+                    document.getElementById('leftContent').value = data.leftContent || '';
+                    document.getElementById('middleTitle').value = data.middleTitle || '';
+                    document.getElementById('middleContent').value = data.middleContent || '';
+                    document.getElementById('rightTitle').value = data.rightTitle || '';
+                    document.getElementById('rightContent').value = data.rightContent || '';
+                    document.getElementById('phoneNumbers').value = data.phoneNumbers || '';
+                    document.getElementById('address').value = data.address || '';
+                    document.getElementById('fullAddress').value = data.fullAddress || '';
+
+                    updatePreview();
+                    alert('✅ پوسٹر لوڈ ہو گیا!');
+                }
+            };
+        }
+
+        function deletePoster(id) {
+            if (!confirm('کیا آپ واقعی اس پوسٹر کو حذف کرنا چاہتے ہیں؟')) return;
+
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            const request = objectStore.delete(id);
+
+            request.onsuccess = () => {
+                alert('✅ پوسٹر حذف ہو گیا!');
+                loadPosterList();
+            };
+        }
+
+        function clearForm() {
+            if (!confirm('کیا آپ فارم صاف کرنا چاہتے ہیں؟')) return;
+
+            document.querySelectorAll('input, textarea').forEach(input => {
+                input.value = '';
+            });
+            updatePreview();
+        }
+
+        async function exportToImage() {
+            const canvas = document.getElementById('posterCanvas');
+
+            try {
+                const downloadCanvas = await html2canvas(canvas, {
+                    scale: 3,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    width: canvas.offsetWidth,
+                    height: canvas.offsetHeight
+                });
+
+                const link = document.createElement('a');
+                link.download = `islamic-poster-${Date.now()}.png`;
+                link.href = downloadCanvas.toDataURL('image/png', 1.0);
+                link.click();
+
+                alert('✅ تصویر کامیابی سے ڈاؤن لوڈ ہو گئی!');
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('❌ ایکسپورٹ میں خرابی!');
+            }
+        }
+
+        async function exportToPDF() {
+            const canvas = document.getElementById('posterCanvas');
+
+            try {
+                const downloadCanvas = await html2canvas(canvas, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff'
+                });
+
+                const imgData = downloadCanvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const imgWidth = 210;
+                const imgHeight = (downloadCanvas.height * imgWidth) / downloadCanvas.width;
+
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                pdf.save(`islamic-poster-${Date.now()}.pdf`);
+
+                alert('✅ PDF کامیابی سے ڈاؤن لوڈ ہو گئی!');
+            } catch (error) {
+                console.error('PDF export error:', error);
+                alert('❌ PDF ایکسپورٹ میں خرابی!');
+            }
+        }
+
+        // Initialize
+        window.onload = () => {
+            initDB();
+            updatePreview();
+        };
+    </script>
+</body>
+</html>

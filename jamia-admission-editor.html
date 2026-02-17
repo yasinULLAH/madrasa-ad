@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جامعۃ الشہید - ایڈیٹر</title>
+
+<!-- Google Fonts for Arabic/Urdu -->
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+  :root {
+    --gold: #C9A84C;
+    --dark-gold: #8B6914;
+    --light-gold: #F0D080;
+    --brown: #4A2C0A;
+    --dark-brown: #2D1A06;
+    --cream: #FBF6ED;
+    --olive: #5C6B3A;
+    --red-accent: #8B1A1A;
+    --white: #FFFFFF;
+    --border-gold: #C9A84C;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a1008;
+    font-family: 'Noto Nastaliq Urdu', 'Amiri', serif;
+    min-height: 100vh;
+    color: #333;
+  }
+
+  /* ===== TOOLBAR ===== */
+  .toolbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: linear-gradient(135deg, #2D1A06, #4A2C0A);
+    border-bottom: 2px solid var(--gold);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    direction: ltr;
+  }
+
+  .toolbar-title {
+    color: var(--gold);
+    font-size: 18px;
+    font-weight: bold;
+    font-family: 'Amiri', serif;
+    margin-left: auto;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    font-family: Arial, sans-serif;
+  }
+
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+
+  .btn-gold { background: linear-gradient(135deg, var(--gold), var(--dark-gold)); color: white; }
+  .btn-green { background: linear-gradient(135deg, #2d7a2d, #1a5c1a); color: white; }
+  .btn-red { background: linear-gradient(135deg, #8B1A1A, #5c0f0f); color: white; }
+  .btn-blue { background: linear-gradient(135deg, #1a4a8B, #0f2d5c); color: white; }
+  .btn-purple { background: linear-gradient(135deg, #5c1a8B, #3a0f5c); color: white; }
+  .btn-orange { background: linear-gradient(135deg, #8B4A1A, #5c2d0f); color: white; }
+
+  .separator { width: 1px; height: 35px; background: var(--gold); opacity: 0.4; margin: 0 5px; }
+
+  /* ===== MAIN LAYOUT ===== */
+  .app-container {
+    display: flex;
+    gap: 0;
+    padding-top: 65px;
+    min-height: 100vh;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 340px;
+    min-width: 340px;
+    background: linear-gradient(180deg, #2D1A06, #1a0e03);
+    border-left: 2px solid var(--gold);
+    overflow-y: auto;
+    padding: 20px;
+    direction: rtl;
+    max-height: calc(100vh - 65px);
+    position: sticky;
+    top: 65px;
+    right: 0;
+  }
+
+  .sidebar-section {
+    margin-bottom: 20px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 10px;
+    padding: 15px;
+  }
+
+  .sidebar-section h3 {
+    color: var(--gold);
+    font-size: 14px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .field-group { margin-bottom: 12px; }
+
+  .field-group label {
+    display: block;
+    color: var(--light-gold);
+    font-size: 12px;
+    margin-bottom: 5px;
+    font-family: Arial, sans-serif;
+  }
+
+  .field-group input,
+  .field-group textarea,
+  .field-group select {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 6px;
+    color: white;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: 'Noto Nastaliq Urdu', Arial, serif;
+    direction: rtl;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .field-group input:focus,
+  .field-group textarea:focus {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.1);
+  }
+
+  .field-group textarea { min-height: 80px; resize: vertical; }
+
+  .field-group input[type="color"] {
+    height: 40px; padding: 4px; cursor: pointer;
+  }
+
+  .field-group input[type="range"] { padding: 4px 0; }
+
+  /* ===== FLYER CANVAS ===== */
+  .canvas-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px;
+    overflow: auto;
+    background: radial-gradient(ellipse at center, #2d1a06 0%, #0d0804 100%);
+  }
+
+  /* ===== THE FLYER ===== */
+  #flyer {
+    width: 540px;
+    min-height: 960px;
+    position: relative;
+    background: var(--cream);
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(201,168,76,0.4), 0 0 120px rgba(0,0,0,0.8);
+    flex-shrink: 0;
+    font-family: 'Noto Nastaliq Urdu', 'Amiri', serif;
+  }
+
+  /* Flyer Background Texture */
+  .flyer-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .flyer-bg-gradient {
+    position: absolute;
+    inset: 0;
+    background: var(--cream);
+  }
+
+  .flyer-bg-pattern {
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+    background-image:
+      repeating-linear-gradient(45deg, #8B6914 0px, #8B6914 1px, transparent 1px, transparent 20px),
+      repeating-linear-gradient(-45deg, #8B6914 0px, #8B6914 1px, transparent 1px, transparent 20px);
+  }
+
+  /* Top Header - Brown */
+  .flyer-header {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(135deg, #3D2008, #5C3A10, #3D2008);
+    padding: 15px 20px 12px;
+    border-bottom: 3px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Announcement Box - Top Left */
+  .announcement-box {
+    background: linear-gradient(135deg, #C9A84C, #8B6914);
+    border-radius: 12px;
+    padding: 10px 15px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    min-width: 110px;
+  }
+
+  .announcement-box .ann-top {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+    direction: rtl;
+    font-family: 'Noto Nastaliq Urdu', serif;
+  }
+
+  .announcement-box .ann-bottom {
+    font-size: 14px;
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+    direction: rtl;
+    font-family: 'Noto Nastaliq Urdu', serif;
+  }
+
+  /* Logos in center */
+  .header-logos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-badge {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    background: linear-gradient(135deg, #1a4a8B, #0d2d5a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: var(--gold);
+    font-weight: bold;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+    overflow: hidden;
+  }
+
+  .logo-badge img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+  .logo-badge-small {
+    width: 45px;
+    height: 45px;
+    font-size: 16px;
+  }
+
+  /* College name top right */
+  .college-name-box {
+    text-align: left;
+    direction: rtl;
+  }
+
+  .college-name-main {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1.2;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+    font-family: 'Amiri', serif;
+  }
+
+  .college-name-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    direction: rtl;
+    font-family: 'Noto Nastaliq Urdu', serif;
+  }
+
+  /* Year banner */
+  .year-banner {
+    background: linear-gradient(90deg, #4A2C0A, #8B6914, #4A2C0A);
+    padding: 6px 20px;
+    text-align: center;
+    color: var(--light-gold);
+    font-size: 16px;
+    font-weight: 700;
+    border-bottom: 2px solid var(--gold);
+    direction: ltr;
+    font-family: 'Amiri', serif;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Photo strip */
+  .photo-strip {
+    position: relative;
+    z-index: 2;
+    height: 130px;
+    background: linear-gradient(135deg, #2d4a1a, #1a2d0a);
+    border-bottom: 3px solid var(--gold);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .photo-strip-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .photo-figure {
+    width: 50px;
+    height: 90px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(45,74,26,0.8) 0%, transparent 20%, transparent 80%, rgba(45,74,26,0.8) 100%);
+  }
+
+  .photo-strip img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Main content area */
+  .flyer-main {
+    position: relative;
+    z-index: 2;
+    padding: 0;
+  }
+
+  /* Shu'ba heading */
+  .shuba-section {
+    background: linear-gradient(135deg, #3D2008, #5C3A10);
+    padding: 15px 25px 12px;
+    border-bottom: 2px solid var(--gold);
+    direction: rtl;
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+  }
+
+  .shuba-word {
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 0.9;
+    font-family: 'Amiri', serif;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+  }
+
+  .shuba-details {
+    direction: rtl;
+    flex: 1;
+  }
+
+  .shuba-title {
+    font-size: 22px;
+    color: white;
+    font-weight: 700;
+    line-height: 1.3;
+    direction: rtl;
+    font-family: 'Noto Nastaliq Urdu', serif;
+  }
+
+  .shuba-subtitle {
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    direction: rtl;
+    font-family: 'Noto Nastaliq Urdu', serif;
+    margin-top: 4px;
+  }
+
+  /* Model class badge */
+  .model-badge {
+    background: linear-gradient(135deg, #C9A84C, #8B6914);
+    margin: 0;
+    padding: 8px 25px;
+    text-align: center;
+    font-size: 17px;
+    color: white;
+    font-weight: 700;
+    font-family: 'Noto Nastaliq Urdu', serif;
+    direction: rtl;
+    border-bottom: 2px solid var(--dark-gold);
+  }
+
+  /* Schedule info */
+  .schedule-bar {
+    background: #f5ede0;
+    border-bottom: 2px solid var(--gold);
+    padding: 10px 25px;
+    display: flex;
+    gap: 20px;
+    direction: rtl;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .schedule-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    direction: rtl;
+  }
+
+  .schedule-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--brown);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .schedule-text {
+    font-size: 13px;
+    color: var(--brown);
+    font-family: 'Noto Nastaliq Urdu', serif;
+    direction: rtl;
+    line-height: 1.5;
+  }
+
+  .schedule-text strong {
+    color: var(--red-accent);
+    font-weight: 700;
+  }
+
+  /* Conditions section */
+  .conditions-section {
+    background: #f0e8d8;
+    margin: 12px;
+    border-radius: 10px;
+    border: 2px solid var(--gold);
+    padding: 12px 15px;
+    direction: rtl;
+  }
+
+  .conditions-header {
+    background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 6px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-family: 'Noto Nastaliq Urdu', serif;
+    direction: rtl;
+  }
+
+  .condition-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 7px;
+    direction: rtl;
+  }
+
+  .cond-bullet {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+
+  .cond-text {
+    font-size: 12.5px;
+    color: var(--dark-brown);
+    font-family: 'Noto Nastaliq Urdu', serif;
+    direction: rtl;
+    line-height: 1.6;
+  }
+
+  /* Features circles */
+  .features-section {
+    padding: 15px 12px;
+    position: relative;
+    background: var(--cream);
+  }
+
+  .features-title {
+    text-align: center;
+    font-size: 16px;
+    color: var(--brown);
+    font-weight: 700;
+    margin-bottom: 12px;
+    font-family: 'Noto Nastaliq Urdu', serif;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    direction: rtl;
+  }
+
+  .feature-circle {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 3px solid var(--gold);
+    overflow: hidden;
+    background: linear-gradient(135deg, #e8d5b0, #f5ede0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px;
+    box-shadow: 0 4px 15px rgba(201,168,76,0.3);
+    position: relative;
+  }
+
+  .feature-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .feature-label {
+    font-size: 12px;
+    color: var(--brown);
+    text-align: center;
+    font-weight: 600;
+    font-family: 'Noto Nastaliq Urdu', serif;
+    direction: rtl;
+    line-height: 1.5;
+  }
+
+  /* Model class center button */
+  .model-class-center {
+    display: flex;
+    justify-content: center;
+    margin: 5px 0;
+  }
+
+  .model-class-badge {
+    background: linear-gradient(135deg, #8B6914, #C9A84C, #8B6914);
+    border-radius: 50%;
+    width: 130px;
+    height: 130px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--dark-gold);
+    box-shadow: 0 6px 20px rgba(139,105,20,0.4);
+    direction: rtl;
+  }
+
+  .mc-title {
+    font-size: 18px;
+    color: white;
+    font-weight: 700;
+    font-family: 'Noto Nastaliq Urdu', serif;
+    line-height: 1.2;
+  }
+
+  .mc-subtitle {
+    font-size: 20px;
+    color: white;
+    font-weight: 700;
+    font-family: 'Noto Nastaliq Urdu', serif;
+  }
+
+  /* Contact section */
+  .contact-section {
+    background: linear-gradient(135deg, #3D2008, #5C3A10);
+    padding: 15px 20px;
+    border-top: 3px solid var(--gold);
+    direction: rtl;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+  }
+
+  .contact-numbers {
+    direction: rtl;
+  }
+
+  .contact-number {
+    font-size: 16px;
+    color: var(--light-gold);
+    font-weight: 700;
+    direction: ltr;
+    font-family: 'Amiri', Arial, serif;
+    margin-bottom: 4px;
+  }
+
+  .contact-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    direction: rtl;
+    font-family: 'Noto Nastaliq Urdu', serif;
+  }
+
+  .phone-icon-big {
+    font-size: 45px;
+    color: var(--gold);
+    opacity: 0.8;
+  }
+
+  .qr-box {
+    width: 70px;
+    height: 70px;
+    background: white;
+    border: 2px solid var(--gold);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #333;
+    text-align: center;
+    font-family: Arial;
+    overflow: hidden;
+  }
+
+  /* Address footer */
+  .address-footer {
+    background: linear-gradient(90deg, #2D1A06, #4A2C0A, #2D1A06);
+    padding: 8px 20px;
+    text-align: center;
+    color: var(--light-gold);
+    font-size: 13px;
+    direction: rtl;
+    font-family: 'Noto Nastaliq Urdu', serif;
+    border-top: 2px solid var(--gold);
+  }
+
+  /* Border decorations */
+  .decorative-border-top {
+    height: 8px;
+    background: linear-gradient(90deg, var(--dark-gold), var(--light-gold), var(--dark-gold));
+  }
+
+  .decorative-border-bottom {
+    height: 8px;
+    background: linear-gradient(90deg, var(--dark-gold), var(--light-gold), var(--dark-gold));
+  }
+
+  /* Editable overlay */
+  .editable-field {
+    cursor: text;
+    outline: 2px dashed transparent;
+    transition: outline 0.2s;
+    min-width: 20px;
+    min-height: 1em;
+  }
+
+  body.edit-mode .editable-field:hover {
+    outline: 2px dashed rgba(201,168,76,0.8);
+    background: rgba(201,168,76,0.05);
+  }
+
+  body.edit-mode .editable-field:focus {
+    outline: 2px solid var(--gold);
+    background: rgba(201,168,76,0.1);
+  }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: linear-gradient(135deg, #2D1A06, #1a0e03);
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    padding: 30px;
+    min-width: 400px;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    direction: ltr;
+  }
+
+  .modal h2 {
+    color: var(--gold);
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-family: 'Amiri', serif;
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+    padding-bottom: 10px;
+  }
+
+  .modal-close {
+    float: right;
+    background: none;
+    border: none;
+    color: var(--gold);
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  /* Records list */
+  .records-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .record-item {
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 8px;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    direction: ltr;
+  }
+
+  .record-info {
+    direction: rtl;
+    flex: 1;
+  }
+
+  .record-title {
+    color: var(--gold);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .record-date {
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    font-family: Arial;
+  }
+
+  .record-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .btn-sm {
+    padding: 5px 10px;
+    font-size: 11px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-family: Arial;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .btn-sm:hover { opacity: 0.85; }
+  .btn-sm-gold { background: var(--gold); color: white; }
+  .btn-sm-red { background: #8B1A1A; color: white; }
+  .btn-sm-green { background: #2d7a2d; color: white; }
+
+  /* Status toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: linear-gradient(135deg, #2d7a2d, #1a5c1a);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 9999;
+    transition: transform 0.4s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    direction: ltr;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { background: linear-gradient(135deg, #8B1A1A, #5c0f0f); }
+
+  /* Edit mode indicator */
+  .edit-indicator {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(201,168,76,0.9);
+    color: #2D1A06;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    z-index: 500;
+    display: none;
+    font-family: Arial;
+  }
+
+  body.edit-mode .edit-indicator { display: block; }
+
+  /* Image upload areas */
+  .img-upload-area {
+    border: 2px dashed rgba(201,168,76,0.5);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .img-upload-area:hover {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.1);
+  }
+
+  .img-upload-area label {
+    color: var(--gold);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: Arial;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .img-upload-area input { display: none; }
+
+  /* Scrollbar styling */
+  .sidebar::-webkit-scrollbar { width: 6px; }
+  .sidebar::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+  /* Condition connector lines */
+  .features-connector {
+    position: relative;
+    padding: 15px 12px;
+    background: var(--cream);
+  }
+
+  .connector-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .connector-line-h {
+    position: absolute;
+    height: 2px;
+    background: rgba(139,105,20,0.4);
+    top: 50%;
+  }
+
+  .connector-line-v {
+    position: absolute;
+    width: 2px;
+    background: rgba(139,105,20,0.4);
+    left: 50%;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <button class="btn btn-green" onclick="saveRecord()"><i class="fas fa-save"></i> Save</button>
+  <button class="btn btn-blue" onclick="openRecords()"><i class="fas fa-folder-open"></i> Records</button>
+  <button class="btn btn-orange" onclick="newFlyer()"><i class="fas fa-plus"></i> New</button>
+  <div class="separator"></div>
+  <button class="btn btn-gold" onclick="toggleEditMode()"><i class="fas fa-edit" id="editIcon"></i> <span id="editBtnText">Edit Mode</span></button>
+  <div class="separator"></div>
+  <button class="btn btn-purple" onclick="exportImage()"><i class="fas fa-image"></i> Export PNG</button>
+  <button class="btn btn-red" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> Export PDF</button>
+  <div class="separator"></div>
+  <button class="btn btn-red" onclick="deleteRecord()"><i class="fas fa-trash"></i> Delete</button>
+
+  <div class="toolbar-title">🕌 جامعۃ الشہید ایڈیٹر</div>
+</div>
+
+<!-- APP CONTAINER -->
+<div class="app-container">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+
+    <!-- Header Section -->
+    <div class="sidebar-section">
+      <h3><i class="fas fa-university"></i> کالج معلومات</h3>
+
+      <div class="field-group">
+        <label>کالج کا نام (بڑا)</label>
+        <input type="text" id="s_collegeName" value="جامعۃ الشہید" oninput="updateFlyer()">
+      </div>
+      <div class="field-group">
+        <label>کیمپس</label>
+        <input type="text" id="s_campus" value="گوجرانوالہ کیمپس" oninput="updateFlyer()">
+      </div>
+      <div class="field-group">
+        <label>اعلان عنوان</label>
+        <input type="text" id="s_annTitle" value="اعلان" oninput="updateFlyer()">
+      </div>
+      <div class="field-group">
+        <label>اعلان ذیلی عنوان</label>
+        <input type="text" id="s_annSub" value="داخلہ" oninput="updateFlyer()">
+      </div>
+      <div class="field-group">
+        <label>سال</label>
+        <input type="text" id="s_year" value="2025/1446ھ" oninput="updateFlyer()">
+      </div>
+    </div>
+
+    <!-- Department Section -->
+    <div class="sidebar-section">
+      <h3><i class="fas fa-book-quran"></i> شعبہ معلومات</h3>
+
+      <div class="field-group">
+        <label>شعبہ بڑا لفظ</label>
+        <input type="text" id="s_shuba" value="شعبہ" oninput="updateFlyer()">
+      </div>
+      <div class="field-group">
+        <label>شعبہ عنوان</label>
+        <input type="text" id="s_shubaTxt" value="تحفیظ القرآن" oninput="updateFlyer()">
+      </div>
+      <div class="field-group">
+        <label>شعبہ ذیلی لائن ۱</label>
+        <input type="text" id="s_shubaSub1" value="داخلہ برائے" oninput="updateFlyer()">
+      </div>
+      <div class="field-group">
+        <label>شعبہ ذیلی لائن ۲</label>
+        <input type="text" id="s_shubaSub2" value="نورانی قاعدہ، ناظرہ، حفظ اور گردان" oninput="updateFlyer()">
+      </div>
+      <div class="field-group">
+        <label>ماڈل کلاس بیج</label>
+        <input type="text" id="s_modelBadge" value="ماڈل کلاس / غیر رہائشی" oninput="updateFlyer()">
+      </div>
+    </div>
+
+    <!-- Schedule Section -->
+    <div class="sidebar-section">
+      <h3><i class="fas fa-calendar"></i> تاریخیں</h3>
+      <div class="field-group">
+        <label>رجسٹریشن آخری تاریخ</label>
+        <input type="text" id="s_regDate" value="رجسٹریشن کی آخری تاریخ: 30 رمضان المبارک 1446ھ" oninput="updateFlyer()">
+      </div>
+      <div class="field-group">
+        <label>داخلہ کی تاریخ</label>
+        <input type="text" id="s_admDate" value="داخلہ کی تاریخ: 13 اپریل 2025ء" oninput="updateFlyer()">
+      </div>
+    </div>
+
+    <!-- Conditions -->
+    <div class="sidebar-section">
+      <h3><i class="fas fa-list-check"></i> شرائط داخلہ</h3>
+      <div id="conditionsList"></div>
+      <button class="btn btn-green" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;" onclick="addCondition()">
+        <i class="fas fa-plus"></i> شرط شامل کریں
+      </button>
+    </div>
+
+    <!-- Features -->
+    <div class="sidebar-section">
+      <h3><i class="fas fa-star"></i> سہولیات</h3>
+      <div id="featuresList"></div>
+      <button class="btn btn-green" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;" onclick="addFeature()">
+        <i class="fas fa-plus"></i> سہولت شامل کریں
+      </button>
+    </div>
+
+    <!-- Contact -->
+    <div class="sidebar-section">
+      <h3><i class="fas fa-phone"></i> رابطہ</h3>
+      <div class="field-group">
+        <label>نمبر ۱</label>
+        <input type="text" id="s_phone1" value="03167677646" oninput="updateFlyer()">
+      </div>
+      <div class="field-group">
+        <label>نمبر ۲</label>
+        <input type="text" id="s_phone2" value="03167677643" oninput="updateFlyer()">
+      </div>
+      <div class="field-group">
+        <label>پتہ</label>
+        <textarea id="s_address" oninput="updateFlyer()">ایڈریس: ساہیوال میں تحصیل دفتر کے ساتھ، گوجرانوالہ</textarea>
+      </div>
+      <div class="field-group">
+        <label>رابطہ نوٹ</label>
+        <input type="text" id="s_contactNote" value="تفصیل کے لیے رابطہ کریں" oninput="updateFlyer()">
+      </div>
+    </div>
+
+    <!-- Colors -->
+    <div class="sidebar-section">
+      <h3><i class="fas fa-palette"></i> رنگ</h3>
+      <div class="field-group">
+        <label>بنیادی سنہری رنگ</label>
+        <input type="color" id="c_gold" value="#C9A84C" oninput="updateColors()">
+      </div>
+      <div class="field-group">
+        <label>بھورا رنگ</label>
+        <input type="color" id="c_brown" value="#3D2008" oninput="updateColors()">
+      </div>
+      <div class="field-group">
+        <label>پس منظر کا رنگ</label>
+        <input type="color" id="c_bg" value="#FBF6ED" oninput="updateColors()">
+      </div>
+    </div>
+
+    <!-- Images -->
+    <div class="sidebar-section">
+      <h3><i class="fas fa-image"></i> تصاویر</h3>
+
+      <div class="field-group">
+        <label>اوپر کی پٹی تصویر</label>
+        <div class="img-upload-area">
+          <label><i class="fas fa-upload"></i> تصویر اپ لوڈ کریں
+            <input type="file" accept="image/*" onchange="uploadImage('photoStrip', this)">
+          </label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>لوگو تصویر</label>
+        <div class="img-upload-area">
+          <label><i class="fas fa-upload"></i> لوگو اپ لوڈ کریں
+            <input type="file" accept="image/*" onchange="uploadImage('logo', this)">
+          </label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CANVAS -->
+  <div class="canvas-wrapper">
+    <div id="flyer">
+      <!-- Top decorative border -->
+      <div class="decorative-border-top"></div>
+
+      <!-- HEADER -->
+      <div class="flyer-header">
+        <!-- Announcement Box (Left) -->
+        <div class="announcement-box">
+          <div class="ann-top editable-field" contenteditable="false" id="f_annTitle">اعلان</div>
+          <div class="ann-bottom editable-field" contenteditable="false" id="f_annSub">داخلہ</div>
+        </div>
+
+        <!-- Center Logos -->
+        <div class="header-logos">
+          <div class="logo-badge" id="logo-main">
+            <i class="fas fa-mosque"></i>
+          </div>
+          <div class="logo-badge logo-badge-small" id="logo-small">
+            <i class="fas fa-star-and-crescent"></i>
+          </div>
+        </div>
+
+        <!-- College Name (Right) -->
+        <div class="college-name-box">
+          <div class="college-name-main editable-field" contenteditable="false" id="f_collegeName">جامعۃ الشہید</div>
+          <div class="college-name-sub editable-field" contenteditable="false" id="f_campus">گوجرانوالہ کیمپس</div>
+        </div>
+      </div>
+
+      <!-- Year Banner -->
+      <div class="year-banner">
+        <span class="editable-field" contenteditable="false" id="f_year">2025/1446ھ</span>
+      </div>
+
+      <!-- Photo Strip -->
+      <div class="photo-strip" id="photoStripDiv">
+        <div class="photo-strip-placeholder" id="photoPlaceholder">
+          <div style="display:flex;gap:8px;align-items:center;justify-content:center;z-index:1;">
+            <div class="photo-figure">👨</div>
+            <div class="photo-figure" style="height:110px;width:60px;">👨‍🎓</div>
+            <div class="photo-figure" style="height:120px;width:65px;font-size:28px;">🧔</div>
+            <div class="photo-figure">👦</div>
+            <div class="photo-figure">👦</div>
+          </div>
+          <div class="photo-overlay"></div>
+        </div>
+      </div>
+
+      <!-- Shu'ba Section -->
+      <div class="shuba-section">
+        <div class="shuba-details">
+          <div class="shuba-title editable-field" contenteditable="false" id="f_shubaTxt">تحفیظ القرآن</div>
+          <div class="shuba-subtitle editable-field" contenteditable="false" id="f_shubaSub1">داخلہ برائے</div>
+          <div class="shuba-subtitle editable-field" contenteditable="false" id="f_shubaSub2">نورانی قاعدہ، ناظرہ، حفظ اور گردان</div>
+        </div>
+        <div class="shuba-word editable-field" contenteditable="false" id="f_shuba">شعبہ</div>
+      </div>
+
+      <!-- Model Badge -->
+      <div class="model-badge editable-field" contenteditable="false" id="f_modelBadge">
+        ماڈل کلاس / غیر رہائشی
+      </div>
+
+      <!-- Schedule Bar -->
+      <div class="schedule-bar">
+        <div class="schedule-item">
+          <div class="schedule-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="schedule-text editable-field" contenteditable="false" id="f_regDate">
+            رجسٹریشن کی آخری تاریخ: 30 رمضان المبارک 1446ھ
+          </div>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-icon"><i class="fas fa-door-open"></i></div>
+          <div class="schedule-text editable-field" contenteditable="false" id="f_admDate">
+            داخلہ کی تاریخ: 13 اپریل 2025ء
+          </div>
+        </div>
+      </div>
+
+      <!-- Conditions Section -->
+      <div class="conditions-section">
+        <div class="conditions-header">شرائط داخلہ</div>
+        <div id="f_conditionsList">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+
+      <!-- Features Section -->
+      <div style="padding:12px;background:var(--cream);position:relative;">
+        <!-- Central model class badge -->
+        <div style="display:flex;justify-content:center;margin-bottom:12px;">
+          <div class="model-class-badge">
+            <div class="mc-title editable-field" contenteditable="false">ماڈل کلاس</div>
+            <div class="mc-subtitle editable-field" contenteditable="false">سہولیات</div>
+          </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div id="f_featuresList" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+
+      <!-- Contact Section -->
+      <div class="contact-section">
+        <div class="contact-numbers">
+          <div class="contact-label editable-field" contenteditable="false" id="f_contactNote">تفصیل کے لیے رابطہ کریں</div>
+          <div class="contact-number editable-field" contenteditable="false" id="f_phone1">03167677646</div>
+          <div class="contact-number editable-field" contenteditable="false" id="f_phone2">03167677643</div>
+        </div>
+        <div class="phone-icon-big">📞</div>
+        <div class="qr-box">
+          <div style="font-size:8px;color:#333;text-align:center;line-height:1.4;">QR Code<br>رابطہ<br>نمبر</div>
+        </div>
+      </div>
+
+      <!-- Address Footer -->
+      <div class="address-footer editable-field" contenteditable="false" id="f_address">
+        ایڈریس: ساہیوال میں تحصیل دفتر کے ساتھ، گوجرانوالہ
+      </div>
+
+      <!-- Bottom decorative border -->
+      <div class="decorative-border-bottom"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- RECORDS MODAL -->
+<div class="modal-overlay" id="recordsModal">
+  <div class="modal">
+    <h2>
+      <button class="modal-close" onclick="closeModal('recordsModal')">×</button>
+      محفوظ ریکارڈز
+    </h2>
+    <div id="recordsList">
+      <div style="color:rgba(255,255,255,0.5);text-align:center;padding:20px;font-family:Arial;">
+        کوئی ریکارڈ نہیں
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT INDICATOR -->
+<div class="edit-indicator" id="editIndicator">✏️ Edit Mode ON - Click text to edit</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== STATE ==========
+let currentData = {
+  id: null,
+  conditions: [
+    'عمر 8 سے 11 سال',
+    'اسکول از درجہ KG-II پاس ہو',
+    'داخلہ اعلان کے بعد کارڈ پر باقاعدہ شرط سے',
+    'ماڈل کلاس اساتذہ کریم بلا فیس اور دیگر خدمات دی جائیں گی'
+  ],
+  features: [
+    { icon: '🏫', label: 'انفرادی نشست درس و تدریس', emoji: '🏫' },
+    { icon: '👨‍🏫', label: 'مشہور و ماہر اساتذہ کرام', emoji: '👨‍🏫' },
+    { icon: '🍽️', label: 'صحت بخش کھانے کا اہتمام', emoji: '🍽️' },
+    { icon: '⚽', label: 'بچوں کے لیے کھیل کا میدان', emoji: '⚽' }
+  ]
+};
+
+let editMode = false;
+let db;
+const DB_NAME = 'JamiaFlyerDB';
+const STORE_NAME = 'flyers';
+
+// ========== INDEXEDDB ==========
+function initDB() {
+  const req = indexedDB.open(DB_NAME, 1);
+  req.onupgradeneeded = e => {
+    db = e.target.result;
+    if (!db.objectStoreNames.contains(STORE_NAME)) {
+      const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+      store.createIndex('name', 'name', { unique: false });
+      store.createIndex('createdAt', 'createdAt', { unique: false });
+    }
+  };
+  req.onsuccess = e => { db = e.target.result; showToast('Database Ready ✓'); };
+  req.onerror = e => { showToast('DB Error: ' + e.target.error, true); };
+}
+
+function getAllRecords(cb) {
+  const tx = db.transaction(STORE_NAME, 'readonly');
+  const store = tx.objectStore(STORE_NAME);
+  const req = store.getAll();
+  req.onsuccess = () => cb(req.result);
+}
+
+function saveRecordToDB(data, cb) {
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  const store = tx.objectStore(STORE_NAME);
+  const req = data.id ? store.put(data) : store.add(data);
+  req.onsuccess = () => { data.id = req.result; cb(req.result); };
+  req.onerror = () => showToast('Save failed!', true);
+}
+
+function deleteRecordFromDB(id, cb) {
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  const store = tx.objectStore(STORE_NAME);
+  const req = store.delete(id);
+  req.onsuccess = cb;
+}
+
+// ========== COLLECT DATA ==========
+function collectCurrentData() {
+  return {
+    id: currentData.id,
+    name: document.getElementById('s_collegeName').value,
+    collegeName: document.getElementById('s_collegeName').value,
+    campus: document.getElementById('s_campus').value,
+    annTitle: document.getElementById('s_annTitle').value,
+    annSub: document.getElementById('s_annSub').value,
+    year: document.getElementById('s_year').value,
+    shuba: document.getElementById('s_shuba').value,
+    shubaTxt: document.getElementById('s_shubaTxt').value,
+    shubaSub1: document.getElementById('s_shubaSub1').value,
+    shubaSub2: document.getElementById('s_shubaSub2').value,
+    modelBadge: document.getElementById('s_modelBadge').value,
+    regDate: document.getElementById('s_regDate').value,
+    admDate: document.getElementById('s_admDate').value,
+    phone1: document.getElementById('s_phone1').value,
+    phone2: document.getElementById('s_phone2').value,
+    address: document.getElementById('s_address').value,
+    contactNote: document.getElementById('s_contactNote').value,
+    conditions: [...currentData.conditions],
+    features: currentData.features.map(f => ({...f})),
+    colors: {
+      gold: document.getElementById('c_gold').value,
+      brown: document.getElementById('c_brown').value,
+      bg: document.getElementById('c_bg').value
+    },
+    createdAt: new Date().toISOString()
+  };
+}
+
+// ========== LOAD DATA ==========
+function loadDataToUI(data) {
+  document.getElementById('s_collegeName').value = data.collegeName || '';
+  document.getElementById('s_campus').value = data.campus || '';
+  document.getElementById('s_annTitle').value = data.annTitle || '';
+  document.getElementById('s_annSub').value = data.annSub || '';
+  document.getElementById('s_year').value = data.year || '';
+  document.getElementById('s_shuba').value = data.shuba || '';
+  document.getElementById('s_shubaTxt').value = data.shubaTxt || '';
+  document.getElementById('s_shubaSub1').value = data.shubaSub1 || '';
+  document.getElementById('s_shubaSub2').value = data.shubaSub2 || '';
+  document.getElementById('s_modelBadge').value = data.modelBadge || '';
+  document.getElementById('s_regDate').value = data.regDate || '';
+  document.getElementById('s_admDate').value = data.admDate || '';
+  document.getElementById('s_phone1').value = data.phone1 || '';
+  document.getElementById('s_phone2').value = data.phone2 || '';
+  document.getElementById('s_address').value = data.address || '';
+  document.getElementById('s_contactNote').value = data.contactNote || '';
+
+  currentData.id = data.id;
+  currentData.conditions = [...(data.conditions || [])];
+  currentData.features = (data.features || []).map(f => ({...f}));
+
+  if (data.colors) {
+    document.getElementById('c_gold').value = data.colors.gold || '#C9A84C';
+    document.getElementById('c_brown').value = data.colors.brown || '#3D2008';
+    document.getElementById('c_bg').value = data.colors.bg || '#FBF6ED';
+  }
+
+  renderConditionsSidebar();
+  renderFeaturesSidebar();
+  updateFlyer();
+}
+
+// ========== UPDATE FLYER ==========
+function updateFlyer() {
+  const get = id => document.getElementById(id)?.value || '';
+
+  // Update flyer fields
+  const fieldMap = {
+    'f_collegeName': 's_collegeName',
+    'f_campus': 's_campus',
+    'f_annTitle': 's_annTitle',
+    'f_annSub': 's_annSub',
+    'f_year': 's_year',
+    'f_shuba': 's_shuba',
+    'f_shubaTxt': 's_shubaTxt',
+    'f_shubaSub1': 's_shubaSub1',
+    'f_shubaSub2': 's_shubaSub2',
+    'f_modelBadge': 's_modelBadge',
+    'f_regDate': 's_regDate',
+    'f_admDate': 's_admDate',
+    'f_phone1': 's_phone1',
+    'f_phone2': 's_phone2',
+    'f_contactNote': 's_contactNote',
+    'f_address': 's_address'
+  };
+
+  for (const [flyerId, sidebarId] of Object.entries(fieldMap)) {
+    const el = document.getElementById(flyerId);
+    if (el && !el.matches(':focus')) {
+      el.textContent = get(sidebarId);
+    }
+  }
+
+  renderConditionsFlyer();
+  renderFeaturesFlyer();
+  updateColors();
+}
+
+// ========== COLORS ==========
+function updateColors() {
+  const gold = document.getElementById('c_gold').value;
+  const brown = document.getElementById('c_brown').value;
+  const bg = document.getElementById('c_bg').value;
+
+  const flyer = document.getElementById('flyer');
+  flyer.style.setProperty('--gold', gold);
+  flyer.style.setProperty('--dark-gold', shadeColor(gold, -30));
+  flyer.style.setProperty('--light-gold', shadeColor(gold, 30));
+  flyer.style.setProperty('--brown', brown);
+  flyer.style.setProperty('--cream', bg);
+}
+
+function shadeColor(hex, percent) {
+  const num = parseInt(hex.slice(1), 16);
+  const r = Math.min(255, Math.max(0, (num >> 16) + percent));
+  const g = Math.min(255, Math.max(0, ((num >> 8) & 0xff) + percent));
+  const b = Math.min(255, Math.max(0, (num & 0xff) + percent));
+  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+// ========== CONDITIONS ==========
+function renderConditionsSidebar() {
+  const list = document.getElementById('conditionsList');
+  list.innerHTML = '';
+  currentData.conditions.forEach((cond, i) => {
+    list.innerHTML += `
+      <div class="field-group" style="display:flex;gap:6px;align-items:flex-start;">
+        <textarea style="flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(201,168,76,0.4);border-radius:6px;color:white;padding:6px 8px;font-size:12px;font-family:Noto Nastaliq Urdu,serif;direction:rtl;outline:none;resize:vertical;min-height:50px;"
+          oninput="currentData.conditions[${i}]=this.value;renderConditionsFlyer()">${escHtml(cond)}</textarea>
+        <button class="btn-sm btn-sm-red" style="margin-top:4px;flex-shrink:0;" onclick="removeCondition(${i})">×</button>
+      </div>`;
+  });
+}
+
+function renderConditionsFlyer() {
+  const list = document.getElementById('f_conditionsList');
+  list.innerHTML = '';
+  currentData.conditions.forEach(cond => {
+    list.innerHTML += `
+      <div class="condition-item">
+        <div class="cond-bullet"></div>
+        <div class="cond-text">${escHtml(cond)}</div>
+      </div>`;
+  });
+}
+
+function addCondition() {
+  currentData.conditions.push('نئی شرط لکھیں');
+  renderConditionsSidebar();
+  renderConditionsFlyer();
+}
+
+function removeCondition(i) {
+  currentData.conditions.splice(i, 1);
+  renderConditionsSidebar();
+  renderConditionsFlyer();
+}
+
+// ========== FEATURES ==========
+function renderFeaturesSidebar() {
+  const list = document.getElementById('featuresList');
+  list.innerHTML = '';
+  currentData.features.forEach((feat, i) => {
+    list.innerHTML += `
+      <div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="color:var(--light-gold);font-size:12px;font-family:Arial;">سہولت ${i+1}</span>
+          <button class="btn-sm btn-sm-red" onclick="removeFeature(${i})">× ہٹائیں</button>
+        </div>
+        <div class="field-group">
+          <label>آئیکن (Emoji)</label>
+          <input type="text" value="${escHtml(feat.emoji||feat.icon||'🏫')}"
+            style="background:rgba(255,255,255,0.08);border:1px solid rgba(201,168,76,0.4);border-radius:6px;color:white;padding:6px 8px;font-size:16px;font-family:Arial;width:100%;outline:none;"
+            oninput="currentData.features[${i}].emoji=this.value;currentData.features[${i}].icon=this.value;renderFeaturesFlyer()">
+        </div>
+        <div class="field-group">
+          <label>لیبل</label>
+          <textarea style="background:rgba(255,255,255,0.08);border:1px solid rgba(201,168,76,0.4);border-radius:6px;color:white;padding:6px 8px;font-size:12px;font-family:Noto Nastaliq Urdu,serif;direction:rtl;outline:none;width:100%;min-height:50px;resize:vertical;"
+            oninput="currentData.features[${i}].label=this.value;renderFeaturesFlyer()">${escHtml(feat.label)}</textarea>
+        </div>
+        <div class="field-group">
+          <label>تصویر</label>
+          <div class="img-upload-area">
+            <label><i class="fas fa-upload"></i> تصویر
+              <input type="file" accept="image/*" onchange="uploadFeatureImage(${i}, this)">
+            </label>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+function renderFeaturesFlyer() {
+  const list = document.getElementById('f_featuresList');
+  list.innerHTML = '';
+  currentData.features.forEach(feat => {
+    list.innerHTML += `
+      <div class="feature-item">
+        <div class="feature-circle">
+          ${feat.imgData ? `<img src="${feat.imgData}">` : `<span style="font-size:35px;">${feat.emoji||feat.icon||'🏫'}</span>`}
+        </div>
+        <div class="feature-label">${escHtml(feat.label)}</div>
+      </div>`;
+  });
+}
+
+function addFeature() {
+  currentData.features.push({ icon: '⭐', emoji: '⭐', label: 'نئی سہولت' });
+  renderFeaturesSidebar();
+  renderFeaturesFlyer();
+}
+
+function removeFeature(i) {
+  currentData.features.splice(i, 1);
+  renderFeaturesSidebar();
+  renderFeaturesFlyer();
+}
+
+function uploadFeatureImage(i, input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentData.features[i].imgData = e.target.result;
+    renderFeaturesFlyer();
+    showToast('Feature image uploaded ✓');
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// ========== IMAGE UPLOAD ==========
+function uploadImage(type, input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    if (type === 'photoStrip') {
+      const div = document.getElementById('photoStripDiv');
+      let img = div.querySelector('img');
+      if (!img) { img = document.createElement('img'); div.appendChild(img); }
+      img.src = e.target.result;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;inset:0;';
+      const ph = document.getElementById('photoPlaceholder');
+      if (ph) ph.style.display = 'none';
+      showToast('Strip image uploaded ✓');
+    } else if (type === 'logo') {
+      const logo = document.getElementById('logo-main');
+      logo.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+      showToast('Logo uploaded ✓');
+    }
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// ========== EDIT MODE ==========
+function toggleEditMode() {
+  editMode = !editMode;
+  document.body.classList.toggle('edit-mode', editMode);
+  const fields = document.querySelectorAll('.editable-field');
+  fields.forEach(f => f.contentEditable = editMode ? 'true' : 'false');
+
+  document.getElementById('editBtnText').textContent = editMode ? 'Exit Edit' : 'Edit Mode';
+  document.getElementById('editIcon').className = editMode ? 'fas fa-times' : 'fas fa-edit';
+
+  if (!editMode) {
+    // Sync editable fields back to sidebar
+    const reverseMap = {
+      's_collegeName': 'f_collegeName',
+      's_campus': 'f_campus',
+      's_annTitle': 'f_annTitle',
+      's_annSub': 'f_annSub',
+      's_year': 'f_year',
+      's_shuba': 'f_shuba',
+      's_shubaTxt': 'f_shubaTxt',
+      's_shubaSub1': 'f_shubaSub1',
+      's_shubaSub2': 'f_shubaSub2',
+      's_modelBadge': 'f_modelBadge',
+      's_regDate': 'f_regDate',
+      's_admDate': 'f_admDate',
+      's_phone1': 'f_phone1',
+      's_phone2': 'f_phone2',
+      's_contactNote': 'f_contactNote',
+      's_address': 'f_address'
+    };
+    for (const [sid, fid] of Object.entries(reverseMap)) {
+      const fe = document.getElementById(fid);
+      const se = document.getElementById(sid);
+      if (fe && se) se.value = fe.textContent;
+    }
+    showToast('Edit mode off - changes synced');
+  } else {
+    showToast('Edit mode ON - click any text to edit');
+  }
+}
+
+// ========== SAVE/LOAD ==========
+function saveRecord() {
+  const data = collectCurrentData();
+  if (!data.name) { showToast('Please enter college name first', true); return; }
+  saveRecordToDB(data, id => {
+    currentData.id = id;
+    data.id = id;
+    showToast(`✓ Saved: "${data.name}" (ID: ${id})`);
+  });
+}
+
+function deleteRecord() {
+  if (!currentData.id) { showToast('No record selected to delete', true); return; }
+  if (!confirm('Are you sure you want to delete this record?')) return;
+  deleteRecordFromDB(currentData.id, () => {
+    showToast('Record deleted');
+    newFlyer();
+  });
+}
+
+function newFlyer() {
+  currentData.id = null;
+  const data = {
+    id: null,
+    collegeName: 'جامعۃ الشہید',
+    campus: 'گوجرانوالہ کیمپس',
+    annTitle: 'اعلان',
+    annSub: 'داخلہ',
+    year: '2025/1446ھ',
+    shuba: 'شعبہ',
+    shubaTxt: 'تحفیظ القرآن',
+    shubaSub1: 'داخلہ برائے',
+    shubaSub2: 'نورانی قاعدہ، ناظرہ، حفظ اور گردان',
+    modelBadge: 'ماڈل کلاس / غیر رہائشی',
+    regDate: 'رجسٹریشن کی آخری تاریخ: 30 رمضان المبارک 1446ھ',
+    admDate: 'داخلہ کی تاریخ: 13 اپریل 2025ء',
+    phone1: '03167677646',
+    phone2: '03167677643',
+    address: 'ایڈریس: ساہیوال میں تحصیل دفتر کے ساتھ، گوجرانوالہ',
+    contactNote: 'تفصیل کے لیے رابطہ کریں',
+    conditions: ['عمر 8 سے 11 سال', 'اسکول از درجہ KG-II پاس ہو', 'داخلہ اعلان کے بعد کارڈ پر', 'ماڈل کلاس بلا فیس'],
+    features: [
+      { icon: '🏫', emoji: '🏫', label: 'انفرادی نشست درس و تدریس' },
+      { icon: '👨‍🏫', emoji: '👨‍🏫', label: 'مشہور و ماہر اساتذہ کرام' },
+      { icon: '🍽️', emoji: '🍽️', label: 'صحت بخش کھانے کا اہتمام' },
+      { icon: '⚽', emoji: '⚽', label: 'بچوں کے لیے کھیل کا میدان' }
+    ],
+    colors: { gold: '#C9A84C', brown: '#3D2008', bg: '#FBF6ED' }
+  };
+  loadDataToUI(data);
+  showToast('New flyer created');
+}
+
+function openRecords() {
+  getAllRecords(records => {
+    const list = document.getElementById('recordsList');
+    if (!records.length) {
+      list.innerHTML = '<div style="color:rgba(255,255,255,0.5);text-align:center;padding:20px;font-family:Arial;">کوئی ریکارڈ نہیں</div>';
+    } else {
+      list.innerHTML = '<div class="records-list">' + records.map(r => `
+        <div class="record-item">
+          <div class="record-info">
+            <div class="record-title">${escHtml(r.name || r.collegeName || 'Untitled')}</div>
+            <div class="record-date">${new Date(r.createdAt).toLocaleString()}</div>
+          </div>
+          <div class="record-actions">
+            <button class="btn-sm btn-sm-gold" onclick="loadRecord(${r.id})">Load</button>
+            <button class="btn-sm btn-sm-red" onclick="deleteRecordById(${r.id})">Delete</button>
+          </div>
+        </div>`).join('') + '</div>';
+    }
+    document.getElementById('recordsModal').classList.add('active');
+  });
+}
+
+function loadRecord(id) {
+  const tx = db.transaction(STORE_NAME, 'readonly');
+  const store = tx.objectStore(STORE_NAME);
+  const req = store.get(id);
+  req.onsuccess = () => {
+    if (req.result) {
+      loadDataToUI(req.result);
+      closeModal('recordsModal');
+      showToast(`Loaded: ${req.result.name || req.result.collegeName}`);
+    }
+  };
+}
+
+function deleteRecordById(id) {
+  if (!confirm('Delete this record?')) return;
+  deleteRecordFromDB(id, () => {
+    showToast('Record deleted');
+    openRecords();
+    if (currentData.id === id) newFlyer();
+  });
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+// ========== EXPORT ==========
+async function exportImage() {
+  showToast('Generating high-res PNG...');
+  try {
+    const flyer = document.getElementById('flyer');
+    const canvas = await html2canvas(flyer, {
+      scale: 4,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#FBF6ED',
+      logging: false
+    });
+    const link = document.createElement('a');
+    link.download = `jamia-flyer-${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png', 1.0);
+    link.click();
+    showToast('✓ PNG exported at 4x resolution!');
+  } catch(e) {
+    showToast('Export failed: ' + e.message, true);
+  }
+}
+
+async function exportPDF() {
+  showToast('Generating high-res PDF...');
+  try {
+    const { jsPDF } = window.jspdf;
+    const flyer = document.getElementById('flyer');
+    const canvas = await html2canvas(flyer, {
+      scale: 4,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#FBF6ED',
+      logging: false
+    });
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    const fw = flyer.offsetWidth;
+    const fh = flyer.offsetHeight;
+    const ratio = fh / fw;
+
+    // A5 portrait (148 x 210 mm)
+    const pdfW = 148;
+    const pdfH = pdfW * ratio;
+
+    const pdf = new jsPDF({
+      orientation: pdfH > pdfW ? 'portrait' : 'landscape',
+      unit: 'mm',
+      format: [pdfW, pdfH]
+    });
+
+    pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH, '', 'FAST');
+    pdf.save(`jamia-flyer-${Date.now()}.pdf`);
+    showToast('✓ PDF exported at high resolution!');
+  } catch(e) {
+    showToast('PDF Export failed: ' + e.message, true);
+  }
+}
+
+// ========== UTILITIES ==========
+function escHtml(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+let toastTimer;
+function showToast(msg, isError=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '') + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('active');
+  });
+});
+
+// ========== INIT ==========
+window.addEventListener('DOMContentLoaded', () => {
+  initDB();
+  renderConditionsSidebar();
+  renderConditionsFlyer();
+  renderFeaturesSidebar();
+  renderFeaturesFlyer();
+  updateFlyer();
+});
+</script>
+</body>
+</html>

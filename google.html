@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jamia Al-Rashid Admission Poster App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --main-blue: #0f4c75;
+            --main-brown: #a65b2e;
+            --light-bg: #f4f4f4;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: var(--main-blue);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-family: inherit;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0a3655;
+        }
+
+        button.save-btn {
+            background-color: #28a745;
+        }
+
+        button.save-btn:hover {
+            background-color: #218838;
+        }
+
+        #poster-container {
+            width: 900px;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Header Section */
+        #header-section {
+            background-color: var(--main-blue);
+            color: white;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: inline-block;
+            border-bottom: 2px solid white;
+            padding-bottom: 5px;
+        }
+
+        .main-title {
+            font-size: 72px;
+            line-height: 1;
+            margin: 10px 0;
+            text-align: right;
+        }
+
+        .main-title span {
+            display: block;
+            font-size: 48px;
+        }
+
+        .header-decoration {
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: var(--main-blue);
+            border-radius: 0 0 50% 50%;
+            z-index: 1;
+        }
+
+        /* Admission Banner */
+        #admission-banner {
+            background-color: var(--main-blue);
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            position: relative;
+            z-index: 2;
+            margin-top: -1px;
+            /* Fix for small gap */
+        }
+
+        .admission-text {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .year-text {
+            font-size: 24px;
+        }
+
+        /* Main Content Layout */
+        #main-content {
+            display: flex;
+            position: relative;
+        }
+
+        /* Left Sidebar (Contact Info) */
+        #left-sidebar {
+            width: 35%;
+            background-color: var(--main-brown);
+            color: white;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            position: relative;
+        }
+
+        #left-sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 20px;
+            height: 100%;
+            background: var(--main-brown);
+            z-index: 2;
+        }
+
+        .contact-section {
+            position: relative;
+        }
+
+        .program-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .program-title::before {
+            content: '❄';
+            margin-left: 10px;
+            font-size: 20px;
+        }
+
+        .date-info {
+            font-size: 16px;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .phone-number {
+            font-size: 32px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .phone-icon {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+
+        /* Right Content Area */
+        #right-content {
+            width: 65%;
+            background-color: var(--light-bg);
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Images and QR Code Section */
+        #images-qr-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .image-container {
+            position: relative;
+            width: 48%;
+        }
+
+        .image-container img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 3px solid white;
+        }
+
+        .qr-container {
+            text-align: center;
+            width: 30%;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-code {
+            width: 100%;
+            height: auto;
+        }
+
+        .qr-text {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Requirements Section */
+        #requirements-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .requirement-box {
+            position: relative;
+        }
+
+        .req-header {
+            background-color: var(--main-blue);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .req-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            top: -15px;
+            padding-top: 25px;
+        }
+
+        .req-list li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-right: 20px;
+        }
+
+        .req-list li::before {
+            content: '◀';
+            position: absolute;
+            right: 0;
+            color: var(--main-blue);
+        }
+
+        /* Graphics */
+        .book-graphic {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 150px;
+            opacity: 0.8;
+        }
+
+        /* Footer */
+        #footer {
+            background-color: var(--main-brown);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 18px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .footer-icon {
+            font-size: 24px;
+            margin-left: 10px;
+        }
+
+        /* Editable Content */
+        [contenteditable="true"] {
+            outline: 2px dashed rgba(255, 255, 255, 0.5);
+            padding: 2px;
+            min-width: 20px;
+        }
+
+        #right-content [contenteditable="true"] {
+            outline: 2px dashed rgba(15, 76, 117, 0.3);
+        }
+
+        [contenteditable="true"]:focus {
+            outline: 2px solid #ffc107;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Pushpin Decoration */
+        .pushpin {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background-color: #d9534f;
+            border-radius: 50%;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        .pushpin::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: #c9302c;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Specific Pushpin Positions */
+        .pin-1 {
+            top: 10px;
+            right: 33%;
+        }
+
+        .pin-2 {
+            top: 180px;
+            right: 33%;
+        }
+
+        .pin-3 {
+            top: 350px;
+            right: 33%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="controls">
+        <button class="save-btn" onclick="saveData()">Save Changes (CRUD)</button>
+        <button onclick="exportToImage()">Export to High-Res Image</button>
+        <button onclick="exportToPDF()">Export to PDF</button>
+    </div>
+
+    <div id="poster-container">
+        <div class="pushpin pin-1"></div>
+        <div class="pushpin pin-2"></div>
+        <div class="pushpin pin-3"></div>
+
+        <div id="header-section">
+            <div class="logo-text" contenteditable="true" id="hdr-campus">گوجرانوالہ کیمپس</div>
+            <h1 class="main-title">
+                <span contenteditable="true" id="hdr-jamia">جامعہ</span>
+                <div contenteditable="true" id="hdr-alrashid">الرشید</div>
+            </h1>
+            <div class="header-decoration"></div>
+        </div>
+
+        <div id="admission-banner">
+            <h2 class="admission-text" contenteditable="true" id="adm-title">داخلہ جاری ہے</h2>
+            <div class="year-text" contenteditable="true" id="adm-year">1446ھ / 2025ء</div>
+        </div>
+
+        <div id="main-content">
+            <div id="left-sidebar">
+                <div class="contact-section">
+                    <div class="program-title" contenteditable="true" id="prog1-title">معهد الرشید العربی</div>
+                    <div class="date-info">رجسٹریشن کی آخری تاریخ: <span contenteditable="true" id="prog1-date">05 شوال
+                            المکرم 1446ھ</span></div>
+                    <div class="phone-number">
+                        <span contenteditable="true" id="prog1-phone">03702770214</span>
+                        <span class="phone-icon">📞</span>
+                    </div>
+                </div>
+                <div class="contact-section">
+                    <div class="program-title" contenteditable="true" id="prog2-title">حفاظ ایجوکیشن سسٹم</div>
+                    <div class="date-info">رجسٹریشن کی آخری تاریخ: <span contenteditable="true" id="prog2-date">04 شوال
+                            المکرم 1446ھ</span></div>
+                    <div class="phone-number">
+                        <span contenteditable="true" id="prog2-phone">03167677645</span>
+                        <span class="phone-icon">📞</span>
+                    </div>
+                </div>
+                <div class="contact-section">
+                    <div class="program-title" contenteditable="true" id="prog3-title">شعبہ تحفیظ القرآن</div>
+                    <div class="date-info">رجسٹریشن کی آخری تاریخ: <span contenteditable="true" id="prog3-date">30 رمضان
+                            المبارک 1446ھ</span></div>
+                    <div class="phone-number">
+                        <span contenteditable="true" id="prog3-phone">03313389535</span>
+                        <span class="phone-icon">📞</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="right-content">
+                <div id="images-qr-section">
+                    <div class="image-container"
+                        style="position: absolute; top: -100px; right: 20px; width: 250px; z-index: 5;">
+                        <img src="https://i.imgur.com/8Q6qQ8c.png" alt="Students">
+                    </div>
+                    <div class="image-container"
+                        style="position: absolute; top: 30px; right: 20px; width: 250px; z-index: 5;">
+                        <img src="https://i.imgur.com/5q3Q3qQ.png" alt="Mosque">
+                    </div>
+                    <div class="image-container"
+                        style="position: absolute; top: 160px; right: 20px; width: 250px; z-index: 5;">
+                        <img src="https://i.imgur.com/2q8Q8qQ.png" alt="Students Studying">
+                    </div>
+
+                    <div class="qr-container" style="position: absolute; top: 350px; left: 20px;">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://example.com/register"
+                            alt="QR Code" class="qr-code">
+                        <div class="qr-text" contenteditable="true" id="qr-text">آن لائن رجسٹریشن کیلئے اسکین کیجیے
+                        </div>
+                    </div>
+                </div>
+
+                <div id="requirements-section" style="margin-top: 300px;">
+                    <div class="requirement-box">
+                        <div class="req-header" contenteditable="true" id="req1-title">شرائط داخلہ (معهد الرشید العربی)
+                        </div>
+                        <ul class="req-list">
+                            <li contenteditable="true" id="req1-li1">میٹرک میں کم از کم B گریڈ ہو</li>
+                            <li contenteditable="true" id="req1-li2">عمر زیادہ سے زیادہ 20 سال ہو</li>
+                            <li contenteditable="true" id="req1-li3">قرآن مجید ناظرہ صحیح تلفظ کے ساتھ پڑھا ہو</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-box" style="margin-top: 20px;">
+                        <div class="req-header" contenteditable="true" id="req2-title">شرائط داخلہ (حفاظ ایجوکیشن سسٹم)
+                        </div>
+                        <div contenteditable="true" id="req2-subtitle"
+                            style="margin-bottom: 10px; color: var(--main-blue);">حافظ بچوں کے لئے چار سالہ دینی و عصری
+                            تعلیمی نظام</div>
+                        <ul class="req-list">
+                            <li contenteditable="true" id="req2-li1">حفظ پختہ ہو</li>
+                            <li contenteditable="true" id="req2-li2">پرائمری کی استعداد ہو</li>
+                            <li contenteditable="true" id="req2-li3">عمر 13 سال سے زائد نہ ہو</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-box" style="margin-top: 20px;">
+                        <div class="req-header" contenteditable="true" id="req3-title">شرائط داخلہ (شعبہ تحفیظ القرآن)
+                        </div>
+                        <ul class="req-list">
+                            <li contenteditable="true" id="req3-li1">عمر کی حد 8 تا 11 سال ہو</li>
+                            <li contenteditable="true" id="req3-li2">اسکول کم از کم KG-II پڑھا ہوا ہو</li>
+                            <li contenteditable="true" id="req3-li3">داخلہ انٹری ٹیسٹ میں کامیابی سے مشروط ہے</li>
+                            <li contenteditable="true" id="req3-li4">داخلے میں غیر رہائشی بچوں کو ترجیح دی جائے گی</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <img src="https://i.imgur.com/6qQ7qQZ.png" alt="Open Book" class="book-graphic">
+            </div>
+        </div>
+
+        <div id="footer">
+            <span class="footer-icon">📍</span>
+            <div contenteditable="true" id="footer-addr">جامعہ الرشید گوجرانوالہ کیمپس، جی ٹی روڈ، گوجرانوالہ</div>
+        </div>
+    </div>
+
+    <script>
+        // --- IndexedDB CRUD Operations ---
+        let db;
+        const dbName = 'PosterDB';
+        const storeName = 'posterContent';
+
+        const request = indexedDB.open(dbName, 1);
+
+        request.onerror = (event) => {
+            console.error('Database error:', event.target.errorCode);
+        };
+
+        request.onupgradeneeded = (event) => {
+            db = event.target.result;
+            if (!db.objectStoreNames.contains(storeName)) {
+                db.createObjectStore(storeName, { keyPath: 'id' });
+            }
+        };
+
+        request.onsuccess = (event) => {
+            db = event.target.result;
+            loadData(); // Load data on successful DB connection
+        };
+
+        function saveData() {
+            const transaction = db.transaction([storeName], 'readwrite');
+            const store = transaction.objectStore(storeName);
+
+            const editableElements = document.querySelectorAll('[contenteditable="true"]');
+            editableElements.forEach(element => {
+                const data = {
+                    id: element.id,
+                    content: element.innerHTML
+                };
+                store.put(data);
+            });
+
+            transaction.oncomplete = () => {
+                alert('Data saved successfully!');
+            };
+
+            transaction.onerror = () => {
+                alert('Error saving data.');
+            };
+        }
+
+        function loadData() {
+            const transaction = db.transaction([storeName], 'readonly');
+            const store = transaction.objectStore(storeName);
+            const request = store.getAll();
+
+            request.onsuccess = (event) => {
+                const data = event.target.result;
+                data.forEach(item => {
+                    const element = document.getElementById(item.id);
+                    if (element) {
+                        element.innerHTML = item.content;
+                    }
+                });
+            };
+        }
+
+        // --- Export Functions ---
+        function exportToImage() {
+            const poster = document.getElementById('poster-container');
+            html2canvas(poster, { scale: 3, useCORS: true }).then(canvas => {
+                const image = canvas.toDataURL("image/png");
+                const link = document.createElement('a');
+                link.href = image;
+                link.download = 'jamia-poster-highres.png';
+                link.click();
+            });
+        }
+
+        function exportToPDF() {
+            const poster = document.getElementById('poster-container');
+            html2canvas(poster, { scale: 2, useCORS: true }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+
+                // Calculate dimensions to fit A4
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 297; // A4 height in mm
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                const doc = new jspdf.jsPDF('p', 'mm', 'a4');
+
+                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    doc.addPage();
+                    doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                doc.save('jamia-poster.pdf');
+            });
+        }
+    </script>
+</body>
+
+</html>
